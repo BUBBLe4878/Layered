@@ -33,7 +33,7 @@
 		<div class="themed-box grow p-3">
 			<h2 class="mb-2 text-xl font-bold">Filter & Sort</h2>
 			<form method="GET">
-				<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+				<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 					<!-- Project status -->
 					<label class="flex flex-col gap-1">
 						<span class="font-medium">Status</span>
