@@ -5,7 +5,7 @@ import { eq, and, asc, sql } from 'drizzle-orm';
 import type { Actions } from './$types';
 import { sendSlackDM } from '$lib/server/slack.js';
 import { getReviewHistory } from '../../getReviewHistory.server';
-import { T1_PAYOUT_BRICKS } from '$lib/defs';
+import { T1_PAYOUT_CLAY } from '$lib/defs';
 
 export async function load({ locals, params }) {
 	if (!locals.user) {
@@ -29,6 +29,7 @@ export async function load({ locals, params }) {
 				editorUrl: project.editorUrl,
 				uploadedFileUrl: project.uploadedFileUrl,
 				modelFile: project.modelFile,
+				doubleDippingWith: project.doubleDippingWith,
 
 				createdAt: project.createdAt,
 				updatedAt: project.updatedAt,
@@ -79,7 +80,12 @@ export async function load({ locals, params }) {
 
 	return {
 		project: queriedProject,
-		devlogs,
+		devlogs: devlogs.map((devlog) => {
+			return {
+				...devlog,
+				lapseId: null
+			};
+		}),
 		reviews: await getReviewHistory(id)
 	};
 }
@@ -127,11 +133,11 @@ export const actions = {
 		});
 
 		if (queriedProject.status === 'submitted' && action !== 'add_comment') {
-			// Bricks payout for reviewer
+			// Clay payout for reviewer
 			await db
 				.update(user)
 				.set({
-					brick: locals.user.brick + T1_PAYOUT_BRICKS
+					clay: locals.user.clay + T1_PAYOUT_CLAY
 				})
 				.where(eq(user.id, locals.user.id));
 		}
