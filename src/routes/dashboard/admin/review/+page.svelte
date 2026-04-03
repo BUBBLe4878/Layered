@@ -145,7 +145,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each data.leaderboard as row}
+							{#each data.leaderboard as row (row.id)}
 								<tr>
 									<td class="py-1" align="left">
 										<a class="underline" href={`/dashboard/users/${row.id}`}>{row.name}</a>
@@ -178,7 +178,7 @@
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-			{#each projects as project}
+			{#each projects as project (project.project.id)}
 				<div
 					class="themed-box relative flex flex-col p-3 shadow-lg/20 transition-all hover:scale-102"
 				>
