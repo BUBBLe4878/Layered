@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db/index.js';
 import { project, user, devlog, t2Review } from '$lib/server/db/schema.js';
+import { getProjectLinkType } from '$lib/utils';
 import { error } from '@sveltejs/kit';
 import { eq, and, sql, ne, inArray, desc, gt } from 'drizzle-orm';
 
@@ -23,11 +24,12 @@ export async function load({ locals, url }) {
 		.getAll('user')
 		.map((id) => parseInt(id))
 		.filter((id) => !isNaN(id) && id > 0);
+	const typeFilter = url.searchParams.getAll('type');
 	const doubleDippingFilter = hasFilters
 		? (url.searchParams.getAll('doubleDippingWith') as (typeof project.doubleDippingWith._.data)[])
 		: (['none'] as (typeof project.doubleDippingWith._.data)[]);
 
-	const projects = await getProjects(statusFilter, projectFilter, userFilter, doubleDippingFilter);
+	const projects = await getProjects(statusFilter, projectFilter, userFilter, typeFilter, doubleDippingFilter);
 
 	const allProjects = await db
 		.select({
@@ -73,6 +75,7 @@ export async function load({ locals, url }) {
 			status: statusFilter,
 			project: projectFilter,
 			user: userFilter,
+			type: typeFilter,
 			doubleDippingWith: doubleDippingFilter
 		}
 	};
@@ -82,47 +85,66 @@ async function getProjects(
 	statusFilter: (typeof project.status._.data)[],
 	projectFilter: number[],
 	userFilter: number[],
+	typeFilter: string[],
 	doubleDippingFilter: (typeof project.doubleDippingWith._.data)[]
 ) {
-	return await db
-		.select({
-			project: {
-				id: project.id,
-				name: project.name,
-				description: project.description,
-				url: project.url,
-				createdAt: project.createdAt,
-				status: project.status
-			},
-			user: {
-				id: user.id,
-				name: user.name
-			},
-			timeSpent: sql<number>`COALESCE(SUM(${devlog.timeSpent}), 0)`,
-			devlogCount: sql<number>`COALESCE(COUNT(${devlog.id}), 0)`
-		})
-		.from(project)
-		.leftJoin(devlog, and(eq(project.id, devlog.projectId), eq(devlog.deleted, false)))
-		.leftJoin(user, eq(user.id, project.userId))
-		.where(
-			and(
-				eq(project.deleted, false),
-				statusFilter.length > 0 ? inArray(project.status, statusFilter) : undefined,
-				projectFilter.length > 0 ? inArray(project.id, projectFilter) : undefined,
-				userFilter.length > 0 ? inArray(project.userId, userFilter) : undefined,
-				doubleDippingFilter.length > 0
-					? inArray(project.doubleDippingWith, doubleDippingFilter)
-					: undefined
+	return (
+		await db
+			.select({
+				project: {
+					id: project.id,
+					name: project.name,
+					description: project.description,
+					url: project.url,
+					editorFileType: project.editorFileType,
+					editorUrl: project.editorUrl,
+					uploadedFileUrl: project.uploadedFileUrl,
+					status: project.status,
+					createdAt: project.createdAt
+				},
+				user: {
+					id: user.id,
+					name: user.name
+				},
+				timeSpent: sql<number>`COALESCE(SUM(${devlog.timeSpent}), 0)`,
+				devlogCount: sql<number>`COALESCE(COUNT(${devlog.id}), 0)`
+			})
+			.from(project)
+			.leftJoin(devlog, and(eq(project.id, devlog.projectId), eq(devlog.deleted, false)))
+			.leftJoin(user, eq(user.id, project.userId))
+			.where(
+				and(
+					eq(project.deleted, false),
+					statusFilter.length > 0 ? inArray(project.status, statusFilter) : undefined,
+					projectFilter.length > 0 ? inArray(project.id, projectFilter) : undefined,
+					userFilter.length > 0 ? inArray(project.userId, userFilter) : undefined,
+					doubleDippingFilter.length > 0
+						? inArray(project.doubleDippingWith, doubleDippingFilter)
+						: undefined
+				)
 			)
-		)
-		.groupBy(
-			project.id,
-			project.name,
-			project.description,
-			project.url,
-			project.createdAt,
-			project.status,
-			user.id,
-			user.name
-		);
+			.groupBy(
+				project.id,
+				project.name,
+				project.description,
+				project.url,
+				project.editorFileType,
+				project.editorUrl,
+				project.uploadedFileUrl,
+				project.createdAt,
+				project.status,
+				user.id,
+				user.name
+			)
+	).filter((item) =>
+		typeFilter.length > 0
+			? typeFilter.includes(
+					getProjectLinkType(
+						item.project.editorFileType,
+						item.project.editorUrl,
+						item.project.uploadedFileUrl
+					)
+				)
+			: true
+	);
 }
