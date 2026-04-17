@@ -18,6 +18,7 @@
 		"db:studio": "drizzle-kit studio"
 	},
 	"devDependencies": {
+		"@sveltejs/adapter-vercel": "latest",
 		"@eslint/compat": "^1.4.1",
 		"@eslint/js": "^9.36.0",
 		"@oslojs/crypto": "^1.0.1",
