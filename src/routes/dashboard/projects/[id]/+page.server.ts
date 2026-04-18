@@ -223,29 +223,32 @@ export const actions = {
 
 		const modelPath = `models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
 
-		const modelCommand = new PutObjectCommand({
-			Bucket: env.S3_BUCKET_NAME,
-			Key: modelPath,
-			Body: Buffer.from(await modelFile.arrayBuffer())
-		});
-		await S3.send(modelCommand);
+		// Only upload to S3 if configured
+		if (env.S3_BUCKET_NAME) {
+			const modelCommand = new PutObjectCommand({
+				Bucket: env.S3_BUCKET_NAME,
+				Key: modelPath,
+				Body: Buffer.from(await modelFile.arrayBuffer())
+			});
+			await S3.send(modelCommand);
 
-		// Remove Exif metadata and save (we don't want another Hack Club classic PII leak :D)
-		const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+			// Remove Exif metadata and save (we don't want another Hack Club classic PII leak :D)
+			const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
 
-		const imageCommand = new PutObjectCommand({
-			Bucket: env.S3_BUCKET_NAME,
-			Key: imagePath,
-			Body: await sharp(imageBuffer).toBuffer()
-		});
-		await S3.send(imageCommand);
+			const imageCommand = new PutObjectCommand({
+				Bucket: env.S3_BUCKET_NAME,
+				Key: imagePath,
+				Body: await sharp(imageBuffer).toBuffer()
+			});
+			await S3.send(imageCommand);
+		}
 
 		await db.insert(devlog).values({
 			userId: locals.user.id,
 			projectId: queriedProject.id,
 			description: description.toString().trim(),
-			image: imagePath,
-			model: modelPath,
+			image: env.S3_BUCKET_NAME ? imagePath : 'placeholder.jpg',
+			model: env.S3_BUCKET_NAME ? modelPath : 'placeholder.stl',
 			timeSpent:
 				lapseUrlValid && lapse?.ok ? lapse.timelapse.durationMins : parseInt(timeSpent!.toString()),
 			lapseId: lapseUrlValid && lapse?.ok ? lapseId : null,
