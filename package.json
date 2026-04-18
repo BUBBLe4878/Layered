@@ -15,16 +15,17 @@
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"vercel-build": "npm run build && npm run db:migrate"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-vercel": "latest",
 		"@eslint/compat": "^1.4.1",
 		"@eslint/js": "^9.36.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"@sveltejs/adapter-auto": "^6.1.1",
 		"@sveltejs/adapter-node": "^5.5.4",
+		"@sveltejs/adapter-vercel": "^6.3.3",
 		"@sveltejs/kit": "^2.55.0",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"@tailwindcss/forms": "^0.5.11",
