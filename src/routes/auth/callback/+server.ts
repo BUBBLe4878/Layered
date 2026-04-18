@@ -66,7 +66,8 @@ export async function GET(event) {
 
 	// Use IDV data for profile (no Slack bot token required)
 	const username = first_name && last_name ? `${first_name} ${last_name}` : first_name || 'User';
-	const profilePic = `https://api.slack.com/img/blocks/bricks/slack_logo_icon.png`; // Default Slack avatar
+	// Generate avatar using UI Avatars service with user's name - creates nice colorful initials
+	const profilePic = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
 
 	// Check Hackatime trust
 	// Bypasses check if hackatime fetching fails for some reason, e.g. hackatime down
