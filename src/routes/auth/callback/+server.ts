@@ -64,66 +64,9 @@ export async function GET(event) {
 		return redirect(302, '/auth/ineligible');
 	}
 
-	// Get slack data
-	const slackProfileURL = new URL('https://slack.com/api/users.info');
-	slackProfileURL.searchParams.set('user', slack_id);
-
-	const slackProfileBody = new URLSearchParams();
-	slackProfileBody.append('token', env.SLACK_BOT_TOKEN ?? '');
-
-	const slackProfileRes = await fetch(slackProfileURL, {
-		method: 'POST',
-		body: slackProfileBody
-	});
-
-	const slackProfileResJSON = await slackProfileRes.json();
-
-	if (!slackProfileResJSON.ok) {
-		console.error('Failed to fetch user profile');
-
-		return redirect(302, '/auth/failed');
-	}
-
-	const slackProfile = slackProfileResJSON['user'];
-
-	const profilePic =
-		slackProfile['profile']['image_1024'] ??
-		slackProfile['profile']['image_512'] ??
-		slackProfile['profile']['image_192'] ??
-		slackProfile['profile']['image_72'] ??
-		slackProfile['profile']['image_48'] ??
-		slackProfile['profile']['image_32'] ??
-		slackProfile['profile']['image_24'];
-
-	const username =
-		slackProfile['profile']['display_name'] !== ''
-			? slackProfile['profile']['display_name']
-			: slackProfile['profile']['real_name'];
-
-	if (env.BETA_CHANNEL_ID && env.BETA_CHANNEL_ID.length > 0) {
-		const channelMembersURL = new URL('https://slack.com/api/conversations.members');
-		channelMembersURL.searchParams.set('channel', env.BETA_CHANNEL_ID);
-
-		const channelMembersBody = new URLSearchParams();
-		channelMembersBody.append('token', env.SLACK_BOT_TOKEN ?? '');
-
-		const channelMembersRes = await fetch(channelMembersURL, {
-			method: 'POST',
-			body: channelMembersBody
-		});
-
-		const channelMembersResJSON = await channelMembersRes.json();
-
-		if (!channelMembersResJSON.ok) {
-			console.error('Failed to fetch channel members');
-
-			return redirect(302, '/auth/failed');
-		}
-
-		if (!channelMembersResJSON['members'].includes(slack_id)) {
-			return redirect(302, '/countdown');
-		}
-	}
+	// Use IDV data for profile (no Slack bot token required)
+	const username = first_name && last_name ? `${first_name} ${last_name}` : first_name || 'User';
+	const profilePic = `https://api.slack.com/img/blocks/bricks/slack_logo_icon.png`; // Default Slack avatar
 
 	// Check Hackatime trust
 	// Bypasses check if hackatime fetching fails for some reason, e.g. hackatime down
