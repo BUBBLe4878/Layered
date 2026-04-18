@@ -204,7 +204,7 @@ export const actions = {
 		const imagePath = `images/${crypto.randomUUID()}${extname(imageFile.name).toLowerCase()}`;
 
 		// Validate model
-		if (!(modelFile instanceof File) || modelFile.size > MAX_UPLOAD_SIZE) {
+		if (!(imageFile instanceof File) || modelFile.size > MAX_UPLOAD_SIZE) {
 			return fail(400, {
 				fields: { description, timeSpent },
 				invalid_model_file: true
