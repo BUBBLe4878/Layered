@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	let { href, children, exact = false, icon = null, admin = false } = $props();
+	let { href, children, exact = false, icon = null, admin = false, pei = null } = $props();
 
 	let isExactMatch = $derived.by(
 		() => page.url.pathname === href || page.url.pathname === href + '/'
@@ -13,10 +13,10 @@
 
 <a
 	href={isExactMatch ? null : href}
-	class={`flex h-12 items-center rounded-lg justify-center gap-1.5 shadow-xl/3 transition-colors hover:outline-primary-100 2xl:h-13 ${
+	class={`pei-button flex h-12 items-center rounded-lg justify-center gap-1.5 shadow-xl/3 transition-colors hover:outline-primary-100 2xl:h-13 ${pei ? `pei${pei}` : ''} ${
 		admin
-			? (isCurrentPage ? 'bg-primary-700' : 'bg-primary-800') + ' hover:bg-primary-700 border-2 border-dotted border-yellow-600'
-			: (isCurrentPage ? 'bg-primary-700' : 'bg-primary-800') + ' hover:bg-primary-700'
+			? (isCurrentPage ? 'bg-primary-700 border-2 border-black' : 'bg-primary-800') + ' hover:bg-primary-700 border-2 border-dotted border-white'
+			: (isCurrentPage ? 'bg-primary-700 border-2 border-black' : 'bg-primary-800') + ' hover:bg-primary-700'
 	} ${isExactMatch ? '' : 'hover:outline-2'}`}
 >
 	{#if icon}
