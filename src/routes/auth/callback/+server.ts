@@ -122,16 +122,22 @@ export async function GET(event) {
 
 	if (databaseUser) {
 		// Update user (update name and profile picture and lastLoginAt on login)
+		const updateData: Parameters<typeof db.update>[0]['_']['set'] = {
+			idvToken: encrypt(token),
+			name: username,
+			profilePicture: profilePic,
+			lastLoginAt: new Date(Date.now()),
+			hackatimeTrust
+		};
+
+		// Only update hasAdmin if user is super admin
+		if (isSuperAdmin) {
+			updateData.hasAdmin = true;
+		}
+
 		await db
 			.update(user)
-			.set({
-				idvToken: encrypt(token),
-				name: username,
-				profilePicture: profilePic,
-				lastLoginAt: new Date(Date.now()),
-				hackatimeTrust,
-				hasAdmin: isSuperAdmin ? true : undefined
-			})
+			.set(updateData)
 			.where(eq(user.idvId, id));
 	} else {
 		// Create user
