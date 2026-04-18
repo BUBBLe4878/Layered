@@ -22,6 +22,8 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
 import { getIdFromLapseUrl, getLapse, type Lapse } from '$lib/lapse';
 
+const VERCEL_SAFE_MULTIPART_LIMIT_BYTES = 4 * 1024 * 1024;
+
 export async function load({ params, locals }) {
 	const id: number = parseInt(params.id);
 
@@ -132,17 +134,27 @@ export const actions = {
 			throw error(404);
 		}
 
-		const data = await request.formData();
+		let data: FormData;
+
+		try {
+			data = await request.formData();
+		} catch {
+			return fail(413, {
+				error: 'upload_too_large'
+			});
+		}
+
 		const description = data.get('description');
 		const timeSpent = data.get('timeSpent');
 		const lapseUrl = data.get('lapseUrl')?.toString();
 		const imageFile = data.get('image') as File;
 		const modelFile = data.get('model') as File;
+		const descriptionWordCount = getWordCount(description?.toString());
 
 		if (
 			!description ||
-			description.toString().trim().length < DEVLOG_DESCRIPTION_MIN_WORDS ||
-			description.toString().trim().length > DEVLOG_DESCRIPTION_MAX_WORDS
+			descriptionWordCount < DEVLOG_DESCRIPTION_MIN_WORDS ||
+			descriptionWordCount > DEVLOG_DESCRIPTION_MAX_WORDS
 		) {
 			return fail(400, {
 				fields: { description, timeSpent },
@@ -158,7 +170,11 @@ export const actions = {
 			lapseId = getIdFromLapseUrl(lapseUrl);
 
 			if (lapseId) {
-				lapse = await getLapse(lapseId);
+				try {
+					lapse = await getLapse(lapseId);
+				} catch {
+					lapse = null;
+				}
 
 				if (lapse?.ok) {
 					lapseUrlValid = true;
@@ -221,47 +237,63 @@ export const actions = {
 			});
 		}
 
+		if (imageFile.size + modelFile.size > VERCEL_SAFE_MULTIPART_LIMIT_BYTES) {
+			return fail(413, {
+				fields: { description, timeSpent },
+				invalid_upload_size: true
+			});
+		}
+
 		const modelPath = `models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
 
 		// Only upload to S3 if configured
-		if (env.S3_BUCKET_NAME) {
-			const modelCommand = new PutObjectCommand({
-				Bucket: env.S3_BUCKET_NAME,
-				Key: modelPath,
-				Body: Buffer.from(await modelFile.arrayBuffer())
-			});
-			await S3.send(modelCommand);
+		try {
+			if (env.S3_BUCKET_NAME) {
+				const modelCommand = new PutObjectCommand({
+					Bucket: env.S3_BUCKET_NAME,
+					Key: modelPath,
+					Body: Buffer.from(await modelFile.arrayBuffer()),
+					ContentType: modelFile.type || undefined
+				});
+				await S3.send(modelCommand);
 
-			// Remove Exif metadata and save (we don't want another Hack Club classic PII leak :D)
-			const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+				// Remove Exif metadata and save (we don't want another Hack Club classic PII leak :D)
+				const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
 
-			const imageCommand = new PutObjectCommand({
-				Bucket: env.S3_BUCKET_NAME,
-				Key: imagePath,
-				Body: await sharp(imageBuffer).toBuffer()
-			});
-			await S3.send(imageCommand);
-		}
+				const imageCommand = new PutObjectCommand({
+					Bucket: env.S3_BUCKET_NAME,
+					Key: imagePath,
+					Body: await sharp(imageBuffer).toBuffer(),
+					ContentType: imageFile.type || undefined
+				});
+				await S3.send(imageCommand);
+			}
 
-		await db.insert(devlog).values({
-			userId: locals.user.id,
-			projectId: queriedProject.id,
-			description: description.toString().trim(),
-			image: env.S3_BUCKET_NAME ? imagePath : 'placeholder.jpg',
-			model: env.S3_BUCKET_NAME ? modelPath : 'placeholder.stl',
-			timeSpent:
-				lapseUrlValid && lapse?.ok ? lapse.timelapse.durationMins : parseInt(timeSpent!.toString()),
-			lapseId: lapseUrlValid && lapse?.ok ? lapseId : null,
-			createdAt: new Date(Date.now()),
-			updatedAt: new Date(Date.now())
-		});
-
-		await db
-			.update(project)
-			.set({
+			await db.insert(devlog).values({
+				userId: locals.user.id,
+				projectId: queriedProject.id,
+				description: description.toString().trim(),
+				image: env.S3_BUCKET_NAME ? imagePath : 'placeholder.jpg',
+				model: env.S3_BUCKET_NAME ? modelPath : 'placeholder.stl',
+				timeSpent:
+					lapseUrlValid && lapse?.ok ? lapse.timelapse.durationMins : parseInt(timeSpent!.toString()),
+				lapseId: lapseUrlValid && lapse?.ok ? lapseId : null,
+				createdAt: new Date(Date.now()),
 				updatedAt: new Date(Date.now())
-			})
-			.where(and(eq(project.id, queriedProject.id)));
+			});
+
+			await db
+				.update(project)
+				.set({
+					updatedAt: new Date(Date.now())
+				})
+				.where(and(eq(project.id, queriedProject.id)));
+		} catch {
+			return fail(500, {
+				fields: { description, timeSpent },
+				upload_failed: true
+			});
+		}
 
 		return { success: true };
 	}
@@ -286,4 +318,15 @@ async function getMaxDevlogTime(id: number) {
 	}
 
 	return devlogCurrentMaxTime;
+}
+
+function getWordCount(value?: string | null) {
+	if (!value) {
+		return 0;
+	}
+
+	return value
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean).length;
 }
