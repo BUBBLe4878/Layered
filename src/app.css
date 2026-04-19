@@ -357,11 +357,11 @@
 	.pei4,
 	.pei5,
 	.pei6 {
-		background-image: url('/static/img/peione.png') !important;
+		background-image: url('/img/peione.png') !important;/*it used to be background-image: url('/static/img/peione.png') !important;*/
 	}
 
 	.pei7 {
-		background-image: url('/static/img/peitwo.png') !important;
+		background-image: url('/img/peitwo.png') !important;
 	}
 }
 
