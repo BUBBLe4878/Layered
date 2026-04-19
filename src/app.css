@@ -51,7 +51,7 @@
 	--background-color-secondary: #f5f0e870;
 	--background-color-tertiary: #ede6dead;
 	--background-color-quarternary: #e8dcc8;
-	--font-color: #2a2622;
+	--font-color: #0d0b08;
 
 	/* Primary Color Palette - Warm Gold (happy & vibrant) */
 	--color-primary-50: #fffaf0;
@@ -294,7 +294,7 @@
 
 	/* ---- Enclosure Background (Textured) ---- */
 	.enclosure-bg {
-		background-color: #fef9f3;
+		background-color: #fffcf9;
 		position: relative;
 		overflow: hidden;
 		z-index: 1;
