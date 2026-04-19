@@ -104,7 +104,7 @@
 
 <div class="flex h-full flex-col gap-4">
 	<!-- ── Header ──────────────────────────────────────────────────── -->
-	<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+	<div class="flex items-center justify-between">
 		<div>
 			<h1 class="mt-5 mb-2 font-hero text-3xl font-medium">Projects</h1>
 			<h2 class="text-md font-medium text-[#72685e]">
@@ -113,16 +113,16 @@
 		</div>
 		<a
 			href="/dashboard/projects/create"
-			class="offset button md block bg-primary-800 text-center hover:bg-primary-700 hover:ring-2 hover:ring-primary-50 sm:inline-block"
+			class="offset button md -mt-14 block bg-primary-800 text-center hover:bg-primary-700 hover:ring-2 hover:ring-primary-50 lg:inline-block"
 		>
 			Create project
 		</a>
 	</div>
 
 	<!-- ── Main Layout: Sidebar + Detail ──────────────────────────── -->
-	<div class="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+	<div class="flex min-h-0 flex-1 gap-4">
 		<!-- ── LEFT SIDEBAR: Project List ──────────────────────────── -->
-		<div class="flex w-full flex-col gap-3 pb-4 lg:w-80">
+		<div class="flex w-80 flex-col gap-3 pb-4">
 			<!-- Search bar -->
 			<div class="relative flex items-center">
 				<Search size={15} class="pointer-events-none absolute left-3 text-primary-700" />
