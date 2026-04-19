@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../app.css';
 	import Sidebar from './Sidebar.svelte';
 	import { ProgressBar } from "@prgm/sveltekit-progress-bar";
 
