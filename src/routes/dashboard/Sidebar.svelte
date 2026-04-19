@@ -57,7 +57,7 @@
 	<div class="grow"></div>
 	<a
 		href={isOnOwnUserPage ? null : `/dashboard/users/${user.id}`}
-		class={`flex h-15 flex-row gap-3 overflow-clip rounded-lg border-2 shadow-xl/3 transition-colors 2xl:h-16 ${isOnOwnUserPage ? 'border-primary-700 bg-primary-800' : 'border-primary-800 bg-primary-900 hover:bg-primary-800 hover:outline-2 hover:outline-primary-100'}`}
+		class={`pei-button pei7 flex h-15 flex-row gap-3 overflow-clip rounded-lg border-2 shadow-xl/3 transition-colors 2xl:h-16 ${isOnOwnUserPage ? 'border-primary-700 bg-primary-800' : 'border-primary-800 bg-primary-900 hover:bg-primary-800 hover:outline-2 hover:outline-primary-100'}`}
 	>
 		<div class="aspect-square">
 			<img src={user.profilePicture} alt="User profile pic" class="aspect-square h-full" />
