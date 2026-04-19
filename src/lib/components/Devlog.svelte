@@ -57,7 +57,7 @@
 		>
 			<div class="flex justify-center">
 				<img
-					src={`${page.data.s3PublicUrl}/${devlog.image}`}
+					src={devlog.image}
 					alt="Journal image"
 					class="max-h-full max-w-full object-contain"
 				/>
@@ -69,7 +69,7 @@
 			>
 				<Spinny3DPreview
 					identifier={`canvas-${devlog.id}`}
-					modelUrl={page.data.s3PublicUrl + '/' + devlog.model}
+					modelUrl={devlog.model}
 				/>
 			</div>
 		{/if}
