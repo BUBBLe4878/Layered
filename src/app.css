@@ -37,20 +37,8 @@
 	font-display: swap;
 }
 
-@font-face {
-	font-family: 'Comic Sans MS';
-	src: url('https://db.onlinewebfonts.com/t/7cc6719bd5f0310be3150ba33418e72e.eot');
-	src:
-		url('https://db.onlinewebfonts.com/t/7cc6719bd5f0310be3150ba33418e72e.eot?#iefix') format('embedded-opentype'),
-		url('https://db.onlinewebfonts.com/t/7cc6719bd5f0310be3150ba33418e72e.woff2') format('woff2'),
-		url('https://db.onlinewebfonts.com/t/7cc6719bd5f0310be3150ba33418e72e.woff') format('woff'),
-		url('https://db.onlinewebfonts.com/t/7cc6719bd5f0310be3150ba33418e72e.ttf') format('truetype'),
-		url('https://db.onlinewebfonts.com/t/7cc6719bd5f0310be3150ba33418e72e.svg#Comic Sans MS') format('svg');
-	font-display: swap;
-}
-
 /* ==================== */
-/* COLOR THEME          */
+/* COLOR THEME - BAMBU  */
 /* ==================== */
 
 @theme {
@@ -58,25 +46,25 @@
 	--font-hc: 'Phantom Sans', var(--font-sans);
 	--font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-	/* Background Colors */
-	--background-color: #22211f;
-	--background-color-secondary: #2e2a2770;
-	--background-color-tertiary: #342f2cad;
-	--background-color-quarternary: #94857d;
-	--font-color: #f3dcc6;
+	/* Background Colors - Clean, Minimal Dark */
+	--background-color: #0f1117;
+	--background-color-secondary: #161b2270;
+	--background-color-tertiary: #1c212dad;
+	--background-color-quarternary: #30363d;
+	--font-color: #e6edf3;
 
-	/* Primary Color Palette (Teal/Green) */
-	--color-primary-50: #ecfdf6;
-	--color-primary-100: #d0fbe8;
-	--color-primary-200: #a6f4d5;
-	--color-primary-300: #6ce9c0;
-	--color-primary-400: #33d6a6;
-	--color-primary-500: #0dbc8e;
-	--color-primary-600: #039874;
-	--color-primary-700: #027a60;
-	--color-primary-800: #05604d;
-	--color-primary-900: #054f41;
-	--color-primary-950: #012d25;
+	/* Primary Color Palette - Bambu Green/Cyan (tech-forward) */
+	--color-primary-50: #f0fdf4;
+	--color-primary-100: #dcfce7;
+	--color-primary-200: #bbf7d0;
+	--color-primary-300: #86efac;
+	--color-primary-400: #4ade80;
+	--color-primary-500: #22c55e;
+	--color-primary-600: #16a34a;
+	--color-primary-700: #15803d;
+	--color-primary-800: #166534;
+	--color-primary-900: #145231;
+	--color-primary-950: #052e16;
 
 	/* Red Palette */
 	--color-red-50: #fef2f2;
@@ -117,18 +105,18 @@
 	--color-yellow-900: #6f4314;
 	--color-yellow-950: #412307;
 
-	/* Cyan Palette */
-	--color-cyan-50: #effbfc;
-	--color-cyan-100: #d6f1f7;
-	--color-cyan-200: #b1e2f0;
-	--color-cyan-300: #5bc0de;
-	--color-cyan-400: #3faed1;
-	--color-cyan-500: #2391b7;
-	--color-cyan-600: #20749a;
-	--color-cyan-700: #205f7e;
-	--color-cyan-800: #224f68;
-	--color-cyan-900: #214358;
-	--color-cyan-950: #102a3c;
+	/* Cyan Palette - Secondary accent */
+	--color-cyan-50: #ecfdfd;
+	--color-cyan-100: #cffafe;
+	--color-cyan-200: #a5f3fc;
+	--color-cyan-300: #67e8f9;
+	--color-cyan-400: #22d3ee;
+	--color-cyan-500: #06b6d4;
+	--color-cyan-600: #0891b2;
+	--color-cyan-700: #0e7490;
+	--color-cyan-800: #155e75;
+	--color-cyan-900: #164e63;
+	--color-cyan-950: #0c2d38;
 
 	/* Blue Palette */
 	--color-blue-50: #f2f7fd;
@@ -157,17 +145,17 @@
 	--color-purple-950: #480f5c;
 
 	/* Gray Palette */
-	--color-gray-50: #f5f7f8;
-	--color-gray-100: #ecf1f3;
-	--color-gray-200: #dde4e8;
-	--color-gray-300: #c7d3da;
-	--color-gray-400: #b0bec9;
-	--color-gray-500: #9baab9;
-	--color-gray-600: #8492a6;
-	--color-gray-700: #717d91;
-	--color-gray-800: #5d6776;
-	--color-gray-900: #4f5760;
-	--color-gray-950: #2e3238;
+	--color-gray-50: #f8f9fa;
+	--color-gray-100: #eaeef2;
+	--color-gray-200: #d0d7de;
+	--color-gray-300: #b1bac4;
+	--color-gray-400: #8b949e;
+	--color-gray-500: #6e7681;
+	--color-gray-600: #57606a;
+	--color-gray-700: #424a53;
+	--color-gray-800: #2d333b;
+	--color-gray-900: #1c2128;
+	--color-gray-950: #0d1117;
 
 	/* Animations */
 	--animate-outline-ping: outline-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
@@ -184,6 +172,16 @@
 			outline-color: transparent;
 		}
 	}
+
+	/* Smooth fade animation */
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
 }
 
 /* ==================== */
@@ -194,37 +192,17 @@
 	body {
 		background-color: var(--background-color);
 		color: var(--font-color);
-		background:
-			linear-gradient(-90deg, var(--background-color-secondary) 1px, transparent 1px),
-			linear-gradient(var(--background-color-secondary) 1px, transparent 1px),
-			linear-gradient(-90deg, var(--background-color-tertiary) 1px, transparent 1px),
-			linear-gradient(var(--background-color-tertiary) 1px, transparent 1px),
-			linear-gradient(
-				transparent 3px,
-				var(--background-color) 3px,
-				var(--background-color) 78px,
-				transparent 78px
-			),
-			linear-gradient(-90deg, var(--background-color-quarternary) 1px, transparent 1px),
-			linear-gradient(
-				-90deg,
-				transparent 3px,
-				var(--background-color) 3px,
-				var(--background-color) 78px,
-				transparent 78px
-			),
-			linear-gradient(var(--background-color-quarternary) 1px, transparent 1px),
-			var(--background-color);
-		background-size:
-			4px 4px,
-			4px 4px,
-			80px 80px,
-			80px 80px,
-			80px 80px,
-			80px 80px,
-			80px 80px,
-			80px 80px;
+		/* Subtle minimalist grid background */
+		background-image:
+			linear-gradient(90deg, rgba(48, 54, 61, 0.1) 1px, transparent 1px),
+			linear-gradient(rgba(48, 54, 61, 0.1) 1px, transparent 1px);
+		background-size: 40px 40px;
 		background-attachment: fixed;
+	}
+
+	/* Smooth defaults */
+	* {
+		transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 	}
 }
 
@@ -235,75 +213,75 @@
 @layer components {
 	/* ---- Buttons ---- */
 	.button {
-		@apply flex cursor-pointer flex-row justify-center transition-colors;
+		@apply flex cursor-pointer flex-row justify-center transition-colors rounded-lg font-medium tracking-wide;
 
 		&.sm {
-			@apply gap-1 rounded-sm p-2 text-sm hover:outline-2 focus:outline-2;
+			@apply gap-1.5 px-3 py-2 text-sm hover:outline-1 focus:outline-1;
 
 			& .lucide-icon {
-				@apply size-[20px];
+				@apply size-[18px];
 			}
 		}
 
 		&.xs {
-			@apply gap-1 rounded-sm p-1.5 text-xs hover:outline-2 focus:outline-2;
+			@apply gap-1 px-2.5 py-1.5 text-xs hover:outline-1 focus:outline-1;
 
 			& .lucide-icon {
-				@apply size-[16px];
+				@apply size-[14px];
 			}
 		}
 
 		&.md {
-			@apply gap-1 rounded-lg p-2 hover:outline-3 focus:outline-3;
+			@apply gap-2 px-4 py-2.5 hover:outline-2 focus:outline-2;
 		}
 
 		&:disabled,
 		&.disabled {
-			@apply cursor-not-allowed opacity-70 hover:outline-0;
+			@apply cursor-not-allowed opacity-50 hover:outline-0;
 		}
 	}
 
 	/* Button Color Variants */
 	.button.primary {
-		@apply bg-primary-800 outline-primary-50 hover:bg-primary-700;
+		@apply bg-primary-600 text-white outline-primary-400 hover:bg-primary-700 hover:shadow-lg;
 	}
 
 	.button.red {
-		@apply bg-red-800 outline-red-50 hover:bg-red-700;
+		@apply bg-red-600 text-white outline-red-400 hover:bg-red-700 hover:shadow-lg;
 	}
 
 	.button.dark-red {
-		@apply bg-red-900 outline-red-50 hover:bg-red-800;
+		@apply bg-red-700 text-white outline-red-400 hover:bg-red-800 hover:shadow-lg;
 	}
 
 	.button.orange {
-		@apply bg-green-700 outline-green-50 hover:bg-green-600;
+		@apply bg-orange-600 text-white outline-orange-400 hover:bg-orange-700 hover:shadow-lg;
 	}
 
 	/* ---- Links ---- */
 	.link {
-		@apply underline hover:opacity-70 transition-opacity;
+		@apply text-primary-400 underline hover:text-primary-300 transition-colors;
 	}
 
 	.list-link {
-		@apply text-primary-400 underline transition-all hover:text-primary-500/75;
+		@apply text-primary-400 underline transition-all hover:text-primary-300;
 	}
 
 	/* ---- Form Inputs ---- */
 	.themed-input-light {
-		@apply border-3 border-primary-700 bg-primary-900 fill-primary-50 p-2 text-sm ring-primary-900 outline-transparent placeholder:text-primary-700 active:ring-3;
+		@apply border border-gray-600 bg-gray-900 text-gray-100 p-2.5 text-sm rounded-lg outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
 	}
 
 	.themed-input {
-		@apply rounded-lg border-3 border-primary-900 bg-primary-950 ring-primary-700 outline-transparent transition-shadow placeholder:text-primary-800 focus:ring-2;
+		@apply rounded-lg border border-gray-600 bg-gray-900 text-gray-100 ring-0 outline-none transition-all placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
 	}
 
 	.themed-input-on-box {
-		@apply rounded-lg border-3 border-primary-800 bg-primary-900 ring-primary-700 outline-transparent transition-shadow placeholder:text-primary-700 focus:ring-2;
+		@apply rounded-lg border border-gray-600 bg-gray-800 text-gray-100 ring-0 outline-none transition-all placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
 	}
 
 	.checkbox {
-		@apply h-4 w-4 rounded-sm border-2 border-primary-600 bg-primary-900 ring-0;
+		@apply w-5 h-5 rounded border border-gray-600 bg-gray-800 accent-primary-500 cursor-pointer;
 	}
 
 	/* ---- Themed Boxes ---- */
@@ -311,16 +289,16 @@
 	.themed-box-prominent,
 	.themed-box-solid,
 	.themed-box-solid-prominent {
-		@apply rounded-lg border-3 border-[#ffffff] bg-[#4d504d];
+		@apply rounded-xl border border-gray-700 bg-gray-900/50 backdrop-blur-sm p-4;
 	}
 
 	/* ---- Enclosure Background (Textured) ---- */
 	.enclosure-bg {
-		background-color: #391F12;
+		background-color: #1a1a1a;
 		position: relative;
 		overflow: hidden;
 		z-index: 1;
-		@apply border-3 border-[#F48D2C];
+		@apply border border-gray-700 rounded-xl;
 	}
 
 	.enclosure-bg::before {
@@ -332,7 +310,7 @@
 		height: 6000%;
 		transform: translate(-50%, -50%) rotate(30deg);
 		background-image: url("https://cdn.hackclub.com/019d4983-aa2c-7c07-ad9e-07ec8b3f9bb9/image.png");
-		opacity: 15%;
+		opacity: 8%;
 		background-repeat: repeat;
 		background-size: 35px 35px;
 		z-index: 0;
@@ -345,9 +323,25 @@
 		background-size: cover !important;
 		background-position: center !important;
 		background-repeat: no-repeat !important;
+		border: 1.5px solid rgba(34, 197, 94, 0.5) !important;
+		border-radius: 12px !important;
+		box-shadow: 
+			0 8px 32px rgba(34, 197, 94, 0.15) !important,
+			inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+		position: relative !important;
+		overflow: hidden !important;
+		transition: all 0.3s ease !important;
 
 		* {
 			color: #ffffff !important;
+		}
+
+		&:hover {
+			border-color: rgba(34, 197, 94, 0.8) !important;
+			box-shadow: 
+				0 12px 40px rgba(34, 197, 94, 0.25) !important,
+				inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+			transform: translateY(-2px) !important;
 		}
 	}
 
@@ -357,7 +351,7 @@
 	.pei4,
 	.pei5,
 	.pei6 {
-		background-image: url('/img/peione.png') !important;/*it used to be background-image: url('/static/img/peione.png') !important;*/
+		background-image: url('/img/peione.png') !important;
 	}
 
 	.pei7 {
@@ -372,5 +366,15 @@
 @layer utilities {
 	.center {
 		@apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform;
+	}
+
+	/* Modern glass effect */
+	.glass {
+		@apply backdrop-blur-md bg-white/10 border border-white/20 rounded-xl;
+	}
+
+	/* Smooth shadow */
+	.shadow-modern {
+		@apply shadow-lg shadow-black/30;
 	}
 }
