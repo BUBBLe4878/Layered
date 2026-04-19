@@ -1,6 +1,6 @@
 <script lang="ts">
-import { Lock, ExternalLink, Link, Download, Search, X } from '@lucide/svelte';
-import relativeDate from 'tiny-relative-date';
+	import { Lock, ExternalLink, Link, Download, Search, X } from '@lucide/svelte';
+	import relativeDate from 'tiny-relative-date';
 
 	export let data: PageData;
 
@@ -8,13 +8,13 @@ import relativeDate from 'tiny-relative-date';
 
 	// ── Filter definitions ──────────────────────────────────────────
 	const FILTERS = [
-		{ key: 'all',         label: 'All' },
-		{ key: 'building',    label: 'Building' },
-		{ key: 'submitted',   label: 'Submitted' },
+		{ key: 'all', label: 'All' },
+		{ key: 'building', label: 'Building' },
+		{ key: 'submitted', label: 'Submitted' },
 		{ key: 't1_approved', label: 'Approved / Queue' },
-		{ key: 'printing',    label: 'Being Printed' },
-		{ key: 'printed',     label: 'Printed' },
-		{ key: 'finalized',   label: 'Finalized' },
+		{ key: 'printing', label: 'Being Printed' },
+		{ key: 'printed', label: 'Printed' },
+		{ key: 'finalized', label: 'Finalized' }
 	] as const;
 
 	type FilterKey = (typeof FILTERS)[number]['key'];
@@ -36,23 +36,31 @@ import relativeDate from 'tiny-relative-date';
 	});
 
 	// ── Auto-select first project when filtered ─────────────────────
-	$: if (filteredProjects.length > 0 && (!selectedProjectId || !filteredProjects.find(p => p.id === selectedProjectId))) {
+	$: if (
+		filteredProjects.length > 0 &&
+		(!selectedProjectId || !filteredProjects.find((p) => p.id === selectedProjectId))
+	) {
 		selectedProjectId = filteredProjects[0].id;
 	}
 
 	// ── Get selected project ────────────────────────────────────────
-	$: selectedProject = projects.find(p => p.id === selectedProjectId);
+	$: selectedProject = projects.find((p) => p.id === selectedProjectId);
 
 	// ── Get last devlog for selected project ────────────────────────
-	$: lastDevlog = data.devlogs
-		?.filter(d => d.projectId === selectedProjectId)
-		?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ?? null;
+	$: lastDevlog =
+		data.devlogs
+			?.filter((d) => d.projectId === selectedProjectId)
+			?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ??
+		null;
 
 	// ── Get last devlog for any project ─────────────────────────────
 	$: getLastDevlogForProject = (projectId: number) => {
-		return data.devlogs
-			?.filter(d => d.projectId === projectId)
-			?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ?? null;
+		return (
+			data.devlogs
+				?.filter((d) => d.projectId === projectId)
+				?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ??
+			null
+		);
 	};
 
 	// ── Helpers ─────────────────────────────────────────────────────
@@ -60,14 +68,16 @@ import relativeDate from 'tiny-relative-date';
 		['printed', 'finalized', 'printing', 'submitted', 't1_approved'].includes(project.status);
 
 	function formatStatus(status: string) {
-		return {
-			building:    'Building',
-			submitted:   'Submitted',
-			t1_approved: 'On print queue',
-			printing:    'Being printed',
-			printed:     'Printed',
-			finalized:   'Finalized',
-		}[status] ?? status;
+		return (
+			{
+				building: 'Building',
+				submitted: 'Submitted',
+				t1_approved: 'On print queue',
+				printing: 'Being printed',
+				printed: 'Printed',
+				finalized: 'Finalized'
+			}[status] ?? status
+		);
 	}
 
 	function formatTime(minutes: number | string) {
@@ -86,7 +96,7 @@ import relativeDate from 'tiny-relative-date';
 			t1_approved: 'bg-cyan-500',
 			printing: 'bg-orange-500',
 			printed: 'bg-primary-600',
-			finalized: 'bg-primary-500',
+			finalized: 'bg-primary-500'
 		};
 		return colors[status] || 'bg-gray-500';
 	}
@@ -94,25 +104,25 @@ import relativeDate from 'tiny-relative-date';
 
 <div class="flex h-full flex-col gap-4">
 	<!-- ── Header ──────────────────────────────────────────────────── -->
-	<div class="flex justify-between items-center">
+	<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 		<div>
 			<h1 class="mt-5 mb-2 font-hero text-3xl font-medium">Projects</h1>
-			<h2 class="text-md text-[#72685e] font-medium">
+			<h2 class="text-md font-medium text-[#72685e]">
 				{data.totalHours}h total ∙ {data.finalHours}h finalized
 			</h2>
 		</div>
 		<a
 			href="/dashboard/projects/create"
-			class="offset block button md lg:inline-block text-center bg-primary-800 hover:ring-primary-50 hover:ring-2 hover:bg-primary-700 -mt-14"
+			class="offset button md block bg-primary-800 text-center hover:bg-primary-700 hover:ring-2 hover:ring-primary-50 sm:inline-block"
 		>
 			Create project
 		</a>
 	</div>
 
 	<!-- ── Main Layout: Sidebar + Detail ──────────────────────────── -->
-	<div class="flex gap-4 flex-1 min-h-0">
+	<div class="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
 		<!-- ── LEFT SIDEBAR: Project List ──────────────────────────── -->
-		<div class="w-80 flex flex-col gap-3 pb-4">
+		<div class="flex w-full flex-col gap-3 pb-4 lg:w-80">
 			<!-- Search bar -->
 			<div class="relative flex items-center">
 				<Search size={15} class="pointer-events-none absolute left-3 text-primary-700" />
@@ -122,7 +132,7 @@ import relativeDate from 'tiny-relative-date';
 					placeholder="Search projects..."
 					autocomplete="off"
 					spellcheck="false"
-					class="themed-input w-full py-2.5 pl-9 pr-9 text-sm"
+					class="themed-input w-full py-2.5 pr-9 pl-9 text-sm"
 				/>
 				{#if searchQuery}
 					<button
@@ -143,8 +153,8 @@ import relativeDate from 'tiny-relative-date';
 						class="
 							rounded-lg border-2 px-2 py-1 text-xs font-semibold transition-colors
 							{activeFilter === filter.key
-								? 'border-primary-600 bg-primary-700 text-primary-50'
-								: 'border-primary-200 bg-primary-50 text-primary-700 hover:border-primary-400 hover:bg-primary-100'}
+							? 'border-primary-600 bg-primary-700 text-primary-50'
+							: 'border-primary-200 bg-primary-50 text-primary-700 hover:border-primary-400 hover:bg-primary-100'}
 						"
 					>
 						{filter.label}
@@ -153,49 +163,49 @@ import relativeDate from 'tiny-relative-date';
 			</div>
 
 			<!-- Project count -->
-			<p class="text-xs text-[#72685e] font-medium">
+			<p class="text-xs font-medium text-[#72685e]">
 				{filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
 			</p>
 
 			<!-- Project List -->
-			<div class="flex-1 overflow-y-auto flex flex-col gap-2">
+			<div class="flex flex-1 flex-col gap-2 overflow-y-auto">
 				{#if filteredProjects.length > 0}
 					{#each filteredProjects as project (project.id)}
 						<button
 							on:click={() => (selectedProjectId = project.id)}
 							class="
-								themed-box relative p-3 text-left transition-all hover:shadow-md text-shadow overflow-hidden
-								{selectedProjectId === project.id
-									? 'ring-2 ring-primary-500 shadow-lg'
-									: 'hover:bg-primary-50'}
+								themed-box text-shadow relative overflow-hidden p-3 text-left transition-all hover:shadow-md
+								{selectedProjectId === project.id ? 'shadow-lg ring-2 ring-primary-500' : 'hover:bg-primary-50'}
 							"
 						>
 							{#if getLastDevlogForProject(project.id)}
-								<img 
-									src={getLastDevlogForProject(project.id).image} 
-									alt="preview" 
-									class="absolute inset-0 w-full h-full object-cover opacity-20 -z-1"
+								<img
+									src={getLastDevlogForProject(project.id).image}
+									alt="preview"
+									class="absolute inset-0 -z-1 h-full w-full object-cover opacity-20"
 								/>
 							{/if}
 
 							<!-- Status badge -->
-							<div class="flex items-start justify-between mb-1 gap-2 relative z-1">
-								<h3 class="font-semibold text-sm truncate flex-1">{project.name}</h3>
+							<div class="relative z-1 mb-1 flex items-start justify-between gap-2">
+								<h3 class="flex-1 truncate text-sm font-semibold">{project.name}</h3>
 								{#if isLocked(project)}
-									<Lock size={16} class="flex-shrink-0 mt-0.5" />
+									<Lock size={16} class="mt-0.5 flex-shrink-0" />
 								{/if}
 							</div>
-							
+
 							<!-- Status + Time -->
-							<div class="flex items-center gap-2 mb-2 relative z-1">
-								<span class={`text-xs font-semibold px-2 py-1 rounded text-white ${getStatusColor(project.status)}`}>
+							<div class="relative z-1 mb-2 flex items-center gap-2">
+								<span
+									class={`rounded px-2 py-1 text-xs font-semibold text-white ${getStatusColor(project.status)}`}
+								>
 									{formatStatus(project.status)}
 								</span>
 								<span class="text-xs text-[#72685e]">{formatTime(project.timeSpent ?? 0)}</span>
 							</div>
 
 							<!-- Description preview -->
-							<p class="text-xs text-[#72685e] line-clamp-2 relative z-1">
+							<p class="relative z-1 line-clamp-2 text-xs text-[#72685e]">
 								{project.description ?? 'No description'}
 							</p>
 						</button>
@@ -212,30 +222,34 @@ import relativeDate from 'tiny-relative-date';
 		<!-- ── RIGHT PANEL: Project Details ──────────────────────── -->
 		<div class="flex-1 overflow-y-auto pb-4">
 			{#if selectedProject}
-				<div class="themed-box flex flex-col gap-4 p-5 h-full">
+				<div class="themed-box flex h-full flex-col gap-4 p-5">
 					<!-- Header -->
 					<div>
-						<div class="flex items-start justify-between gap-4 mb-2">
+						<div class="mb-2 flex items-start justify-between gap-4">
 							<h1 class="font-hero text-2xl font-semibold">{selectedProject.name}</h1>
 							{#if isLocked(selectedProject)}
 								<Lock size={24} title="This project is locked" />
 							{/if}
 						</div>
 						<div class="flex items-center gap-2">
-							<span class={`text-sm font-semibold px-3 py-1 rounded text-white ${getStatusColor(selectedProject.status)}`}>
+							<span
+								class={`rounded px-3 py-1 text-sm font-semibold text-white ${getStatusColor(selectedProject.status)}`}
+							>
 								{formatStatus(selectedProject.status)}
 							</span>
-							<span class="text-sm text-[#72685e]">{formatTime(selectedProject.timeSpent ?? 0)} total</span>
+							<span class="text-sm text-[#72685e]"
+								>{formatTime(selectedProject.timeSpent ?? 0)} total</span
+							>
 						</div>
 					</div>
 
 					<!-- Image Preview -->
 					{#if lastDevlog}
-						<div class="rounded-lg overflow-hidden border-3 border-primary-200">
-							<img 
-								src={lastDevlog.image} 
-								alt="Latest devlog preview" 
-								class="w-full h-48 object-cover"
+						<div class="overflow-hidden rounded-lg border-3 border-primary-200">
+							<img
+								src={lastDevlog.image}
+								alt="Latest devlog preview"
+								class="h-48 w-full object-cover"
 							/>
 							<div class="bg-primary-50 p-2 text-xs text-[#72685e]">
 								Latest: {relativeDate(lastDevlog.createdAt)}
@@ -245,7 +259,7 @@ import relativeDate from 'tiny-relative-date';
 
 					<!-- Description -->
 					<div>
-						<h3 class="font-semibold text-sm mb-1">About</h3>
+						<h3 class="mb-1 text-sm font-semibold">About</h3>
 						<p class="text-sm text-gray-700">
 							{selectedProject.description ?? 'No description provided'}
 						</p>
@@ -253,48 +267,37 @@ import relativeDate from 'tiny-relative-date';
 
 					<!-- Links -->
 					<div>
-						<h3 class="font-semibold text-sm mb-2">Links</h3>
+						<h3 class="mb-2 text-sm font-semibold">Links</h3>
 						<div class="flex flex-col gap-2">
 							{#if selectedProject.url}
-								<a 
-									class="button sm primary" 
-									href={selectedProject.url} 
-									target="_blank"
-								>
+								<a class="button sm primary" href={selectedProject.url} target="_blank">
 									<ExternalLink size={18} /> Printables page
 								</a>
 							{/if}
 							{#if selectedProject.editorFileType === 'upload' && selectedProject.uploadedFileUrl}
-								<a 
-									class="button sm primary" 
-									href="{s3PublicUrl}/{selectedProject.uploadedFileUrl}" 
+								<a
+									class="button sm primary"
+									href="{s3PublicUrl}/{selectedProject.uploadedFileUrl}"
 									target="_blank"
 								>
 									<Download size={18} /> Project file
 								</a>
 							{:else if selectedProject.editorFileType === 'url' && selectedProject.editorUrl}
-								<a 
-									class="button sm primary" 
-									href={selectedProject.editorUrl} 
-									target="_blank"
-								>
+								<a class="button sm primary" href={selectedProject.editorUrl} target="_blank">
 									<Link size={18} /> Project link
 								</a>
 							{/if}
-							<a 
-								class="button sm primary" 
-								href="/dashboard/projects/{selectedProject.id}"
-							>
+							<a class="button sm primary" href="/dashboard/projects/{selectedProject.id}">
 								View devlogs
 							</a>
 						</div>
 					</div>
 
 					<!-- Metadata -->
-					<div class="pt-4 border-t border-primary-200">
+					<div class="border-t border-primary-200 pt-4">
 						<div class="grid grid-cols-2 gap-4 text-sm">
 							<div>
-								<p class="text-[#72685e] font-medium mb-1">Created</p>
+								<p class="mb-1 font-medium text-[#72685e]">Created</p>
 								<p class="font-semibold">
 									<abbr title={selectedProject.createdAt.toUTCString()}>
 										{relativeDate(selectedProject.createdAt)}
@@ -302,16 +305,16 @@ import relativeDate from 'tiny-relative-date';
 								</p>
 							</div>
 							<div>
-								<p class="text-[#72685e] font-medium mb-1">Time spent</p>
+								<p class="mb-1 font-medium text-[#72685e]">Time spent</p>
 								<p class="font-semibold">{formatTime(selectedProject.timeSpent ?? 0)}</p>
 							</div>
 						</div>
 					</div>
 				</div>
 			{:else}
-				<div class="themed-box flex flex-col items-center justify-center gap-4 p-5 h-full">
+				<div class="themed-box flex h-full flex-col items-center justify-center gap-4 p-5">
 					<Search size={32} class="text-primary-700" />
-					<p class="font-semibold text-lg">Select a project to view details</p>
+					<p class="text-lg font-semibold">Select a project to view details</p>
 				</div>
 			{/if}
 		</div>
