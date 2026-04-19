@@ -54,6 +54,7 @@
 		"@lucide/svelte": "^0.547.0",
 		"@prgm/sveltekit-progress-bar": "^3.0.2",
 		"@sentry/sveltekit": "^10.46.0",
+		"@vercel/blob": "^2.3.3",
 		"airtable": "^0.12.2",
 		"cron": "^4.4.0",
 		"cryptr": "^6.4.0",
