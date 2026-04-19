@@ -38,7 +38,11 @@ export async function load({ locals }) {
 		.select({
 			id: devlog.id,
 			projectId: devlog.projectId,
+			description: devlog.description,
+			timeSpent: devlog.timeSpent,
 			image: devlog.image,
+			model: devlog.model,
+			lapseId: devlog.lapseId,
 			createdAt: devlog.createdAt
 		})
 		.from(devlog)

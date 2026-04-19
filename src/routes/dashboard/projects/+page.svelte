@@ -1,6 +1,9 @@
 <script lang="ts">
-	import { Lock, ExternalLink, Link, Download, Search, X } from '@lucide/svelte';
+	import { Lock, ExternalLink, Link, Download, Search, X, PlusCircle, Clock } from '@lucide/svelte';
 	import relativeDate from 'tiny-relative-date';
+	import Devlog from '$lib/components/Devlog.svelte';
+	import { DEVLOG_MIN_TIME } from '$lib/defs';
+	import { resolve } from '$app/paths';
 
 	export let data: PageData;
 
@@ -53,15 +56,29 @@
 			?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ??
 		null;
 
-	// ── Get last devlog for any project ─────────────────────────────
-	$: getLastDevlogForProject = (projectId: number) => {
+	// ── All devlogs for selected project (newest first) ─────────────
+	$: selectedProjectDevlogs =
+		data.devlogs
+			?.filter((d) => d.projectId === selectedProjectId)
+			?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) ?? [];
+
+	// ── Cooldown: minutes remaining before next journal entry ────────
+	function calcCooldown(devlog: typeof lastDevlog): number {
+		if (!devlog) return 0;
+		const elapsed = (Date.now() - new Date(devlog.createdAt).getTime()) / 1000 / 60;
+		return Math.max(0, DEVLOG_MIN_TIME - elapsed);
+	}
+	$: cooldownRemaining = calcCooldown(lastDevlog);
+
+	// ── Get last devlog image for any project (for sidebar thumbnail) ─
+	function getLastDevlogForProject(projectId: number) {
 		return (
 			data.devlogs
 				?.filter((d) => d.projectId === projectId)
 				?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ??
 			null
 		);
-	};
+	}
 
 	// ── Helpers ─────────────────────────────────────────────────────
 	const isLocked = (project: (typeof projects)[0]) =>
@@ -112,7 +129,7 @@
 			</h2>
 		</div>
 		<a
-			href="/dashboard/projects/create"
+			href={resolve('/dashboard/projects/create')}
 			class="offset button md -mt-14 block bg-primary-800 text-center hover:bg-primary-700 hover:ring-2 hover:ring-primary-50 lg:inline-block"
 		>
 			Create project
@@ -222,7 +239,7 @@
 		<!-- ── RIGHT PANEL: Project Details ──────────────────────── -->
 		<div class="flex-1 overflow-y-auto pb-4">
 			{#if selectedProject}
-				<div class="themed-box flex h-full flex-col gap-4 p-5">
+				<div class="themed-box flex flex-col gap-4 p-5">
 					<!-- Header -->
 					<div>
 						<div class="mb-2 flex items-start justify-between gap-4">
@@ -287,8 +304,11 @@
 									<Link size={18} /> Project link
 								</a>
 							{/if}
-							<a class="button sm primary" href="/dashboard/projects/{selectedProject.id}">
-								View devlogs
+							<a
+								class="button sm primary"
+								href={resolve('/dashboard/projects/[id]', { id: `${selectedProject.id}` })}
+							>
+								Open full page
 							</a>
 						</div>
 					</div>
@@ -309,6 +329,48 @@
 								<p class="font-semibold">{formatTime(selectedProject.timeSpent ?? 0)}</p>
 							</div>
 						</div>
+					</div>
+
+					<!-- Journal entries ──────────────────────────────────────── -->
+					<div class="border-t border-primary-200 pt-4">
+						<div class="mb-3 flex items-center justify-between gap-2">
+							<h3 class="text-sm font-semibold">
+								Journal entries ({selectedProjectDevlogs.length})
+							</h3>
+							{#if !isLocked(selectedProject)}
+								{#if cooldownRemaining > 0}
+									<span class="flex items-center gap-1 text-xs text-[#72685e]">
+										<Clock size={13} />
+										{Math.ceil(cooldownRemaining)} min cooldown
+									</span>
+								{:else}
+									<a
+										href={resolve('/dashboard/projects/[id]', {
+											id: `${selectedProject.id}`
+										})}
+										class="flex items-center gap-1 text-xs text-primary-600 hover:underline"
+									>
+										<PlusCircle size={13} />
+										Add entry
+									</a>
+								{/if}
+							{/if}
+						</div>
+
+						{#if selectedProjectDevlogs.length === 0}
+							<p class="text-xs text-[#72685e]">No journal entries yet.</p>
+						{:else}
+							<div class="flex flex-col gap-3">
+								{#each selectedProjectDevlogs as devlog (devlog.id)}
+									<Devlog
+										{devlog}
+										projectId={selectedProject.id}
+										showModifyButtons={!isLocked(selectedProject)}
+										allowDelete={!isLocked(selectedProject)}
+									/>
+								{/each}
+							</div>
+						{/if}
 					</div>
 				</div>
 			{:else}
