@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Sora:wght@100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Sora:wght@100..800&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
@@ -42,7 +42,7 @@
 /* ==================== */
 
 @theme {
-	--font-hero: 'Press Start 2P', var(--font-sans);
+	--font-hero: 'Fredoka', var(--font-sans);
 	--font-hc: 'Phantom Sans', var(--font-sans);
 	--font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
