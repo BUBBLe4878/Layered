@@ -17,9 +17,7 @@ import {
 	DEVLOG_MAX_TIME,
 	DEVLOG_MIN_TIME
 } from '$lib/defs';
-import { S3 } from '$lib/server/s3';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { env } from '$env/dynamic/private';
+import { put } from '@vercel/blob';
 import { getIdFromLapseUrl, getLapse, type Lapse } from '$lib/lapse';
 
 export async function load({ params, locals }) {
@@ -201,10 +199,8 @@ export const actions = {
 			});
 		}
 
-		const imagePath = `images/${crypto.randomUUID()}${extname(imageFile.name).toLowerCase()}`;
-
 		// Validate model
-		if (!(imageFile instanceof File) || modelFile.size > MAX_UPLOAD_SIZE) {
+		if (!(modelFile instanceof File) || modelFile.size > MAX_UPLOAD_SIZE) {
 			return fail(400, {
 				fields: { description, timeSpent },
 				invalid_model_file: true
@@ -221,46 +217,57 @@ export const actions = {
 			});
 		}
 
-		const modelPath = `models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
+		try {
+			// Upload model to Vercel Blob
+			const modelBlob = await put(
+				`devlogs/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`,
+				modelFile,
+				{
+					access: 'public'
+				}
+			);
 
-		const modelCommand = new PutObjectCommand({
-			Bucket: env.S3_BUCKET_NAME,
-			Key: modelPath,
-			Body: Buffer.from(await modelFile.arrayBuffer())
-		});
-		await S3.send(modelCommand);
+			// Remove Exif metadata and upload image
+			const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+			const processedImage = await sharp(imageBuffer).toBuffer();
 
-		// Remove Exif metadata and save (we don't want another Hack Club classic PII leak :D)
-		const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+			const imageBlob = await put(
+				`devlogs/images/${crypto.randomUUID()}${extname(imageFile.name).toLowerCase()}`,
+				processedImage,
+				{
+					access: 'public'
+				}
+			);
 
-		const imageCommand = new PutObjectCommand({
-			Bucket: env.S3_BUCKET_NAME,
-			Key: imagePath,
-			Body: await sharp(imageBuffer).toBuffer()
-		});
-		await S3.send(imageCommand);
-
-		await db.insert(devlog).values({
-			userId: locals.user.id,
-			projectId: queriedProject.id,
-			description: description.toString().trim(),
-			image: imagePath,
-			model: modelPath,
-			timeSpent:
-				lapseUrlValid && lapse?.ok ? lapse.timelapse.durationMins : parseInt(timeSpent!.toString()),
-			lapseId: lapseUrlValid && lapse?.ok ? lapseId : null,
-			createdAt: new Date(Date.now()),
-			updatedAt: new Date(Date.now())
-		});
-
-		await db
-			.update(project)
-			.set({
+			// Store the full URLs in the database
+			await db.insert(devlog).values({
+				userId: locals.user.id,
+				projectId: queriedProject.id,
+				description: description.toString().trim(),
+				image: imageBlob.url,
+				model: modelBlob.url,
+				timeSpent:
+					lapseUrlValid && lapse?.ok ? lapse.timelapse.durationMins : parseInt(timeSpent!.toString()),
+				lapseId: lapseUrlValid && lapse?.ok ? lapseId : null,
+				createdAt: new Date(Date.now()),
 				updatedAt: new Date(Date.now())
-			})
-			.where(and(eq(project.id, queriedProject.id)));
+			});
 
-		return { success: true };
+			await db
+				.update(project)
+				.set({
+					updatedAt: new Date(Date.now())
+				})
+				.where(and(eq(project.id, queriedProject.id)));
+
+			return { success: true };
+		} catch (err) {
+			console.error('Upload error:', err);
+			return fail(500, {
+				fields: { description, timeSpent },
+				upload_error: true
+			});
+		}
 	}
 } satisfies Actions;
 
