@@ -13,13 +13,11 @@ export async function load({ locals }) {
 			id: project.id,
 			name: project.name,
 			description: project.description,
-
 			url: project.url,
 			editorFileType: project.editorFileType,
 			editorUrl: project.editorUrl,
 			uploadedFileUrl: project.uploadedFileUrl,
 			modelFile: project.modelFile,
-
 			createdAt: project.createdAt,
 			status: project.status,
 			timeSpent: sql<number>`COALESCE(SUM(${devlog.timeSpent}), 0)`
@@ -36,6 +34,16 @@ export async function load({ locals }) {
 			project.status
 		);
 
+	const devlogs = await db
+		.select({
+			id: devlog.id,
+			projectId: devlog.projectId,
+			image: devlog.image,
+			createdAt: devlog.createdAt
+		})
+		.from(devlog)
+		.where(and(eq(devlog.userId, locals.user.id), eq(devlog.deleted, false)));
+
 	const totalHours = projects.reduce((sum, p) => sum + (Number(p.timeSpent) || 0), 0) / 60;
 	const finalHours =
 		projects
@@ -44,6 +52,7 @@ export async function load({ locals }) {
 
 	return {
 		projects,
+		devlogs,
 		totalHours: Math.round(totalHours * 10) / 10,
 		finalHours: Math.round(finalHours * 10) / 10
 	};
