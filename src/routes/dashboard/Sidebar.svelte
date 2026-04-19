@@ -1,3 +1,4 @@
+<!--this is the header, changed from the sidebar-->
 <script lang="ts">
 	import {
 		House,
@@ -30,7 +31,7 @@
 	<div class="flex items-center justify-between gap-4 px-4 py-3">
 		
 		<!-- Logo -->
-		<div class="flex-shrink-0">
+		<div class="flex-shrink-0 pr-6 border-r border-gray-700">
 			<a href="/">
 				<img src={logo} alt="logo" class="h-8 w-8" />
 			</a>
@@ -90,27 +91,29 @@
 
 			<!-- Admin Dropdown -->
 			{#if user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin}
-				<div class="relative group">
+				<div 
+					class="relative"
+					onmouseenter={() => (showAdminMenu = true)}
+					onmouseleave={() => (showAdminMenu = false)}
+				>
 					<button 
 						class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-800 hover:bg-primary-700 border-2 border-dotted border-white transition-colors"
-						onmouseenter={() => (showAdminMenu = true)}
-						onmouseleave={() => (showAdminMenu = false)}
 					>
 						<span class="hidden md:inline">Admin</span>
-						<ChevronDown size={16} class="hidden md:block" />
+						<ChevronDown size={16} />
 					</button>
 					
 					<!-- Dropdown Menu -->
-					{#if showAdminMenu || true}
+					{#if showAdminMenu}
 						<div 
-							class="absolute left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all"
+							class="absolute left-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-[60]"
 							onmouseenter={() => (showAdminMenu = true)}
 							onmouseleave={() => (showAdminMenu = false)}
 						>
 							{#if user.isPrinter}
 								<a 
 									href="/dashboard/admin/print" 
-									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 first:rounded-t-lg text-sm transition-colors"
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 first:rounded-t-lg text-sm transition-colors text-white"
 								>
 									<Box size={16} />
 									Print
@@ -119,7 +122,7 @@
 							{#if user.hasT1Review}
 								<a 
 									href="/dashboard/admin/review" 
-									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors"
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors text-white"
 								>
 									<ClipboardPen size={16} />
 									Review
@@ -128,7 +131,7 @@
 							{#if user.hasT2Review}
 								<a 
 									href="/dashboard/admin/ysws-review" 
-									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors"
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors text-white"
 								>
 									<ClipboardPenLine size={16} />
 									YSWS Review
@@ -137,7 +140,7 @@
 							{#if user.hasAdmin}
 								<a 
 									href="/dashboard/admin/admin" 
-									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 last:rounded-b-lg text-sm transition-colors"
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 last:rounded-b-lg text-sm transition-colors text-white"
 								>
 									<ShieldUser size={16} />
 									Admin
