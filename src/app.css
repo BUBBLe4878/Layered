@@ -299,7 +299,7 @@
 	}
 
 	.pei-button {
-		color: #ffffff !important;
+		color: #000000 !important;
 		background-size: cover !important;
 		background-position: center !important;
 		background-repeat: no-repeat !important;
@@ -310,11 +310,11 @@
 	}
 
 	.pei1 {
-		background-image: url('/img/pei1.png') !important;
+		background-image: url('/img/pei1.png');
 	}
 
 	.pei2 {
-		background-image: url('/img/pei1.png') !important;
+		background-image: url('/img/pei1.png');
 	}
 
 	.pei3 {
