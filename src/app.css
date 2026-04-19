@@ -38,7 +38,7 @@
 }
 
 /* ==================== */
-/* COLOR THEME - BAMBU  */
+/* COLOR THEME - HAPPY  */
 /* ==================== */
 
 @theme {
@@ -46,116 +46,116 @@
 	--font-hc: 'Phantom Sans', var(--font-sans);
 	--font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-	/* Background Colors - Clean, Minimal Dark */
-	--background-color: #0f1117;
-	--background-color-secondary: #161b2270;
-	--background-color-tertiary: #1c212dad;
-	--background-color-quarternary: #30363d;
-	--font-color: #e6edf3;
+	/* Background Colors - Light & Warm Happy */
+	--background-color: #faf6f1;
+	--background-color-secondary: #f5f0e870;
+	--background-color-tertiary: #ede6dead;
+	--background-color-quarternary: #e8dcc8;
+	--font-color: #2a2622;
 
-	/* Primary Color Palette - Bambu Green/Cyan (tech-forward) */
-	--color-primary-50: #f0fdf4;
-	--color-primary-100: #dcfce7;
-	--color-primary-200: #bbf7d0;
-	--color-primary-300: #86efac;
-	--color-primary-400: #4ade80;
-	--color-primary-500: #22c55e;
-	--color-primary-600: #16a34a;
-	--color-primary-700: #15803d;
-	--color-primary-800: #166534;
-	--color-primary-900: #145231;
-	--color-primary-950: #052e16;
+	/* Primary Color Palette - Warm Gold (happy & vibrant) */
+	--color-primary-50: #fffaf0;
+	--color-primary-100: #fef3c7;
+	--color-primary-200: #fce8a6;
+	--color-primary-300: #fdd97b;
+	--color-primary-400: #fcc84a;
+	--color-primary-500: #d4af85;
+	--color-primary-600: #c9a25b;
+	--color-primary-700: #b8924a;
+	--color-primary-800: #a8823d;
+	--color-primary-900: #8b6a32;
+	--color-primary-950: #5a4623;
 
-	/* Red Palette */
-	--color-red-50: #fef2f2;
-	--color-red-100: #fee5e6;
-	--color-red-200: #fccfd3;
-	--color-red-300: #faa7ae;
-	--color-red-400: #f67685;
-	--color-red-500: #ec3750;
-	--color-red-600: #da2446;
-	--color-red-700: #b8183a;
-	--color-red-800: #9a1737;
-	--color-red-900: #841735;
-	--color-red-950: #490818;
+	/* Red Palette - Warm Coral Red */
+	--color-red-50: #fef5f4;
+	--color-red-100: #fde9e7;
+	--color-red-200: #fbcfc7;
+	--color-red-300: #f9a89c;
+	--color-red-400: #f57460;
+	--color-red-500: #ee4a36;
+	--color-red-600: #db3d2c;
+	--color-red-700: #b83223;
+	--color-red-800: #952b1f;
+	--color-red-900: #7a241d;
+	--color-red-950: #460f0d;
 
-	/* Orange Palette */
-	--color-orange-50: #fff7ed;
-	--color-orange-100: #ffecd4;
-	--color-orange-200: #ffd5a8;
-	--color-orange-300: #ffb671;
-	--color-orange-400: #ff8c37;
-	--color-orange-500: #fe6c11;
-	--color-orange-600: #ef5107;
-	--color-orange-700: #c63a08;
-	--color-orange-800: #9d2f0f;
-	--color-orange-900: #7e2910;
-	--color-orange-950: #441106;
+	/* Orange Palette - Vibrant Warm Orange */
+	--color-orange-50: #fff8f3;
+	--color-orange-100: #ffede3;
+	--color-orange-200: #ffd9c1;
+	--color-orange-300: #ffbb91;
+	--color-orange-400: #ff9558;
+	--color-orange-500: #ff6e23;
+	--color-orange-600: #f05613;
+	--color-orange-700: #d94812;
+	--color-orange-800: #b83a15;
+	--color-orange-900: #8f2f18;
+	--color-orange-950: #51190a;
 
-	/* Yellow Palette */
-	--color-yellow-50: #fdfde9;
-	--color-yellow-100: #fdfbc4;
-	--color-yellow-200: #fbf38d;
-	--color-yellow-300: #f9e54b;
-	--color-yellow-400: #f5d31a;
-	--color-yellow-500: #f1c40f;
-	--color-yellow-600: #c59009;
-	--color-yellow-700: #9d670b;
-	--color-yellow-800: #825211;
-	--color-yellow-900: #6f4314;
-	--color-yellow-950: #412307;
+	/* Yellow Palette - Sunshine Yellow */
+	--color-yellow-50: #fffef0;
+	--color-yellow-100: #fffbdd;
+	--color-yellow-200: #fff5bb;
+	--color-yellow-300: #ffed87;
+	--color-yellow-400: #ffe44d;
+	--color-yellow-500: #ffd700;
+	--color-yellow-600: #f0b800;
+	--color-yellow-700: #d49400;
+	--color-yellow-800: #a37400;
+	--color-yellow-900: #7d5800;
+	--color-yellow-950: #4d3400;
 
-	/* Cyan Palette - Secondary accent */
-	--color-cyan-50: #ecfdfd;
-	--color-cyan-100: #cffafe;
-	--color-cyan-200: #a5f3fc;
-	--color-cyan-300: #67e8f9;
-	--color-cyan-400: #22d3ee;
-	--color-cyan-500: #06b6d4;
-	--color-cyan-600: #0891b2;
-	--color-cyan-700: #0e7490;
-	--color-cyan-800: #155e75;
-	--color-cyan-900: #164e63;
-	--color-cyan-950: #0c2d38;
+	/* Cyan Palette - Fun Teal */
+	--color-cyan-50: #f0fffe;
+	--color-cyan-100: #d9fffe;
+	--color-cyan-200: #a8fafd;
+	--color-cyan-300: #6df0fb;
+	--color-cyan-400: #2ee5f5;
+	--color-cyan-500: #1bc7dc;
+	--color-cyan-600: #1aacbc;
+	--color-cyan-700: #1a8a98;
+	--color-cyan-800: #1d6f7e;
+	--color-cyan-900: #1d5968;
+	--color-cyan-950: #0d3540;
 
-	/* Blue Palette */
-	--color-blue-50: #f2f7fd;
-	--color-blue-100: #e3eefb;
-	--color-blue-200: #c1dcf6;
-	--color-blue-300: #8bc0ee;
-	--color-blue-400: #4d9fe3;
-	--color-blue-500: #338eda;
-	--color-blue-600: #1867b1;
-	--color-blue-700: #145290;
-	--color-blue-800: #154777;
-	--color-blue-900: #173c63;
-	--color-blue-950: #0f2742;
+	/* Blue Palette - Cheerful Blue */
+	--color-blue-50: #f3f8ff;
+	--color-blue-100: #e6f0ff;
+	--color-blue-200: #c8e0ff;
+	--color-blue-300: #9ac5ff;
+	--color-blue-400: #61a3ff;
+	--color-blue-500: #3b82ff;
+	--color-blue-600: #2563eb;
+	--color-blue-700: #1d4ed8;
+	--color-blue-800: #1e40af;
+	--color-blue-900: #1e3a8a;
+	--color-blue-950: #0c1e4d;
 
-	/* Purple Palette */
-	--color-purple-50: #fbf6fe;
-	--color-purple-100: #f6eafd;
-	--color-purple-200: #efd9fb;
-	--color-purple-300: #e3bbf7;
-	--color-purple-400: #d28ff1;
-	--color-purple-500: #c064e8;
-	--color-purple-600: #a633d6;
-	--color-purple-700: #9632be;
-	--color-purple-800: #7e2d9c;
-	--color-purple-900: #67267d;
-	--color-purple-950: #480f5c;
+	/* Purple Palette - Fun Purple */
+	--color-purple-50: #fdf7ff;
+	--color-purple-100: #f8e8ff;
+	--color-purple-200: #f0d0ff;
+	--color-purple-300: #e5b3ff;
+	--color-purple-400: #d582ff;
+	--color-purple-500: #c13eff;
+	--color-purple-600: #a624d6;
+	--color-purple-700: #8f1fbb;
+	--color-purple-800: #75189a;
+	--color-purple-900: #5e127d;
+	--color-purple-950: #380d4d;
 
-	/* Gray Palette */
-	--color-gray-50: #f8f9fa;
-	--color-gray-100: #eaeef2;
-	--color-gray-200: #d0d7de;
-	--color-gray-300: #b1bac4;
-	--color-gray-400: #8b949e;
-	--color-gray-500: #6e7681;
-	--color-gray-600: #57606a;
-	--color-gray-700: #424a53;
-	--color-gray-800: #2d333b;
-	--color-gray-900: #1c2128;
-	--color-gray-950: #0d1117;
+	/* Gray Palette - Warm Grays */
+	--color-gray-50: #faf9f8;
+	--color-gray-100: #f3f1ef;
+	--color-gray-200: #e8e5e1;
+	--color-gray-300: #d8d2c9;
+	--color-gray-400: #bfb5a8;
+	--color-gray-500: #a69789;
+	--color-gray-600: #8b7a6d;
+	--color-gray-700: #6d5d52;
+	--color-gray-800: #4a3f37;
+	--color-gray-900: #2a2622;
+	--color-gray-950: #1a1815;
 
 	/* Animations */
 	--animate-outline-ping: outline-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
@@ -192,10 +192,10 @@
 	body {
 		background-color: var(--background-color);
 		color: var(--font-color);
-		/* Subtle minimalist grid background */
+		/* Warm, subtle minimalist pattern */
 		background-image:
-			linear-gradient(90deg, rgba(48, 54, 61, 0.1) 1px, transparent 1px),
-			linear-gradient(rgba(48, 54, 61, 0.1) 1px, transparent 1px);
+			linear-gradient(90deg, rgba(212, 175, 133, 0.05) 1px, transparent 1px),
+			linear-gradient(rgba(212, 175, 133, 0.05) 1px, transparent 1px);
 		background-size: 40px 40px;
 		background-attachment: fixed;
 	}
@@ -260,28 +260,28 @@
 
 	/* ---- Links ---- */
 	.link {
-		@apply text-primary-400 underline hover:text-primary-300 transition-colors;
+		@apply text-primary-600 underline hover:text-primary-700 transition-colors;
 	}
 
 	.list-link {
-		@apply text-primary-400 underline transition-all hover:text-primary-300;
+		@apply text-primary-600 underline transition-all hover:text-primary-700;
 	}
 
 	/* ---- Form Inputs ---- */
 	.themed-input-light {
-		@apply border border-gray-600 bg-gray-900 text-gray-100 p-2.5 text-sm rounded-lg outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+		@apply border border-primary-300 bg-white text-gray-900 p-2.5 text-sm rounded-lg outline-none placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
 	}
 
 	.themed-input {
-		@apply rounded-lg border border-gray-600 bg-gray-900 text-gray-100 ring-0 outline-none transition-all placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
+		@apply rounded-lg border border-primary-300 bg-white text-gray-900 ring-0 outline-none transition-all placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
 	}
 
 	.themed-input-on-box {
-		@apply rounded-lg border border-gray-600 bg-gray-800 text-gray-100 ring-0 outline-none transition-all placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
+		@apply rounded-lg border border-primary-300 bg-primary-50 text-gray-900 ring-0 outline-none transition-all placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
 	}
 
 	.checkbox {
-		@apply w-5 h-5 rounded border border-gray-600 bg-gray-800 accent-primary-500 cursor-pointer;
+		@apply w-5 h-5 rounded border border-primary-300 bg-white accent-primary-500 cursor-pointer;
 	}
 
 	/* ---- Themed Boxes ---- */
@@ -289,16 +289,16 @@
 	.themed-box-prominent,
 	.themed-box-solid,
 	.themed-box-solid-prominent {
-		@apply rounded-xl border border-gray-700 bg-gray-900/50 backdrop-blur-sm p-4;
+		@apply rounded-xl border border-primary-200 bg-white/60 backdrop-blur-sm p-4;
 	}
 
 	/* ---- Enclosure Background (Textured) ---- */
 	.enclosure-bg {
-		background-color: #1a1a1a;
+		background-color: #fef9f3;
 		position: relative;
 		overflow: hidden;
 		z-index: 1;
-		@apply border border-gray-700 rounded-xl;
+		@apply border border-primary-200 rounded-xl;
 	}
 
 	.enclosure-bg::before {
@@ -310,7 +310,7 @@
 		height: 6000%;
 		transform: translate(-50%, -50%) rotate(30deg);
 		background-image: url("https://cdn.hackclub.com/019d4983-aa2c-7c07-ad9e-07ec8b3f9bb9/image.png");
-		opacity: 8%;
+		opacity: 3%;
 		background-repeat: repeat;
 		background-size: 35px 35px;
 		z-index: 0;
@@ -323,11 +323,11 @@
 		background-size: cover !important;
 		background-position: center !important;
 		background-repeat: no-repeat !important;
-		border: 1.5px solid rgba(34, 197, 94, 0.5) !important;
+		border: 1.5px solid rgba(212, 175, 133, 0.6) !important;
 		border-radius: 12px !important;
 		box-shadow: 
-			0 8px 32px rgba(34, 197, 94, 0.15) !important,
-			inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+			0 8px 32px rgba(212, 175, 133, 0.2) !important,
+			inset 0 1px 2px rgba(255, 255, 255, 0.2) !important;
 		position: relative !important;
 		overflow: hidden !important;
 		transition: all 0.3s ease !important;
@@ -337,10 +337,10 @@
 		}
 
 		&:hover {
-			border-color: rgba(34, 197, 94, 0.8) !important;
+			border-color: rgba(212, 175, 133, 0.9) !important;
 			box-shadow: 
-				0 12px 40px rgba(34, 197, 94, 0.25) !important,
-				inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+				0 12px 40px rgba(212, 175, 133, 0.3) !important,
+				inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
 			transform: translateY(-2px) !important;
 		}
 	}
@@ -370,11 +370,11 @@
 
 	/* Modern glass effect */
 	.glass {
-		@apply backdrop-blur-md bg-white/10 border border-white/20 rounded-xl;
+		@apply backdrop-blur-md bg-white/20 border border-white/30 rounded-xl;
 	}
 
 	/* Smooth shadow */
 	.shadow-modern {
-		@apply shadow-lg shadow-black/30;
+		@apply shadow-lg shadow-black/15;
 	}
 }
