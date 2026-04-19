@@ -1,4 +1,3 @@
-<!--this is the header, changed from the sidebar-->
 <script lang="ts">
 	import {
 		House,
@@ -31,9 +30,9 @@
 	<div class="flex items-center justify-between gap-4 px-4 py-3">
 		
 		<!-- Logo -->
-		<div class="flex-shrink-0 pr-6 border-r border-gray-700">
+		<div class="flex-shrink-0 pr-8 border-r border-gray-700 mr-2">
 			<a href="/">
-				<img src={logo} alt="logo" class="h-8 w-8" />
+				<img src={logo} alt="logo" class="h-10 w-10" />
 			</a>
 		</div>
 
@@ -103,10 +102,10 @@
 						<ChevronDown size={16} />
 					</button>
 					
-					<!-- Dropdown Menu -->
+					<!-- Dropdown Menu - Positioned Above -->
 					{#if showAdminMenu}
 						<div 
-							class="absolute left-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-[60]"
+							class="absolute left-0 bottom-full mb-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-[60]"
 							onmouseenter={() => (showAdminMenu = true)}
 							onmouseleave={() => (showAdminMenu = false)}
 						>
