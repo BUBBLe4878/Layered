@@ -90,12 +90,9 @@
 
 			<!-- Admin Dropdown -->
 			{#if user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin}
-				<div 
-					class="relative"
-					onmouseenter={() => (showAdminMenu = true)}
-					onmouseleave={() => (showAdminMenu = false)}
-				>
+				<div class="relative">
 					<button 
+						onclick={() => (showAdminMenu = !showAdminMenu)}
 						class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-800 hover:bg-primary-700 border-2 border-dotted border-white transition-colors"
 					>
 						<span class="hidden md:inline">Admin</span>
@@ -106,13 +103,12 @@
 					{#if showAdminMenu}
 						<div 
 							class="absolute left-0 bottom-full mb-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-[60]"
-							onmouseenter={() => (showAdminMenu = true)}
-							onmouseleave={() => (showAdminMenu = false)}
 						>
 							{#if user.isPrinter}
 								<a 
 									href="/dashboard/admin/print" 
 									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 first:rounded-t-lg text-sm transition-colors text-white"
+									onclick={() => (showAdminMenu = false)}
 								>
 									<Box size={16} />
 									Print
@@ -122,6 +118,7 @@
 								<a 
 									href="/dashboard/admin/review" 
 									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors text-white"
+									onclick={() => (showAdminMenu = false)}
 								>
 									<ClipboardPen size={16} />
 									Review
@@ -131,6 +128,7 @@
 								<a 
 									href="/dashboard/admin/ysws-review" 
 									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors text-white"
+									onclick={() => (showAdminMenu = false)}
 								>
 									<ClipboardPenLine size={16} />
 									YSWS Review
@@ -140,6 +138,7 @@
 								<a 
 									href="/dashboard/admin/admin" 
 									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 last:rounded-b-lg text-sm transition-colors text-white"
+									onclick={() => (showAdminMenu = false)}
 								>
 									<ShieldUser size={16} />
 									Admin
