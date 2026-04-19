@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db/index.js';
 import { project, user, devlog, t2Review } from '$lib/server/db/schema.js';
+import { withSlackProfiles } from '$lib/server/slack.js';
 import { getProjectLinkType } from '$lib/utils';
 import { error } from '@sveltejs/kit';
 import { eq, and, sql, ne, inArray, desc, gt } from 'drizzle-orm';
@@ -42,10 +43,14 @@ export async function load({ locals, url }) {
 	const users = await db
 		.select({
 			id: user.id,
+			slackId: user.slackId,
+			profilePicture: user.profilePicture,
 			name: user.name
 		})
 		.from(user)
 		.where(and(ne(user.trust, 'red'), ne(user.hackatimeTrust, 'red'))); // hide banned users
+
+	const usersWithSlackProfiles = await withSlackProfiles(users);
 
 	const t2Agg = db
 		.$with('t2Agg')
@@ -69,7 +74,7 @@ export async function load({ locals, url }) {
 	return {
 		allProjects,
 		projects,
-		users,
+		users: usersWithSlackProfiles.map(({ id, name }) => ({ id, name })),
 		leaderboard,
 		fields: {
 			status: statusFilter,
