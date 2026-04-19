@@ -24,6 +24,16 @@
 	
 	let showAdminMenu = $state(false);
 	let adminButtonElement: HTMLButtonElement | null = $state(null);
+	let logoElement: HTMLImageElement | null = $state(null);
+	let logoAspectRatio = $state('1 / 1');
+
+	function handleLogoLoad() {
+		if (logoElement) {
+			const aspectRatio = logoElement.naturalWidth / logoElement.naturalHeight;
+			logoAspectRatio = `${aspectRatio} / 1`;
+		}
+	}
+
 	let dropdownPosition = $derived.by(() => {
 		if (!adminButtonElement) return { left: '0px' };
 		const rect = adminButtonElement.getBoundingClientRect();
@@ -39,8 +49,14 @@
 		
 		<!-- Logo -->
 		<div class="flex-shrink-0 pr-8 border-r border-gray-700 mr-2">
-			<a href="/">
-				<img src={logo} alt="logo" class="h-10 w-10" />
+			<a href="/" class="flex items-center" style="aspect-ratio: {logoAspectRatio};">
+				<img 
+					bind:this={logoElement}
+					onload={handleLogoLoad}
+					src={logo} 
+					alt="logo" 
+					class="h-10 w-auto" 
+				/>
 			</a>
 		</div>
 
