@@ -22,6 +22,7 @@ import relativeDate from 'tiny-relative-date';
 	// ── State ───────────────────────────────────────────────────────
 	let searchQuery = '';
 	let activeFilter: FilterKey = 'all';
+	let selectedProjectId: number | null = null;
 
 	// ── Derived filtered list ───────────────────────────────────────
 	$: filteredProjects = projects.filter((p) => {
@@ -34,7 +35,15 @@ import relativeDate from 'tiny-relative-date';
 		return matchesFilter && matchesSearch;
 	});
 
-	// ── Helpers (kept from original page) ──────────────────────────
+	// ── Auto-select first project when filtered ─────────────────────
+	$: if (filteredProjects.length > 0 && (!selectedProjectId || !filteredProjects.find(p => p.id === selectedProjectId))) {
+		selectedProjectId = filteredProjects[0].id;
+	}
+
+	// ── Get selected project ────────────────────────────────────────
+	$: selectedProject = projects.find(p => p.id === selectedProjectId);
+
+	// ── Helpers ─────────────────────────────────────────────────────
 	const isLocked = (project: (typeof projects)[0]) =>
 		['printed', 'finalized', 'printing', 'submitted', 't1_approved'].includes(project.status);
 
@@ -57,9 +66,21 @@ import relativeDate from 'tiny-relative-date';
 		if (rem === 0) return `${h}h`;
 		return `${h}h ${rem}min`;
 	}
+
+	function getStatusColor(status: string) {
+		const colors: Record<string, string> = {
+			building: 'bg-blue-500',
+			submitted: 'bg-yellow-500',
+			t1_approved: 'bg-cyan-500',
+			printing: 'bg-orange-500',
+			printed: 'bg-green-500',
+			finalized: 'bg-primary-600',
+		};
+		return colors[status] || 'bg-gray-500';
+	}
 </script>
 
-<div class="flex h-full flex-col">
+<div class="flex h-full flex-col gap-4">
 	<!-- ── Header ──────────────────────────────────────────────────── -->
 	<div class="flex justify-between items-center">
 		<div>
@@ -76,129 +97,189 @@ import relativeDate from 'tiny-relative-date';
 		</a>
 	</div>
 
-	<!-- ── Search bar — uses themed-input from app.css ──────── -->
-	<div class="relative mt-2 flex items-center">
-		<Search size={15} class="pointer-events-none absolute left-3 text-primary-700" />
-		<input
-			type="text"
-			bind:value={searchQuery}
-			placeholder="Search projects..."
-			autocomplete="off"
-			spellcheck="false"
-			class="themed-input w-full py-2.5 pl-9 pr-9 text-sm"
-		/>
-		{#if searchQuery}
-			<button
-				on:click={() => (searchQuery = '')}
-				aria-label="Clear search"
-				class="absolute right-2 flex items-center justify-center rounded-md p-1 text-primary-700 transition-colors hover:bg-primary-800 hover:text-primary-400"
-			>
-				<X size={13} />
-			</button>
-		{/if}
-	</div>
+	<!-- ── Main Layout: Sidebar + Detail ──────────────────────────── -->
+	<div class="flex gap-4 flex-1 min-h-0">
+		<!-- ── LEFT SIDEBAR: Project List ──────────────────────────── -->
+		<div class="w-80 flex flex-col gap-3 pb-4">
+			<!-- Search bar -->
+			<div class="relative flex items-center">
+				<Search size={15} class="pointer-events-none absolute left-3 text-primary-700" />
+				<input
+					type="text"
+					bind:value={searchQuery}
+					placeholder="Search projects..."
+					autocomplete="off"
+					spellcheck="false"
+					class="themed-input w-full py-2.5 pl-9 pr-9 text-sm"
+				/>
+				{#if searchQuery}
+					<button
+						on:click={() => (searchQuery = '')}
+						aria-label="Clear search"
+						class="absolute right-2 flex items-center justify-center rounded-md p-1 text-primary-700 transition-colors hover:bg-primary-100"
+					>
+						<X size={13} />
+					</button>
+				{/if}
+			</div>
 
-	<!-- ── Filter chips — use themed-box style (dashed border) ──────── -->
-	<div class="mt-3 flex flex-wrap gap-2">
-		{#each FILTERS as filter (filter.key)}
-			<button
-				on:click={() => (activeFilter = filter.key)}
-				class="
-					rounded-lg border-2 px-2 py-1 text-xs font-semibold transition-colors
-					{activeFilter === filter.key
-						? 'border-primary-600 bg-primary-700 text-primary-50'
-						: 'border-primary-900 bg-primary-950 text-primary-700 hover:border-primary-700 hover:bg-primary-900 hover:text-primary-400'}
-				"
-			>
-				{filter.label}
-			</button>
-		{/each}
-	</div>
+			<!-- Filter chips -->
+			<div class="flex flex-wrap gap-2">
+				{#each FILTERS as filter (filter.key)}
+					<button
+						on:click={() => (activeFilter = filter.key)}
+						class="
+							rounded-lg border-2 px-2 py-1 text-xs font-semibold transition-colors
+							{activeFilter === filter.key
+								? 'border-primary-600 bg-primary-700 text-primary-50'
+								: 'border-primary-200 bg-primary-50 text-primary-700 hover:border-primary-400 hover:bg-primary-100'}
+						"
+					>
+						{filter.label}
+					</button>
+				{/each}
+			</div>
 
-	<!-- ── Count ─────────────────────────────────────────────────── -->
-	<p class="mt-2 mb-0 text-sm text-[#72685e] font-medium">
-		{filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
-	</p>
+			<!-- Project count -->
+			<p class="text-xs text-[#72685e] font-medium">
+				{filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+			</p>
 
-	<!-- ── Project grid ──────────────────────────────────────────── -->
-	{#if filteredProjects.length > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-5 mt-2">
-			{#each filteredProjects as project (project.id)}
-				<div class="themed-box relative flex flex-col p-3 shadow-lg/20 transition-all hover:scale-102">
-					<!-- Clickable overlay -->
-					<a class="absolute inset-0 z-1" href="/dashboard/projects/{project.id}" aria-label="project"></a>
+			<!-- Project List -->
+			<div class="flex-1 overflow-y-auto flex flex-col gap-2">
+				{#if filteredProjects.length > 0}
+					{#each filteredProjects as project (project.id)}
+						<button
+							on:click={() => (selectedProjectId = project.id)}
+							class="
+								themed-box relative p-3 text-left transition-all hover:shadow-md text-shadow
+								{selectedProjectId === project.id
+									? 'ring-2 ring-primary-500 shadow-lg'
+									: 'hover:bg-primary-50'}
+							"
+						>
+							<!-- Status badge -->
+							<div class="flex items-start justify-between mb-1 gap-2">
+								<h3 class="font-semibold text-sm truncate flex-1">{project.name}</h3>
+								{#if isLocked(project)}
+									<Lock size={16} class="flex-shrink-0 mt-0.5" />
+								{/if}
+							</div>
+							
+							<!-- Status + Time -->
+							<div class="flex items-center gap-2 mb-2">
+								<span class={`text-xs font-semibold px-2 py-1 rounded text-white ${getStatusColor(project.status)}`}>
+									{formatStatus(project.status)}
+								</span>
+								<span class="text-xs text-[#72685e]">{formatTime(project.timeSpent ?? 0)}</span>
+							</div>
 
-					<!-- Title + lock -->
-					<h1 class="flex flex-row gap-1 text-xl font-semibold">
-						<span class="grow truncate">{project.name}</span>
-						{#if isLocked(project)}
-							<span title="This project is currently locked as it has been shipped" class="relative z-2">
-								<Lock size={24} />
+							<!-- Description preview -->
+							<p class="text-xs text-[#72685e] line-clamp-2">
+								{project.description ?? 'No description'}
+							</p>
+						</button>
+					{/each}
+				{:else}
+					<div class="themed-box flex flex-col items-center justify-center gap-2 py-8 text-center">
+						<Search size={20} class="text-primary-700" />
+						<p class="text-xs font-semibold">No projects found</p>
+					</div>
+				{/if}
+			</div>
+		</div>
+
+		<!-- ── RIGHT PANEL: Project Details ──────────────────────── -->
+		<div class="flex-1 overflow-y-auto pb-4">
+			{#if selectedProject}
+				<div class="themed-box flex flex-col gap-4 p-5 h-full">
+					<!-- Header -->
+					<div>
+						<div class="flex items-start justify-between gap-4 mb-2">
+							<h1 class="font-hero text-2xl font-semibold">{selectedProject.name}</h1>
+							{#if isLocked(selectedProject)}
+								<Lock size={24} title="This project is locked" />
+							{/if}
+						</div>
+						<div class="flex items-center gap-2">
+							<span class={`text-sm font-semibold px-3 py-1 rounded text-white ${getStatusColor(selectedProject.status)}`}>
+								{formatStatus(selectedProject.status)}
 							</span>
-						{/if}
-					</h1>
-
-					<!-- Description -->
-					<p class="mb-2 grow">{project.description ?? ''}</p>
-
-					<!-- Links -->
-					<div class="mb-2">
-						<div class="flex flex-row gap-2">
-							{#if project.url}
-								<div class="flex">
-									<a class="button sm primary relative z-2" href={project.url} target="_blank">
-										<ExternalLink size={20} /> Printables page
-									</a>
-								</div>
-							{/if}
-							{#if project.editorFileType === 'upload' && project.uploadedFileUrl}
-								<div class="flex">
-									<a class="button sm primary relative z-2" href="{s3PublicUrl}/{project.uploadedFileUrl}" target="_blank">
-										<Download size={20} /> Project file
-									</a>
-								</div>
-							{:else if project.editorFileType === 'url' && project.editorUrl}
-								<div class="flex">
-									<a class="button sm primary relative z-2" href={project.editorUrl} target="_blank">
-										<Link size={20} /> Project link
-									</a>
-								</div>
-							{/if}
+							<span class="text-sm text-[#72685e]">{formatTime(selectedProject.timeSpent ?? 0)} total</span>
 						</div>
 					</div>
 
-					<!-- Footer -->
-					<div class="flex flex-row gap-4">
-						<p class="grow text-sm">
-							Created <abbr title={project.createdAt.toUTCString()} class="relative z-2">
-    {relativeDate(project.createdAt)}
-</abbr> ∙ {formatTime(project.timeSpent ?? 0)}
+					<!-- Description -->
+					<div>
+						<h3 class="font-semibold text-sm mb-1">About</h3>
+						<p class="text-sm text-gray-700">
+							{selectedProject.description ?? 'No description provided'}
 						</p>
-						<p class="text-sm">{formatStatus(project.status)}</p>
+					</div>
+
+					<!-- Links -->
+					<div>
+						<h3 class="font-semibold text-sm mb-2">Links</h3>
+						<div class="flex flex-col gap-2">
+							{#if selectedProject.url}
+								<a 
+									class="button sm primary" 
+									href={selectedProject.url} 
+									target="_blank"
+								>
+									<ExternalLink size={18} /> Printables page
+								</a>
+							{/if}
+							{#if selectedProject.editorFileType === 'upload' && selectedProject.uploadedFileUrl}
+								<a 
+									class="button sm primary" 
+									href="{s3PublicUrl}/{selectedProject.uploadedFileUrl}" 
+									target="_blank"
+								>
+									<Download size={18} /> Project file
+								</a>
+							{:else if selectedProject.editorFileType === 'url' && selectedProject.editorUrl}
+								<a 
+									class="button sm primary" 
+									href={selectedProject.editorUrl} 
+									target="_blank"
+								>
+									<Link size={18} /> Project link
+								</a>
+							{/if}
+							<a 
+								class="button sm primary" 
+								href="/dashboard/projects/{selectedProject.id}"
+							>
+								View devlogs
+							</a>
+						</div>
+					</div>
+
+					<!-- Metadata -->
+					<div class="pt-4 border-t border-primary-200">
+						<div class="grid grid-cols-2 gap-4 text-sm">
+							<div>
+								<p class="text-[#72685e] font-medium mb-1">Created</p>
+								<p class="font-semibold">
+									<abbr title={selectedProject.createdAt.toUTCString()}>
+										{relativeDate(selectedProject.createdAt)}
+									</abbr>
+								</p>
+							</div>
+							<div>
+								<p class="text-[#72685e] font-medium mb-1">Time spent</p>
+								<p class="font-semibold">{formatTime(selectedProject.timeSpent ?? 0)}</p>
+							</div>
+						</div>
 					</div>
 				</div>
-			{/each}
+			{:else}
+				<div class="themed-box flex flex-col items-center justify-center gap-4 p-5 h-full">
+					<Search size={32} class="text-primary-700" />
+					<p class="font-semibold text-lg">Select a project to view details</p>
+				</div>
+			{/if}
 		</div>
-	{:else}
-		<!-- Empty state -->
-		<div class="themed-box mt-6 flex flex-col items-center justify-center gap-2 py-16 text-center">
-			<Search size={28} class="text-primary-700" />
-			<p class="font-semibold">No projects found</p>
-			<p class="text-sm text-[#72685e]">
-				{#if searchQuery && activeFilter !== 'all'}
-					No <em>{activeFilter.replace('_', ' ')}</em> projects match "<em>{searchQuery}</em>"
-				{:else if searchQuery}
-					Nothing matches "<em>{searchQuery}</em>"
-				{:else}
-					No projects with status <em>{activeFilter.replace('_', ' ')}</em>
-				{/if}
-			</p>
-			<button
-				on:click={() => { searchQuery = ''; activeFilter = 'all'; }}
-				class="button sm mt-2 bg-primary-800 hover:bg-primary-700"
-			>
-				Clear filters
-			</button>
-		</div>
-	{/if}
+	</div>
 </div>
