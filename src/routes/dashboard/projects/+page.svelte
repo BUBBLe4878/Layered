@@ -48,6 +48,13 @@ import relativeDate from 'tiny-relative-date';
 		?.filter(d => d.projectId === selectedProjectId)
 		?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ?? null;
 
+	// ── Get last devlog for any project ─────────────────────────────
+	$: getLastDevlogForProject = (projectId: number) => {
+		return data.devlogs
+			?.filter(d => d.projectId === projectId)
+			?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ?? null;
+	};
+
 	// ── Helpers ─────────────────────────────────────────────────────
 	const isLocked = (project: (typeof projects)[0]) =>
 		['printed', 'finalized', 'printing', 'submitted', 't1_approved'].includes(project.status);
@@ -157,14 +164,22 @@ import relativeDate from 'tiny-relative-date';
 						<button
 							on:click={() => (selectedProjectId = project.id)}
 							class="
-								themed-box relative p-3 text-left transition-all hover:shadow-md text-shadow
+								themed-box relative p-3 text-left transition-all hover:shadow-md text-shadow overflow-hidden
 								{selectedProjectId === project.id
 									? 'ring-2 ring-primary-500 shadow-lg'
 									: 'hover:bg-primary-50'}
 							"
 						>
+							{#if getLastDevlogForProject(project.id)}
+								<img 
+									src={getLastDevlogForProject(project.id).image} 
+									alt="preview" 
+									class="absolute inset-0 w-full h-full object-cover opacity-20 -z-1"
+								/>
+							{/if}
+
 							<!-- Status badge -->
-							<div class="flex items-start justify-between mb-1 gap-2">
+							<div class="flex items-start justify-between mb-1 gap-2 relative z-1">
 								<h3 class="font-semibold text-sm truncate flex-1">{project.name}</h3>
 								{#if isLocked(project)}
 									<Lock size={16} class="flex-shrink-0 mt-0.5" />
@@ -172,7 +187,7 @@ import relativeDate from 'tiny-relative-date';
 							</div>
 							
 							<!-- Status + Time -->
-							<div class="flex items-center gap-2 mb-2">
+							<div class="flex items-center gap-2 mb-2 relative z-1">
 								<span class={`text-xs font-semibold px-2 py-1 rounded text-white ${getStatusColor(project.status)}`}>
 									{formatStatus(project.status)}
 								</span>
@@ -180,7 +195,7 @@ import relativeDate from 'tiny-relative-date';
 							</div>
 
 							<!-- Description preview -->
-							<p class="text-xs text-[#72685e] line-clamp-2">
+							<p class="text-xs text-[#72685e] line-clamp-2 relative z-1">
 								{project.description ?? 'No description'}
 							</p>
 						</button>
