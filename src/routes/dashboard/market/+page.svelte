@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
+	import { resolve } from '$app/paths';
 	import MarketItem from './MarketItem.svelte';
 	import MarketTimer from './MarketTimer.svelte';
 	import ovenpheus from '$lib/assets/ovenpheus.png';
@@ -22,27 +23,29 @@
 		<span class="opacity-50">(allows you to get stuff for cheaper and unlock more items!)</span>
 	</p>
 
-	<div class="themed-box mb-5 flex flex-row gap-5 p-3">
-		<div class="w-80">
+	<div class="themed-box mb-5 flex flex-col gap-4 p-3 md:flex-row md:gap-5">
+		<div class="w-full md:w-80">
 			<img src={ovenpheus} alt="ovenpheus" class="rounded-lg border-20 border-white" />
 		</div>
 		<div class="flex grow flex-col">
 			<div class="animate-pulse">
-				<h2 class="text-2xl font-bold text-primary-400">
+				<h2 class="text-xl font-bold text-primary-400 sm:text-2xl">
 					Fire your clay into bricks with Ovenpheus today!!1!
 				</h2>
-				<p class="text-lg text-primary-200">Get your yummy yummy bricks here!</p>
+				<p class="text-base text-primary-200 sm:text-lg">Get your yummy yummy bricks here!</p>
 			</div>
 			<p>
 				You'll get {(data.user.hasBasePrinter ? BRICKS_PER_HOUR : BRICKS_PER_HOUR_CONVERTED) /
 					CLAY_PER_HOUR} bricks per clay
 			</p>
 			<div class="grow"></div>
-			<a href="market/ovenpheus" class="button md primary">Go get your bricks</a>
+			<a href={resolve('/dashboard/market/ovenpheus')} class="button md primary"
+				>Go get your bricks</a
+			>
 		</div>
 	</div>
 
-	<a href="market/printer" class="button md primary mb-5">Printer market</a>
+	<a href={resolve('/dashboard/market/printer')} class="button md primary mb-5">Printer market</a>
 
 	<h2 class="mb-2 text-2xl font-bold">Market items</h2>
 
