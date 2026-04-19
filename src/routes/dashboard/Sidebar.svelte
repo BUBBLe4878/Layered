@@ -23,6 +23,14 @@
 	);
 	
 	let showAdminMenu = $state(false);
+	let adminButtonElement: HTMLButtonElement | null = $state(null);
+	let dropdownPosition = $derived.by(() => {
+		if (!adminButtonElement) return { left: '0px' };
+		const rect = adminButtonElement.getBoundingClientRect();
+		return {
+			left: `${rect.left}px`
+		};
+	});
 </script>
 
 <!-- Top Header Navigation -->
@@ -91,6 +99,7 @@
 			<!-- Admin Button -->
 			{#if user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin}
 				<button 
+					bind:this={adminButtonElement}
 					onclick={() => (showAdminMenu = !showAdminMenu)}
 					class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-800 hover:bg-primary-700 border-2 border-dotted border-white transition-colors"
 				>
@@ -127,7 +136,8 @@
 		<!-- Admin Dropdown Menu - Outside nav to avoid overflow clipping -->
 		{#if showAdminMenu && (user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin)}
 			<div 
-				class="absolute left-[105px] top-full mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-[60]"
+				class="absolute top-full mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-[60]"
+				style="left: {dropdownPosition.left};"
 			>
 				{#if user.isPrinter}
 					<a 
