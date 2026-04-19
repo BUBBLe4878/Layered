@@ -1,0 +1,380 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Sora:wght@100..800&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* ==================== */
+/* FONTS & TYPOGRAPHY   */
+/* ==================== */
+
+@font-face {
+	font-family: 'Phantom Sans';
+	src:
+		url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff'),
+		url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Phantom Sans';
+	src:
+		url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Italic.woff') format('woff'),
+		url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Italic.woff2') format('woff2');
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Phantom Sans';
+	src:
+		url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff'),
+		url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* ==================== */
+/* COLOR THEME - BAMBU  */
+/* ==================== */
+
+@theme {
+	--font-hero: 'Press Start 2P', var(--font-sans);
+	--font-hc: 'Phantom Sans', var(--font-sans);
+	--font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+	/* Background Colors - Clean, Minimal Dark */
+	--background-color: #0f1117;
+	--background-color-secondary: #161b2270;
+	--background-color-tertiary: #1c212dad;
+	--background-color-quarternary: #30363d;
+	--font-color: #e6edf3;
+
+	/* Primary Color Palette - Bambu Green/Cyan (tech-forward) */
+	--color-primary-50: #f0fdf4;
+	--color-primary-100: #dcfce7;
+	--color-primary-200: #bbf7d0;
+	--color-primary-300: #86efac;
+	--color-primary-400: #4ade80;
+	--color-primary-500: #22c55e;
+	--color-primary-600: #16a34a;
+	--color-primary-700: #15803d;
+	--color-primary-800: #166534;
+	--color-primary-900: #145231;
+	--color-primary-950: #052e16;
+
+	/* Red Palette */
+	--color-red-50: #fef2f2;
+	--color-red-100: #fee5e6;
+	--color-red-200: #fccfd3;
+	--color-red-300: #faa7ae;
+	--color-red-400: #f67685;
+	--color-red-500: #ec3750;
+	--color-red-600: #da2446;
+	--color-red-700: #b8183a;
+	--color-red-800: #9a1737;
+	--color-red-900: #841735;
+	--color-red-950: #490818;
+
+	/* Orange Palette */
+	--color-orange-50: #fff7ed;
+	--color-orange-100: #ffecd4;
+	--color-orange-200: #ffd5a8;
+	--color-orange-300: #ffb671;
+	--color-orange-400: #ff8c37;
+	--color-orange-500: #fe6c11;
+	--color-orange-600: #ef5107;
+	--color-orange-700: #c63a08;
+	--color-orange-800: #9d2f0f;
+	--color-orange-900: #7e2910;
+	--color-orange-950: #441106;
+
+	/* Yellow Palette */
+	--color-yellow-50: #fdfde9;
+	--color-yellow-100: #fdfbc4;
+	--color-yellow-200: #fbf38d;
+	--color-yellow-300: #f9e54b;
+	--color-yellow-400: #f5d31a;
+	--color-yellow-500: #f1c40f;
+	--color-yellow-600: #c59009;
+	--color-yellow-700: #9d670b;
+	--color-yellow-800: #825211;
+	--color-yellow-900: #6f4314;
+	--color-yellow-950: #412307;
+
+	/* Cyan Palette - Secondary accent */
+	--color-cyan-50: #ecfdfd;
+	--color-cyan-100: #cffafe;
+	--color-cyan-200: #a5f3fc;
+	--color-cyan-300: #67e8f9;
+	--color-cyan-400: #22d3ee;
+	--color-cyan-500: #06b6d4;
+	--color-cyan-600: #0891b2;
+	--color-cyan-700: #0e7490;
+	--color-cyan-800: #155e75;
+	--color-cyan-900: #164e63;
+	--color-cyan-950: #0c2d38;
+
+	/* Blue Palette */
+	--color-blue-50: #f2f7fd;
+	--color-blue-100: #e3eefb;
+	--color-blue-200: #c1dcf6;
+	--color-blue-300: #8bc0ee;
+	--color-blue-400: #4d9fe3;
+	--color-blue-500: #338eda;
+	--color-blue-600: #1867b1;
+	--color-blue-700: #145290;
+	--color-blue-800: #154777;
+	--color-blue-900: #173c63;
+	--color-blue-950: #0f2742;
+
+	/* Purple Palette */
+	--color-purple-50: #fbf6fe;
+	--color-purple-100: #f6eafd;
+	--color-purple-200: #efd9fb;
+	--color-purple-300: #e3bbf7;
+	--color-purple-400: #d28ff1;
+	--color-purple-500: #c064e8;
+	--color-purple-600: #a633d6;
+	--color-purple-700: #9632be;
+	--color-purple-800: #7e2d9c;
+	--color-purple-900: #67267d;
+	--color-purple-950: #480f5c;
+
+	/* Gray Palette */
+	--color-gray-50: #f8f9fa;
+	--color-gray-100: #eaeef2;
+	--color-gray-200: #d0d7de;
+	--color-gray-300: #b1bac4;
+	--color-gray-400: #8b949e;
+	--color-gray-500: #6e7681;
+	--color-gray-600: #57606a;
+	--color-gray-700: #424a53;
+	--color-gray-800: #2d333b;
+	--color-gray-900: #1c2128;
+	--color-gray-950: #0d1117;
+
+	/* Animations */
+	--animate-outline-ping: outline-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+	@keyframes outline-ping {
+		0% {
+			outline-width: 0px;
+		}
+		70% {
+			outline-width: 10px;
+			outline-color: transparent;
+		}
+		100% {
+			outline-width: 0px;
+			outline-color: transparent;
+		}
+	}
+
+	/* Smooth fade animation */
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+}
+
+/* ==================== */
+/* BASE LAYER           */
+/* ==================== */
+
+@layer base {
+	body {
+		background-color: var(--background-color);
+		color: var(--font-color);
+		/* Subtle minimalist grid background */
+		background-image:
+			linear-gradient(90deg, rgba(48, 54, 61, 0.1) 1px, transparent 1px),
+			linear-gradient(rgba(48, 54, 61, 0.1) 1px, transparent 1px);
+		background-size: 40px 40px;
+		background-attachment: fixed;
+	}
+
+	/* Smooth defaults */
+	* {
+		transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+	}
+}
+
+/* ==================== */
+/* COMPONENT LAYER      */
+/* ==================== */
+
+@layer components {
+	/* ---- Buttons ---- */
+	.button {
+		@apply flex cursor-pointer flex-row justify-center transition-colors rounded-lg font-medium tracking-wide;
+
+		&.sm {
+			@apply gap-1.5 px-3 py-2 text-sm hover:outline-1 focus:outline-1;
+
+			& .lucide-icon {
+				@apply size-[18px];
+			}
+		}
+
+		&.xs {
+			@apply gap-1 px-2.5 py-1.5 text-xs hover:outline-1 focus:outline-1;
+
+			& .lucide-icon {
+				@apply size-[14px];
+			}
+		}
+
+		&.md {
+			@apply gap-2 px-4 py-2.5 hover:outline-2 focus:outline-2;
+		}
+
+		&:disabled,
+		&.disabled {
+			@apply cursor-not-allowed opacity-50 hover:outline-0;
+		}
+	}
+
+	/* Button Color Variants */
+	.button.primary {
+		@apply bg-primary-600 text-white outline-primary-400 hover:bg-primary-700 hover:shadow-lg;
+	}
+
+	.button.red {
+		@apply bg-red-600 text-white outline-red-400 hover:bg-red-700 hover:shadow-lg;
+	}
+
+	.button.dark-red {
+		@apply bg-red-700 text-white outline-red-400 hover:bg-red-800 hover:shadow-lg;
+	}
+
+	.button.orange {
+		@apply bg-orange-600 text-white outline-orange-400 hover:bg-orange-700 hover:shadow-lg;
+	}
+
+	/* ---- Links ---- */
+	.link {
+		@apply text-primary-400 underline hover:text-primary-300 transition-colors;
+	}
+
+	.list-link {
+		@apply text-primary-400 underline transition-all hover:text-primary-300;
+	}
+
+	/* ---- Form Inputs ---- */
+	.themed-input-light {
+		@apply border border-gray-600 bg-gray-900 text-gray-100 p-2.5 text-sm rounded-lg outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+	}
+
+	.themed-input {
+		@apply rounded-lg border border-gray-600 bg-gray-900 text-gray-100 ring-0 outline-none transition-all placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
+	}
+
+	.themed-input-on-box {
+		@apply rounded-lg border border-gray-600 bg-gray-800 text-gray-100 ring-0 outline-none transition-all placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 px-3 py-2.5;
+	}
+
+	.checkbox {
+		@apply w-5 h-5 rounded border border-gray-600 bg-gray-800 accent-primary-500 cursor-pointer;
+	}
+
+	/* ---- Themed Boxes ---- */
+	.themed-box,
+	.themed-box-prominent,
+	.themed-box-solid,
+	.themed-box-solid-prominent {
+		@apply rounded-xl border border-gray-700 bg-gray-900/50 backdrop-blur-sm p-4;
+	}
+
+	/* ---- Enclosure Background (Textured) ---- */
+	.enclosure-bg {
+		background-color: #1a1a1a;
+		position: relative;
+		overflow: hidden;
+		z-index: 1;
+		@apply border border-gray-700 rounded-xl;
+	}
+
+	.enclosure-bg::before {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 150%;
+		height: 6000%;
+		transform: translate(-50%, -50%) rotate(30deg);
+		background-image: url("https://cdn.hackclub.com/019d4983-aa2c-7c07-ad9e-07ec8b3f9bb9/image.png");
+		opacity: 8%;
+		background-repeat: repeat;
+		background-size: 35px 35px;
+		z-index: 0;
+		pointer-events: none;
+	}
+
+	/* ---- PEI Buttons (Background Image Buttons) ---- */
+	.pei-button {
+		color: #ffffff !important;
+		background-size: cover !important;
+		background-position: center !important;
+		background-repeat: no-repeat !important;
+		border: 1.5px solid rgba(34, 197, 94, 0.5) !important;
+		border-radius: 12px !important;
+		box-shadow: 
+			0 8px 32px rgba(34, 197, 94, 0.15) !important,
+			inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+		position: relative !important;
+		overflow: hidden !important;
+		transition: all 0.3s ease !important;
+
+		* {
+			color: #ffffff !important;
+		}
+
+		&:hover {
+			border-color: rgba(34, 197, 94, 0.8) !important;
+			box-shadow: 
+				0 12px 40px rgba(34, 197, 94, 0.25) !important,
+				inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+			transform: translateY(-2px) !important;
+		}
+	}
+
+	.pei1,
+	.pei2,
+	.pei3,
+	.pei4,
+	.pei5,
+	.pei6 {
+		background-image: url('/img/peione.png') !important;
+	}
+
+	.pei7 {
+		background-image: url('/img/peitwo.png') !important;
+	}
+}
+
+/* ==================== */
+/* UTILITY LAYER        */
+/* ==================== */
+
+@layer utilities {
+	.center {
+		@apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform;
+	}
+
+	/* Modern glass effect */
+	.glass {
+		@apply backdrop-blur-md bg-white/10 border border-white/20 rounded-xl;
+	}
+
+	/* Smooth shadow */
+	.shadow-modern {
+		@apply shadow-lg shadow-black/30;
+	}
+}
