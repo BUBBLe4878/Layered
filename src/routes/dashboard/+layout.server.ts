@@ -16,14 +16,26 @@ export async function load({ locals }) {
 					Authorization: `Bearer ${env.SLACK_BOT_TOKEN}`
 				}
 			});
+
+			if (!response.ok) {
+				throw new Error(`Slack users.info request failed with ${response.status}`);
+			}
+
 			const data = await response.json();
+
+			if (!data?.ok) {
+				throw new Error(`Slack users.info returned error: ${data?.error ?? 'unknown_error'}`);
+			}
+
 			const slackProfilePicture =
 				data?.user?.profile?.image_512 ??
 				data?.user?.profile?.image_192 ??
 				data?.user?.profile?.image_72;
 
-			if (data?.ok && typeof slackProfilePicture === 'string' && slackProfilePicture.length > 0) {
+			if (typeof slackProfilePicture === 'string') {
 				profilePicture = slackProfilePicture;
+			} else {
+				console.warn(`No Slack profile image found for user ${locals.user.slackId}`);
 			}
 		} catch (error) {
 			console.error('Failed to fetch Slack profile picture for sidebar:', error);
