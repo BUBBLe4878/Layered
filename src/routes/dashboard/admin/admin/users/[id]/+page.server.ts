@@ -18,6 +18,7 @@ import {
 } from '$lib/server/auth';
 import { decrypt } from '$lib/server/encryption';
 import { getUserData } from '$lib/server/idvUserData';
+import { withSlackProfile } from '$lib/server/slack';
 
 export async function load({ locals, params }) {
 	if (!locals.user) {
@@ -43,8 +44,10 @@ export async function load({ locals, params }) {
 		throw error(404, { message: 'user not found' });
 	}
 
+	const queriedUserWithSlackProfile = await withSlackProfile(queriedUser);
+
 	return {
-		queriedUser,
+		queriedUser: queriedUserWithSlackProfile,
 		devlogCount
 	};
 }

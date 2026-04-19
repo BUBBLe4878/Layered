@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db/index.js';
 import { user, project, devlog } from '$lib/server/db/schema.js';
+import { withSlackProfile } from '$lib/server/slack';
 import { error } from '@sveltejs/kit';
 import { eq, and, desc } from 'drizzle-orm';
 
@@ -15,6 +16,8 @@ export async function load({ locals, params }) {
 	if (!requestedUser) {
 		throw error(404);
 	}
+
+	const requestedUserWithSlackProfile = await withSlackProfile(requestedUser);
 
 	const projects = await db
 		.select({
@@ -43,22 +46,25 @@ export async function load({ locals, params }) {
 
 	return {
 		requestedUser: {
-			id: requestedUser.id,
-			slackId: requestedUser.slackId,
-			profilePicture: requestedUser.profilePicture,
-			name: requestedUser.name,
+			id: requestedUserWithSlackProfile.id,
+			slackId: requestedUserWithSlackProfile.slackId,
+			profilePicture: requestedUserWithSlackProfile.profilePicture,
+			name: requestedUserWithSlackProfile.name,
 
-			isPrinter: requestedUser.isPrinter,
-			hasT1Review: requestedUser.hasT1Review,
-			hasT2Review: requestedUser.hasT2Review,
-			hasAdmin: requestedUser.hasAdmin,
+			isPrinter: requestedUserWithSlackProfile.isPrinter,
+			hasT1Review: requestedUserWithSlackProfile.hasT1Review,
+			hasT2Review: requestedUserWithSlackProfile.hasT2Review,
+			hasAdmin: requestedUserWithSlackProfile.hasAdmin,
 
-			shopScore: requestedUser.shopScore,
-			clay: requestedUser.clay,
-			brick: requestedUser.brick,
+			shopScore: requestedUserWithSlackProfile.shopScore,
+			clay: requestedUserWithSlackProfile.clay,
+			brick: requestedUserWithSlackProfile.brick,
 
-			createdAt: requestedUser.createdAt,
-			lastLoginAt: requestedUser.id === locals.user?.id ? requestedUser.lastLoginAt : null
+			createdAt: requestedUserWithSlackProfile.createdAt,
+			lastLoginAt:
+				requestedUserWithSlackProfile.id === locals.user?.id
+					? requestedUserWithSlackProfile.lastLoginAt
+					: null
 		},
 		projects: projects,
 		devlogs: devlogs

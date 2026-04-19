@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import type { Actions } from './$types';
 import { decrypt } from '$lib/server/encryption';
 import { getUserData } from '$lib/server/idvUserData';
+import { withSlackProfile } from '$lib/server/slack';
 
 export async function load({ locals, params }) {
 	if (!locals.user) {
@@ -21,6 +22,8 @@ export async function load({ locals, params }) {
 	if (!queriedUser) {
 		throw error(404, { message: 'user not found' });
 	}
+
+	const queriedUserWithSlackProfile = await withSlackProfile(queriedUser);
 
 	let piiSuccess = true;
 
@@ -53,7 +56,7 @@ export async function load({ locals, params }) {
 		: null;
 
 	return {
-		queriedUser,
+		queriedUser: queriedUserWithSlackProfile,
 		pii
 	};
 }
