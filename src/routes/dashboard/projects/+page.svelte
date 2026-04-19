@@ -43,6 +43,11 @@ import relativeDate from 'tiny-relative-date';
 	// ── Get selected project ────────────────────────────────────────
 	$: selectedProject = projects.find(p => p.id === selectedProjectId);
 
+	// ── Get last devlog for selected project ────────────────────────
+	$: lastDevlog = data.devlogs
+		?.filter(d => d.projectId === selectedProjectId)
+		?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ?? null;
+
 	// ── Helpers ─────────────────────────────────────────────────────
 	const isLocked = (project: (typeof projects)[0]) =>
 		['printed', 'finalized', 'printing', 'submitted', 't1_approved'].includes(project.status);
@@ -69,12 +74,12 @@ import relativeDate from 'tiny-relative-date';
 
 	function getStatusColor(status: string) {
 		const colors: Record<string, string> = {
-			building: 'bg-blue-500',
-			submitted: 'bg-yellow-500',
+			building: 'bg-orange-500',
+			submitted: 'bg-orange-600',
 			t1_approved: 'bg-cyan-500',
 			printing: 'bg-orange-500',
-			printed: 'bg-green-500',
-			finalized: 'bg-primary-600',
+			printed: 'bg-primary-600',
+			finalized: 'bg-primary-500',
 		};
 		return colors[status] || 'bg-gray-500';
 	}
@@ -208,6 +213,20 @@ import relativeDate from 'tiny-relative-date';
 							<span class="text-sm text-[#72685e]">{formatTime(selectedProject.timeSpent ?? 0)} total</span>
 						</div>
 					</div>
+
+					<!-- Image Preview -->
+					{#if lastDevlog}
+						<div class="rounded-lg overflow-hidden border-3 border-primary-200">
+							<img 
+								src={lastDevlog.image} 
+								alt="Latest devlog preview" 
+								class="w-full h-48 object-cover"
+							/>
+							<div class="bg-primary-50 p-2 text-xs text-[#72685e]">
+								Latest: {relativeDate(lastDevlog.createdAt)}
+							</div>
+						</div>
+					{/if}
 
 					<!-- Description -->
 					<div>
