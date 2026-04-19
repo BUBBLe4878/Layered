@@ -299,7 +299,7 @@
 	}
 
 	.themed-input-on-box {
-		@apply rounded-lg border-3 border-primary-800 bg-primary-#ffffff ring-primary-700 outline-transparent transition-shadow placeholder:text-primary-700 focus:ring-2;
+		@apply rounded-lg border-3 border-primary-800 bg-primary-900 ring-primary-700 outline-transparent transition-shadow placeholder:text-primary-700 focus:ring-2;
 	}
 
 	.checkbox {
