@@ -204,6 +204,11 @@
 	* {
 		transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 	}
+
+	/* Text shadow for better readability */
+	body {
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	}
 }
 
 /* ==================== */
@@ -376,5 +381,14 @@
 	/* Smooth shadow */
 	.shadow-modern {
 		@apply shadow-lg shadow-black/15;
+	}
+
+	/* Text shadows for readability */
+	.text-shadow {
+		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	}
+
+	.text-shadow-strong {
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
 }
