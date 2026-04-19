@@ -3,6 +3,7 @@ import { club, clubMembership, user, devlog, ship, project } from '$lib/server/d
 import { error, fail } from '@sveltejs/kit';
 import { eq, and, sql, inArray } from 'drizzle-orm';
 import { getLeaderClub } from '$lib/server/clubs-api.js';
+import { withSlackProfiles } from '$lib/server/slack';
 import type { Actions } from './$types';
 import crypto from 'crypto';
 
@@ -44,6 +45,7 @@ export async function load({ locals }) {
 		.select({
 			id: user.id,
 			name: user.name,
+			slackId: user.slackId,
 			profilePicture: user.profilePicture,
 			role: clubMembership.role
 		})
@@ -51,11 +53,13 @@ export async function load({ locals }) {
 		.innerJoin(user, eq(clubMembership.userId, user.id))
 		.where(eq(clubMembership.clubId, userMembership.clubId));
 
+	const membersWithSlackProfiles = await withSlackProfiles(members);
+
 	// Sort: leaders first, then members
-	members.sort((a, b) => {
+	membersWithSlackProfiles.sort((a, b) => {
 		if (a.role === 'leader' && b.role !== 'leader') return -1;
 		if (a.role !== 'leader' && b.role === 'leader') return 1;
-		return a.name.localeCompare(b.name);
+		return (a.name ?? '').localeCompare(b.name ?? '');
 	});
 
 	// Calculate club hours from devlogs on shipped club projects
@@ -85,7 +89,7 @@ export async function load({ locals }) {
 		clubName: userMembership.clubName,
 		joinCode: userMembership.joinCode,
 		role: userMembership.role,
-		members,
+		members: membersWithSlackProfiles,
 		totalHours
 	};
 }

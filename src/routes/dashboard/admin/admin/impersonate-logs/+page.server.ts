@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db/index.js';
 import { impersonateAuditLog, user } from '$lib/server/db/schema.js';
+import { withSlackProfiles } from '$lib/server/slack';
 import { error } from '@sveltejs/kit';
 import { desc, eq, inArray } from 'drizzle-orm';
 
@@ -18,6 +19,7 @@ export async function load({ locals }) {
 			adminUser: {
 				id: user.id,
 				name: user.name,
+				slackId: user.slackId,
 				profilePicture: user.profilePicture
 			},
 			targetUserId: impersonateAuditLog.targetUserId
@@ -34,6 +36,7 @@ export async function load({ locals }) {
 					.select({
 						id: user.id,
 						name: user.name,
+						slackId: user.slackId,
 						profilePicture: user.profilePicture
 					})
 					.from(user)
@@ -49,7 +52,20 @@ export async function load({ locals }) {
 		targetUser: targetUserMap.get(log.targetUserId)
 	}));
 
+	const adminUsers = logsWithUsers.flatMap((log) => (log.adminUser ? [log.adminUser] : []));
+	const targetUsersInLogs = logsWithUsers.flatMap((log) =>
+		log.targetUser ? [log.targetUser] : []
+	);
+	const hydratedUsers = await withSlackProfiles([...adminUsers, ...targetUsersInLogs]);
+	const hydratedUserMap = new Map(hydratedUsers.map((u) => [u.id, u]));
+
 	return {
-		logs: logsWithUsers
+		logs: logsWithUsers.map((log) => ({
+			...log,
+			adminUser: log.adminUser ? (hydratedUserMap.get(log.adminUser.id) ?? log.adminUser) : null,
+			targetUser: log.targetUser
+				? (hydratedUserMap.get(log.targetUser.id) ?? log.targetUser)
+				: undefined
+		}))
 	};
 }

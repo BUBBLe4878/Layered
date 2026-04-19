@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import type { Actions } from './$types';
 import { decrypt } from '$lib/server/encryption';
 import { getUserData } from '$lib/server/idvUserData';
+import { withSlackProfile } from '$lib/server/slack';
 
 type FulfilmentStatus = (typeof printerFulfilmentStatus.enumValues)[number];
 
@@ -24,10 +25,9 @@ export async function load({ locals, params }) {
 		throw error(404, { message: 'user not found' });
 	}
 
-	const orders = await db
-		.select()
-		.from(printerOrder)
-		.where(eq(printerOrder.userId, id));
+	const queriedUserWithSlackProfile = await withSlackProfile(queriedUser);
+
+	const orders = await db.select().from(printerOrder).where(eq(printerOrder.userId, id));
 
 	let piiSuccess = true;
 	let userData;
@@ -58,7 +58,7 @@ export async function load({ locals, params }) {
 		: null;
 
 	return {
-		queriedUser,
+		queriedUser: queriedUserWithSlackProfile,
 		orders,
 		pii,
 		fulfilmentStatuses: printerFulfilmentStatus.enumValues
