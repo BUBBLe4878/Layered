@@ -306,7 +306,7 @@
 	}
 
 	.pei-button * {
-		color: #ffffff !important;
+		color: #000000 !important;
 	}
 
 	.pei1 {
@@ -315,26 +315,6 @@
 
 	.pei2 {
 		background-image: url('/img/pei1.png');
-	}
-
-	.pei3 {
-		background-image: url('/img/pei1.png') !important;
-	}
-
-	.pei4 {
-		background-image: url('/img/pei1.png') !important;
-	}
-
-	.pei5 {
-		background-image: url('/img/pei1.png') !important;
-	}
-
-	.pei6 {
-		background-image: url('/img/pei1.png') !important;
-	}
-
-	.pei7 {
-		background-image: url('/img/pei2F.png') !important;
 	}
 
 	.themed-input-light {
