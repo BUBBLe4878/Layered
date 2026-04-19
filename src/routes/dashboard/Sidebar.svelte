@@ -1,5 +1,4 @@
 <script lang="ts">
-	import SidebarButton from './SidebarButton.svelte';
 	import {
 		House,
 		PencilRuler,
@@ -10,64 +9,168 @@
 		Store,
 		ShieldUser,
 		Box,
-		Users
+		Users,
+		ChevronDown
 	} from '@lucide/svelte';
 	import { page } from '$app/state';
 	import logo from '$lib/assets/logo.png';
-
+	
 	let { user } = $props();
-
+	
 	let isOnOwnUserPage = $derived(
 		page.url.pathname === `/dashboard/users/${user.id}` ||
 			page.url.pathname === `/dashboard/users/${user.id}/`
 	);
+	
+	let showAdminMenu = $state(false);
 </script>
 
-<div class="themed-box m-5 flex w-60 flex-none flex-col gap-2 rounded-xl p-3 shadow-lg/20 2xl:w-70">
-	<div class="mb-0">
-		<a href="/">
-			<img src={logo} alt="logo" />
-		</a>
+<!-- Top Header Navigation -->
+<header class="border-b border-gray-700 bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
+	<div class="flex items-center justify-between gap-4 px-4 py-3">
+		
+		<!-- Logo -->
+		<div class="flex-shrink-0">
+			<a href="/">
+				<img src={logo} alt="logo" class="h-8 w-8" />
+			</a>
+		</div>
+
+		<!-- Main Navigation -->
+		<nav class="flex items-center gap-2 overflow-x-auto flex-1">
+			<!-- Home -->
+			<a 
+				href="/dashboard" 
+				class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-600 hover:bg-primary-700 transition-colors"
+				class:bg-primary-700={page.url.pathname === '/dashboard'}
+			>
+				<House size={20} />
+				<span class="hidden md:inline">Home</span>
+			</a>
+
+			<!-- Projects -->
+			<a 
+				href="/dashboard/projects" 
+				class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-700 hover:bg-primary-600 transition-colors"
+				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/projects')}
+			>
+				<PencilRuler size={20} />
+				<span class="hidden md:inline">Projects</span>
+			</a>
+
+			<!-- Explore -->
+			<a 
+				href="/dashboard/explore" 
+				class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-700 hover:bg-primary-600 transition-colors"
+				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/explore')}
+			>
+				<Compass size={20} />
+				<span class="hidden md:inline">Explore</span>
+			</a>
+
+			<!-- Market -->
+			<a 
+				href="/dashboard/market" 
+				class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-700 hover:bg-primary-600 transition-colors"
+				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/market')}
+			>
+				<Store size={20} />
+				<span class="hidden md:inline">Market</span>
+			</a>
+
+			<!-- Club -->
+			<a 
+				href="/dashboard/clubs" 
+				class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-700 hover:bg-primary-600 transition-colors"
+				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/clubs')}
+			>
+				<Users size={20} />
+				<span class="hidden md:inline">Club</span>
+			</a>
+
+			<!-- Admin Dropdown -->
+			{#if user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin}
+				<div class="relative group">
+					<button 
+						class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-800 hover:bg-primary-700 border-2 border-dotted border-white transition-colors"
+						onmouseenter={() => (showAdminMenu = true)}
+						onmouseleave={() => (showAdminMenu = false)}
+					>
+						<span class="hidden md:inline">Admin</span>
+						<ChevronDown size={16} class="hidden md:block" />
+					</button>
+					
+					<!-- Dropdown Menu -->
+					{#if showAdminMenu || true}
+						<div 
+							class="absolute left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all"
+							onmouseenter={() => (showAdminMenu = true)}
+							onmouseleave={() => (showAdminMenu = false)}
+						>
+							{#if user.isPrinter}
+								<a 
+									href="/dashboard/admin/print" 
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 first:rounded-t-lg text-sm transition-colors"
+								>
+									<Box size={16} />
+									Print
+								</a>
+							{/if}
+							{#if user.hasT1Review}
+								<a 
+									href="/dashboard/admin/review" 
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors"
+								>
+									<ClipboardPen size={16} />
+									Review
+								</a>
+							{/if}
+							{#if user.hasT2Review}
+								<a 
+									href="/dashboard/admin/ysws-review" 
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-sm transition-colors"
+								>
+									<ClipboardPenLine size={16} />
+									YSWS Review
+								</a>
+							{/if}
+							{#if user.hasAdmin}
+								<a 
+									href="/dashboard/admin/admin" 
+									class="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 last:rounded-b-lg text-sm transition-colors"
+								>
+									<ShieldUser size={16} />
+									Admin
+								</a>
+							{/if}
+						</div>
+					{/if}
+				</div>
+			{/if}
+		</nav>
+
+		<!-- Right Side - User Profile & Logout -->
+		<div class="flex items-center gap-2 flex-shrink-0">
+			<!-- User Profile Button -->
+			<a 
+				href={isOnOwnUserPage ? null : `/dashboard/users/${user.id}`}
+				class="pei-button pei7 flex h-10 items-center gap-2 px-3 py-2 rounded-lg text-sm border-2 transition-colors {isOnOwnUserPage ? 'border-primary-700 bg-primary-800 cursor-default' : 'border-primary-800 bg-primary-900 hover:bg-primary-800'}"
+			>
+				<img src={user.profilePicture} alt="User profile pic" class="w-6 h-6 rounded" />
+				<div class="hidden sm:block text-xs">
+					<p class="font-medium truncate">{user.name.split(' ')[0]}</p>
+					<p class="text-gray-400">{Math.floor(user.brick)} brick</p>
+				</div>
+			</a>
+
+			<!-- Logout Button -->
+			<a 
+				href="/auth/logout" 
+				class="pei-button pei1 flex h-10 items-center rounded-lg justify-center gap-1.5 px-3 py-2 text-sm bg-primary-600 hover:bg-primary-700 transition-colors"
+			>
+				<LogOut size={20} />
+				<span class="hidden md:inline">Logout</span>
+			</a>
+		</div>
 	</div>
-	<SidebarButton icon={House} href="/dashboard" exact>Home</SidebarButton>
-	<SidebarButton icon={PencilRuler} href="/dashboard/projects">Projects</SidebarButton>
-	<SidebarButton icon={Compass} href="/dashboard/explore">Explore</SidebarButton>
-	<SidebarButton icon={Store} href="/dashboard/market">Market</SidebarButton>
-	<SidebarButton icon={Users} href="/dashboard/clubs">Club</SidebarButton>
-	{#if user.isPrinter}
-		<SidebarButton icon={Box} href="/dashboard/admin/print" admin={true}>
-			Print
-		</SidebarButton>
-	{/if}
-	{#if user.hasT1Review}
-		<SidebarButton icon={ClipboardPen} href="/dashboard/admin/review" admin={true}>
-			Review
-		</SidebarButton>
-	{/if}
-	{#if user.hasT2Review}
-	<SidebarButton icon={ClipboardPenLine} href="/dashboard/admin/ysws-review" admin={true}>
-	YSWS Review
-	</SidebarButton>
-	{/if}
-	{#if user.hasAdmin}
-		<SidebarButton icon={ShieldUser} href="/dashboard/admin/admin" admin={true}>
-			Admin
-		</SidebarButton>
-	{/if}
-	<div class="grow"></div>
-	<a
-		href={isOnOwnUserPage ? null : `/dashboard/users/${user.id}`}
-		class={`pei-button pei7 flex h-15 flex-row gap-3 overflow-clip rounded-lg border-2 shadow-xl/3 transition-colors 2xl:h-16 ${isOnOwnUserPage ? 'border-primary-700 bg-primary-800' : 'border-primary-800 bg-primary-900 hover:bg-primary-800 hover:outline-2 hover:outline-primary-100'}`}
-	>
-		<div class="aspect-square">
-			<img src={user.profilePicture} alt="User profile pic" class="aspect-square h-full" />
-		</div>
-		<div class="flex grow flex-col justify-center truncate">
-			<p class="truncate font-medium">
-				{user.name}
-			</p>
-			<p class="text-sm">{Math.floor(user.clay)} clay · {Math.floor(user.brick)} brick</p>
-		</div>
-	</a>
-	<SidebarButton icon={LogOut} href="/auth/logout">Log out</SidebarButton>
-</div>
+</header>
