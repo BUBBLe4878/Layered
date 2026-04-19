@@ -43,6 +43,7 @@ export async function load({ locals, url }) {
 		.select({
 			id: user.id,
 			slackId: user.slackId,
+			profilePicture: user.profilePicture,
 			name: user.name
 		})
 		.from(user)
