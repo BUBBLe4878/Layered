@@ -8,7 +8,7 @@
 
 	type SortType = 'newest' | 'trending' | 'random' | 'liked';
 
-	let devlogs = $state([...data.devlogs]);
+	let devlogs = $state(Array.isArray(data.devlogs) ? [...data.devlogs] : []);
 	let hasMore = $state(data.hasMore);
 	let nextOffset = $state(data.nextOffset);
 	let loadingMore = $state(false);
