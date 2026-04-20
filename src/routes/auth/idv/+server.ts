@@ -5,7 +5,7 @@ export function GET({ url }) {
 	// const state = crypto.randomBytes(32).toString('hex');
 	// cookies.set('oauth_state', state, { path: '/', maxAge: 600 });
 	//const scopes = 'openid profile email phone address birthdate';//when we get verified we do this
-	const scopes = 'openid profile email';
+	const scopes = 'openid profile email name profile verification_status slack_id';
 	const redirectURL = new URL(`https://${env.IDV_DOMAIN}/oauth/authorize`);
 	redirectURL.searchParams.set('client_id', env.IDV_CLIENT_ID ?? '');
 	redirectURL.searchParams.set('redirect_uri', `${url.protocol}//${url.host}/auth/callback`);
