@@ -8,6 +8,8 @@
 
 	type SortType = 'newest' | 'trending' | 'random' | 'liked';
 
+	console.log('🔍 [Explore Page] Initial data:', data);
+
 	let devlogs = $state([...data.devlogs]);
 	let hasMore = $state(data.hasMore);
 	let nextOffset = $state(data.nextOffset);
@@ -20,6 +22,7 @@
 	const rootMargin = '320px 0px';
 
 	function hydrateDevlogs(rawDevlogs: typeof data.devlogs) {
+		console.log('🔍 [hydrateDevlogs] Processing', rawDevlogs.length, 'devlogs');
 		return rawDevlogs.map((entry) => ({
 			...entry,
 			devlog: {
@@ -30,26 +33,41 @@
 	}
 
 	async function loadMoreDevlogs() {
-		if (loadingMore || !hasMore) return;
+		if (loadingMore || !hasMore) {
+			console.log('🔍 [loadMoreDevlogs] Skipped - loadingMore:', loadingMore, 'hasMore:', hasMore);
+			return;
+		}
+		
 		loadingMore = true;
 		loadError = '';
+		console.log('🔍 [loadMoreDevlogs] Starting with offset:', nextOffset);
+
 		try {
 			const params = new URLSearchParams({
 				offset: `${nextOffset}`,
 				sort: sortBy
 			});
+			console.log('🔍 [loadMoreDevlogs] Fetching with params:', params.toString());
+
 			const response = await fetch(`/dashboard/explore?${params.toString()}`);
+			console.log('🔍 [loadMoreDevlogs] Response status:', response.status);
+
 			if (!response.ok) {
-				throw new Error('Failed to load more devlogs');
+				throw new Error(`Failed to load more devlogs: ${response.status}`);
 			}
+
 			const payload = await response.json();
+			console.log('🔍 [loadMoreDevlogs] Got payload:', payload);
+
 			const incoming = hydrateDevlogs(payload.devlogs ?? []);
 			devlogs = [...devlogs, ...incoming];
 			nextOffset = payload.nextOffset ?? nextOffset + incoming.length;
 			hasMore = Boolean(payload.hasMore);
+
+			console.log('🔍 [loadMoreDevlogs] Updated - devlogs count:', devlogs.length, 'hasMore:', hasMore);
 		} catch (error) {
-			console.error(error);
-			loadError = 'Could not load more right now.';
+			console.error('❌ [loadMoreDevlogs] Error:', error);
+			loadError = error instanceof Error ? error.message : 'Could not load more right now.';
 		} finally {
 			loadingMore = false;
 		}
@@ -64,6 +82,8 @@
 		e.preventDefault();
 		e.stopPropagation();
 
+		console.log('🔍 [toggleLike] devlogId:', devlogId, 'currentLiked:', currentLiked);
+
 		try {
 			const response = await fetch('/api/devlog', {
 				method: 'POST',
@@ -74,11 +94,14 @@
 				})
 			});
 
+			console.log('🔍 [toggleLike] Response status:', response.status);
+
 			if (!response.ok) {
 				throw new Error('Failed to update like');
 			}
 
 			const result = await response.json();
+			console.log('🔍 [toggleLike] Result:', result);
 
 			// Update the local state
 			devlogs[index].devlog.userLiked = result.liked;
@@ -88,12 +111,17 @@
 				devlogs[index].devlog.likeCount -= 1;
 			}
 		} catch (error) {
-			console.error('Like error:', error);
+			console.error('❌ [toggleLike] Error:', error);
 		}
 	}
 
 	async function changeSortOrder(newSort: SortType) {
-		if (newSort === sortBy) return;
+		if (newSort === sortBy) {
+			console.log('🔍 [changeSortOrder] Same sort, skipping');
+			return;
+		}
+
+		console.log('🔍 [changeSortOrder] Changing from', sortBy, 'to', newSort);
 
 		sortBy = newSort;
 		devlogs = [];
@@ -102,25 +130,39 @@
 
 		try {
 			const params = new URLSearchParams({ offset: '0', sort: newSort });
+			console.log('🔍 [changeSortOrder] Fetching with params:', params.toString());
+
 			const response = await fetch(`/dashboard/explore?${params.toString()}`);
+			console.log('🔍 [changeSortOrder] Response status:', response.status);
+
 			if (!response.ok) throw new Error('Failed to load devlogs');
 
 			const payload = await response.json();
+			console.log('🔍 [changeSortOrder] Got payload:', payload);
+
 			devlogs = hydrateDevlogs(payload.devlogs ?? []);
 			nextOffset = payload.nextOffset ?? 0;
 			hasMore = Boolean(payload.hasMore);
+
+			console.log('🔍 [changeSortOrder] Updated - devlogs count:', devlogs.length);
 		} catch (error) {
-			console.error(error);
-			loadError = 'Could not load devlogs.';
+			console.error('❌ [changeSortOrder] Error:', error);
+			loadError = error instanceof Error ? error.message : 'Could not load devlogs.';
 		}
 	}
 
 	onMount(() => {
-		if (!hasMore || !sentinel) return;
+		console.log('🔍 [onMount] Mounting observer');
+		if (!hasMore || !sentinel) {
+			console.log('🔍 [onMount] Skipped - hasMore:', hasMore, 'sentinel:', !!sentinel);
+			return;
+		}
+
 		observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
 					if (entry.isIntersecting) {
+						console.log('🔍 [IntersectionObserver] Triggered');
 						loadMoreDevlogs();
 					}
 				});
