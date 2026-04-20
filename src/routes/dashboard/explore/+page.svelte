@@ -116,21 +116,12 @@
 					<form
 						method="POST"
 						action="?/toggleLike"
-						use:enhance={({ result }) => {
-							if (!result?.data?.success) return;
-					
-							const liked = result.data.liked;
-					
-							// ✅ authoritative update from server (NO math guessing)
-							devlogs = devlogs.map((d, i) => {
-								if (i !== index) return d;
-					
-								return {
-									...d,
-									userLiked: liked,
-									likeCount: result.data.likeCount
-								};
-							});
+						use:enhance={() => {
+							return async ({ result }) => {
+								if (result?.data?.success) {
+									location.reload();
+								}
+							};
 						}}
 						class="absolute bottom-2 left-2"
 					>
