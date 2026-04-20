@@ -1,46 +1,51 @@
-// src/routes/dashboard/explore/+server.ts
+// src/routes/explore/+server.ts (or a +page.server.ts action)
+import { db } from '$lib/server/db/index.js';
+import { devlogLike } from '$lib/server/db/schema.js';
+import { eq, and } from 'drizzle-orm';
 
-import { json } from '@sveltejs/kit';
-import { fetchExploreDevlogs, type SortType, DEVLOGS_PAGE_SIZE } from './devlogs.js';
+export const actions = {
+  toggleLike: async ({ request, locals }) => {
+    if (!locals.user?.id) {
+      return { error: 'Not authenticated' };
+    }
 
-export async function GET({ url, locals }) {
-	console.log('🔍 [Explore GET] Request received');
-	const offsetParam = url.searchParams.get('offset');
-	const sortParam = url.searchParams.get('sort') as SortType | null;
+    const data = await request.formData();
+    const devlogId = parseInt(data.get('devlogId') as string);
 
-	console.log('🔍 [Explore GET] Params - offset:', offsetParam, 'sort:', sortParam);
+    try {
+      // Check if already liked
+      const existing = await db
+        .select()
+        .from(devlogLike)
+        .where(
+          and(
+            eq(devlogLike.devlogId, devlogId),
+            eq(devlogLike.userId, locals.user.id)
+          )
+        );
 
-	const offset = offsetParam ? Number.parseInt(offsetParam, 10) : 0;
-	const sort: SortType = sortParam || 'newest';
+      if (existing.length > 0) {
+        // Unlike
+        await db
+          .delete(devlogLike)
+          .where(
+            and(
+              eq(devlogLike.devlogId, devlogId),
+              eq(devlogLike.userId, locals.user.id)
+            )
+          );
+      } else {
+        // Like
+        await db.insert(devlogLike).values({
+          devlogId,
+          userId: locals.user.id
+        });
+      }
 
-	if (!Number.isFinite(offset) || offset < 0) {
-		console.error('❌ [Explore GET] Invalid offset:', offset);
-		return json({ error: 'Invalid offset' }, { status: 400 });
-	}
-
-	try {
-		console.log('🔍 [Explore GET] Calling fetchExploreDevlogs...');
-		const devlogs = await fetchExploreDevlogs(offset, sort, locals.user?.id);
-		console.log('🔍 [Explore GET] Got devlogs:', devlogs.length);
-
-		const nextOffset = offset + devlogs.length;
-		const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
-
-		console.log('🔍 [Explore GET] Returning - nextOffset:', nextOffset, 'hasMore:', hasMore);
-
-		return json({
-			devlogs,
-			nextOffset,
-			hasMore
-		});
-	} catch (err) {
-		console.error('❌ [Explore GET] Error:', err);
-		return json(
-			{ 
-				error: 'Failed to fetch devlogs',
-				details: err instanceof Error ? err.message : String(err)
-			},
-			{ status: 500 }
-		);
-	}
-}
+      return { success: true };
+    } catch (err) {
+      console.error('Like toggle error:', err);
+      return { error: 'Failed to toggle like' };
+    }
+  }
+};
