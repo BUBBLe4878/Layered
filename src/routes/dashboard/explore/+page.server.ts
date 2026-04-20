@@ -5,64 +5,51 @@ import { devlogLike } from '$lib/server/db/schema.js';
 import { eq, and } from 'drizzle-orm';
 
 export async function load({ url, locals }) {
-	console.log('🔍 [Load] Starting explore page load');
-	
 	const sortParam = url.searchParams.get('sort') as SortType | null;
 	const sort: SortType = sortParam || 'newest';
-	console.log('🔍 [Load] Sort:', sort, 'User:', locals.user?.id);
 
 	try {
-		console.log('🔍 [Load] Calling fetchExploreDevlogs with sort:', sort);
 		const devlogs = await fetchExploreDevlogs(0, sort, locals.user?.id);
-		
-		console.log('🔍 [Load] Got result:', {
-			isArray: Array.isArray(devlogs),
-			length: Array.isArray(devlogs) ? devlogs.length : 'N/A',
-			type: typeof devlogs
-		});
 
 		if (!Array.isArray(devlogs)) {
-			console.error('❌ [Load] devlogs is not an array:', devlogs);
-			throw new Error(`Expected array, got ${typeof devlogs}`);
+			throw new Error('Devlogs not an array');
 		}
-
-		const nextOffset = devlogs.length;
-		const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
-
-		console.log('🔍 [Load] Returning data:', { 
-			devlogsCount: devlogs.length, 
-			nextOffset, 
-			hasMore 
-		});
 
 		return {
 			devlogs,
-			nextOffset,
-			hasMore
+			nextOffset: devlogs.length,
+			hasMore: devlogs.length === DEVLOGS_PAGE_SIZE
 		};
 	} catch (err) {
-		console.error('❌ [Load] Error:', err);
-		const msg = err instanceof Error ? err.message : String(err);
-		console.error('❌ [Load] Full stack:', err);
-		throw svelteError(500, `Failed to load explore: ${msg}`);
+		throw svelteError(500, 'Failed to load explore');
 	}
 }
 
 export const actions = {
 	toggleLike: async ({ request, locals }) => {
-		console.log('🔵 toggleLike action called');
-		console.log('User ID:', locals.user?.id);
-		
+		// 🔐 auth guard
 		if (!locals.user?.id) {
-			console.log('❌ No user ID');
-			return { error: 'Not authenticated' };
+			return {
+				success: false,
+				error: 'Not authenticated'
+			};
 		}
 
-		const data = await request.formData();
-		const devlogId = parseInt(data.get('devlogId') as string);
-		console.log('📌 Like/Unlike devlog:', devlogId);
-		
+		const form = await request.formData();
+		const raw = form.get('devlogId');
+
+		const devlogId = Number(raw);
+
+		// 🛑 validation
+		if (!devlogId || Number.isNaN(devlogId)) {
+			return {
+				success: false,
+				error: 'Invalid devlogId'
+			};
+		}
+
 		try {
+			// check existing like
 			const existing = await db
 				.select()
 				.from(devlogLike)
@@ -72,11 +59,10 @@ export const actions = {
 						eq(devlogLike.userId, locals.user.id)
 					)
 				);
-			
-			console.log('Found existing:', existing.length > 0);
-			
-			if (existing.length > 0) {
-				console.log('🗑️ Deleting like');
+
+			const alreadyLiked = existing.length > 0;
+
+			if (alreadyLiked) {
 				await db
 					.delete(devlogLike)
 					.where(
@@ -85,18 +71,29 @@ export const actions = {
 							eq(devlogLike.userId, locals.user.id)
 						)
 					);
-				return { success: true, liked: false };
-			} else {
-				console.log('➕ Inserting like');
-				await db.insert(devlogLike).values({
-					devlogId,
-					userId: locals.user.id
-				});
-				return { success: true, liked: true };
+
+				return {
+					success: true,
+					liked: false
+				};
 			}
+
+			await db.insert(devlogLike).values({
+				devlogId,
+				userId: locals.user.id
+			});
+
+			return {
+				success: true,
+				liked: true
+			};
 		} catch (err) {
-			console.error('❌ Like toggle error:', err);
-			return { error: 'Failed to toggle like' };
+			console.error('toggleLike error:', err);
+
+			return {
+				success: false,
+				error: 'Database error'
+			};
 		}
 	}
 };
