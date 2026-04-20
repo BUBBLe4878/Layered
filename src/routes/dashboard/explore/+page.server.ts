@@ -81,11 +81,11 @@ export const actions = {
 
 			// 🔥 ALWAYS get real count from DB (fixes 2→4 bug)
 			const likeCountResult = await db
-				.select({ count: sql<number>`count(*)` })
+				.select({ count: devlogLike.id })
 				.from(devlogLike)
 				.where(eq(devlogLike.devlogId, devlogId));
-
-			const likeCount = Number(likeCountResult[0]?.count ?? 0);
+			
+			const likeCount = likeCountResult.length;
 
 			return json({
 				success: true,
