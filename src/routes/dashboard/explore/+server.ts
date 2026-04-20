@@ -1,51 +1,20 @@
-// src/routes/explore/+server.ts (or a +page.server.ts action)
-import { db } from '$lib/server/db/index.js';
-import { devlogLike } from '$lib/server/db/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { json } from '@sveltejs/kit';
+import { DEVLOGS_PAGE_SIZE, fetchExploreDevlogs } from './devlogs.js';
 
-export const actions = {
-  toggleLike: async ({ request, locals }) => {
-    if (!locals.user?.id) {
-      return { error: 'Not authenticated' };
-    }
+export async function GET({ url }) {
+	const offsetParam = url.searchParams.get('offset');
+	const offset = offsetParam ? Number.parseInt(offsetParam, 10) : 0;
 
-    const data = await request.formData();
-    const devlogId = parseInt(data.get('devlogId') as string);
+	if (!Number.isFinite(offset) || offset < 0) {
+		return json({ error: 'Invalid offset' }, { status: 400 });
+	}
 
-    try {
-      // Check if already liked
-      const existing = await db
-        .select()
-        .from(devlogLike)
-        .where(
-          and(
-            eq(devlogLike.devlogId, devlogId),
-            eq(devlogLike.userId, locals.user.id)
-          )
-        );
+	const devlogs = await fetchExploreDevlogs(offset);
+	const nextOffset = offset + devlogs.length;
 
-      if (existing.length > 0) {
-        // Unlike
-        await db
-          .delete(devlogLike)
-          .where(
-            and(
-              eq(devlogLike.devlogId, devlogId),
-              eq(devlogLike.userId, locals.user.id)
-            )
-          );
-      } else {
-        // Like
-        await db.insert(devlogLike).values({
-          devlogId,
-          userId: locals.user.id
-        });
-      }
-
-      return { success: true };
-    } catch (err) {
-      console.error('Like toggle error:', err);
-      return { error: 'Failed to toggle like' };
-    }
-  }
-};
+	return json({
+		devlogs,
+		nextOffset,
+		hasMore: devlogs.length === DEVLOGS_PAGE_SIZE
+	});
+}
