@@ -141,89 +141,27 @@ export const actions: Actions = {
 	},
 
 	/* ---------------- FETCH PII ---------------- */
-	fetchPII: async ({ locals, params }) => {
-		if (!locals.user) throw error(500);
-		if (!locals.user.hasAdmin) throw error(403);
-
-		const id = Number(params.id);
-
-		const [row] = await db
-			.select({ idvToken: user.idvToken })
-			.from(user)
-			.where(eq(user.id, id));
-
-		if (!row) throw error(404, { message: 'user not found' });
-
-		if (!row.idvToken) {
-			return fail(400, {
-				fetchPII: {
-					success: false,
-					errorMessage: 'missing token',
-					first_name: null,
-					last_name: null,
-					email: null,
-					phone_number: null,
-					birthday: null,
-					address: null
+	return {
+	fetchPII: {
+		success: true,
+		errorMessage: '',
+		first_name: first_name ?? '',
+		last_name: last_name ?? '',
+		primary_email: email ?? '',
+		phone_number: phone_number ?? '',
+		birthday: birthday ?? '',
+		address: address
+			? {
+					id: address.id ?? '',
+					first_name: address.first_name ?? '',
+					last_name: address.last_name ?? '',
+					line_1: address.line_1 ?? '',
+					line_2: address.line_2 ?? '',
+					city: address.city ?? '',
+					state: address.state ?? '',
+					postal_code: address.postal_code ?? '',
+					country: address.country ?? ''
 				}
-			});
-		}
-
-		let userData;
-
-		try {
-			const token = decrypt(row.idvToken);
-			userData = await getUserData(token);
-		} catch {
-			return fail(400, {
-				fetchPII: {
-					success: false,
-					errorMessage: 'invalid token',
-					first_name: null,
-					last_name: null,
-					email: null,
-					phone_number: null,
-					birthday: null,
-					address: null
-				}
-			});
-		}
-
-		const first_name = userData?.first_name ?? null;
-		const last_name = userData?.last_name ?? null;
-
-		const email =
-			userData?.primary_email ??
-			userData?.email ??
-			userData?.emails?.[0]?.email ??
-			null;
-
-		const phone_number =
-			userData?.phone_number ??
-			userData?.phone_numbers?.[0]?.number ??
-			null;
-
-		const birthday =
-			userData?.birthday ??
-			userData?.date_of_birth ??
-			null;
-
-		const address =
-			userData?.addresses?.find((a: any) => a.primary) ??
-			userData?.addresses?.[0] ??
-			null;
-
-		return {
-			fetchPII: {
-				success: true,
-				errorMessage: '',
-				first_name,
-				last_name,
-				email,
-				phone_number,
-				birthday,
-				address
-			}
-		};
+			: null
 	}
 };
