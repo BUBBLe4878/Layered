@@ -117,40 +117,64 @@
 						method="POST"
 						action="?/toggleLike"
 						use:enhance={({ result }) => {
-
-							if (!result?.data?.success) return;
-
+							// ❌ server failed → rollback
+							if (!result?.data?.success) {
+								devlogs = devlogs.map((d, i) => {
+									if (i !== index) return d;
+					
+									// rollback: reverse optimistic change
+									return {
+										...d,
+										userLiked: !d.userLiked,
+										likeCount: d.likeCount + (d.userLiked ? 1 : -1)
+									};
+								});
+								return;
+							}
+					
+							// ✅ server confirmed → sync final state
 							const liked = result.data.liked;
-
-							// 🔥 IMPORTANT: immutable update (THIS FIXES YOUR BUG)
+					
 							devlogs = devlogs.map((d, i) => {
 								if (i !== index) return d;
-
+					
 								return {
 									...d,
 									userLiked: liked,
-									likeCount: d.likeCount + (liked ? 1 : -1)
+									likeCount: liked
+										? d.likeCount + 1
+										: d.likeCount - 1
 								};
 							});
 						}}
 					>
-
 						<input type="hidden" name="devlogId" value={devlog.devlog.id} />
-
+					
 						<button
 							type="submit"
-							class={`cursor-pointer flex items-center gap-1 px-2 py-1 rounded text-xs ${
-								devlog.userLiked
-									? 'bg-red-500 text-white'
-									: 'bg-white/80 text-black'
-							}`}
+							onclick={() => {
+								// 🚀 OPTIMISTIC UPDATE (instant UI)
+								devlogs = devlogs.map((d, i) => {
+									if (i !== index) return d;
+					
+									const next = !d.userLiked;
+					
+									return {
+										...d,
+										userLiked: next,
+										likeCount: d.likeCount + (next ? 1 : -1)
+									};
+								});
+							}}
+							class="cursor-pointer flex items-center gap-1 px-2 py-1 rounded text-xs transition-all"
 						>
-							<Heart size={14} class={devlog.userLiked ? 'fill-current' : ''} />
-							{devlog.likeCount}
+							<Heart
+								size={14}
+								class={devlog.userLiked ? 'fill-current' : ''}
+							/>
+							<span>{devlog.likeCount}</span>
 						</button>
-
 					</form>
-
 				</div>
 
 				<!-- VIEW COUNT -->
