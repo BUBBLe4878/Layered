@@ -1,10 +1,14 @@
 import { db } from '$lib/server/db/index.js';
-import { user, devlog, session, impersonateAuditLog, currencyAuditLog } from '$lib/server/db/schema.js';
-
+import {
+	user,
+	devlog,
+	session,
+	impersonateAuditLog,
+	currencyAuditLog
+} from '$lib/server/db/schema.js';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Actions } from './$types';
-
 import {
 	createSession,
 	DAY_IN_MS,
@@ -12,115 +16,126 @@ import {
 	SESSION_EXPIRY_DAYS,
 	setSessionTokenCookie
 } from '$lib/server/auth';
-
 import { decrypt } from '$lib/server/encryption';
 import { getUserData } from '$lib/server/idvUserData';
-import { withSlackProfile } from '$lib/server/slack';
-
-/* =========================================================
-   LOAD
-========================================================= */
 
 export async function load({ locals, params }) {
-	if (!locals.user) throw error(500);
-	if (!locals.user.hasAdmin) throw error(403, { message: 'oi get out' });
+	if (!locals.user) {
+		throw error(500);
+	}
+	if (!locals.user.hasAdmin) {
+		throw error(403, { message: 'oi get out' });
+	}
 
-	const id = Number(params.id);
+	const id: number = parseInt(params.id);
 
-	const [queriedUser] = await db
-		.select()
+	const [queriedUser] = await db.select().from(user).where(eq(user.id, id));
+	const [{ devlogCount }] = (await db
+		.select({
+			devlogCount: sql`COALESCE(COUNT(${devlog.id}), 0)`
+		})
 		.from(user)
-		.where(eq(user.id, id));
+		.leftJoin(devlog, and(eq(devlog.userId, user.id), eq(devlog.deleted, false)))
+		.where(eq(user.id, id))
+		.groupBy(user.id)) ?? [{ devlogCount: 0 }];
 
 	if (!queriedUser) {
 		throw error(404, { message: 'user not found' });
 	}
-	
-	const result = await db
-		.select({
-			devlogCount: sql<number>`COALESCE(COUNT(${devlog.id}), 0)`
-		})
-		.from(user)
-		.leftJoin(
-			devlog,
-			and(eq(devlog.userId, user.id), eq(devlog.deleted, false))
-		)
-		.where(eq(user.id, id))
-		.groupBy(user.id);
-	
-	const devlogCount = result[0]?.devlogCount ?? 0;
-
-	const enrichedUser = await withSlackProfile(queriedUser);
 
 	return {
-		queriedUser: enrichedUser,
+		queriedUser,
 		devlogCount
 	};
 }
 
-/* =========================================================
-   ACTIONS
-========================================================= */
-
 export const actions = {
-	/* ---------------- PRIVILEGES ---------------- */
 	privileges: async ({ locals, request, params }) => {
-		if (!locals.user) throw error(500);
-		if (!locals.user.hasAdmin) throw error(403);
+		if (!locals.user) {
+			throw error(500);
+		}
+		if (!locals.user.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
 
-		const id = Number(params.id);
+		const id: number = parseInt(params.id);
+
 		const data = await request.formData();
+		const isPrinter = data.get('is_printer');
+		const hasT1Review = data.get('has_t1_review');
+		const hasT2Review = data.get('has_t2_review');
+		const hasAdmin = data.get('has_admin');
 
 		await db
 			.update(user)
 			.set({
-				isPrinter: data.get('is_printer') === 'on',
-				hasT1Review: data.get('has_t1_review') === 'on',
-				hasT2Review: data.get('has_t2_review') === 'on',
-				hasAdmin: data.get('has_admin') === 'on'
+				isPrinter: isPrinter === 'on',
+				hasT1Review: hasT1Review === 'on',
+				hasT2Review: hasT2Review === 'on',
+				hasAdmin: hasAdmin === 'on'
 			})
 			.where(eq(user.id, id));
 
+		const [queriedUser] = await db.select().from(user).where(eq(user.id, id));
+
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
+
 		return {
-			queriedUser: await db.query.user.findFirst({
-				where: eq(user.id, id)
-			})
+			queriedUser
 		};
 	},
 
-	/* ---------------- CURRENCY ---------------- */
 	currency: async ({ locals, request, params }) => {
-		if (!locals.user) throw error(500);
-		if (!locals.user.hasAdmin) throw error(403);
+		if (!locals.user) {
+			throw error(500);
+		}
+		if (!locals.user.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
 
-		const id = Number(params.id);
+		const id: number = parseInt(params.id);
+
 		const data = await request.formData();
-
-		const clay = Number(data.get('clay'));
-		const brick = Number(data.get('brick'));
-		const shopScore = Number(data.get('market_score'));
+		const clay = data.get('clay');
+		const brick = data.get('brick');
+		const shopScore = data.get('market_score');
 		const reason = data.get('reason')?.toString();
 
-		if (isNaN(clay) || isNaN(brick) || isNaN(shopScore)) {
+		if (
+			!clay ||
+			isNaN(parseFloat(clay.toString())) ||
+			!brick ||
+			isNaN(parseFloat(brick.toString())) ||
+			!shopScore ||
+			isNaN(parseFloat(shopScore.toString()))
+		) {
 			return fail(400, {
-				currency: { invalidFields: true }
+				currency: {
+					fields: { clay, brick, shopScore },
+					invalidFields: true
+				}
 			});
 		}
 
-		if (!reason) {
+		if (reason === null || reason === undefined || reason.length <= 0) {
 			throw error(400, { message: 'invalid reason' });
 		}
 
-		const [queriedUser] = await db
-			.select()
-			.from(user)
-			.where(eq(user.id, id));
+		const [queriedUser] = await db.select().from(user).where(eq(user.id, id));
 
-		if (!queriedUser) throw error(404, { message: 'user not found' });
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
 
 		await db
 			.update(user)
-			.set({ clay, brick, shopScore })
+			.set({
+				clay: parseFloat(clay.toString()),
+				brick: parseFloat(brick.toString()),
+				shopScore: parseFloat(shopScore.toString())
+			})
 			.where(eq(user.id, id));
 
 		await db.insert(currencyAuditLog).values({
@@ -129,95 +144,217 @@ export const actions = {
 			oldClay: queriedUser.clay,
 			oldBrick: queriedUser.brick,
 			oldShopScore: queriedUser.shopScore,
-			newClay: clay,
-			newBrick: brick,
-			newShopScore: shopScore,
+			newClay: parseFloat(clay.toString()),
+			newBrick: parseFloat(brick.toString()),
+			newShopScore: parseFloat(shopScore.toString()),
 			reason
 		});
 
+		const [queriedUserAfter] = await db.select().from(user).where(eq(user.id, id));
+
 		return {
-			queriedUserAfter: await db.query.user.findFirst({
-				where: eq(user.id, id)
-			})
+			queriedUserAfter: queriedUserAfter!
 		};
 	},
 
-	/* ---------------- IMPERSONATE ---------------- */
-	impersonate: async (event) => {
-		const { locals, params } = event;
+	refreshHackatime: async ({ locals, params }) => {
+		if (!locals.user) {
+			throw error(500);
+		}
+		if (!locals.user.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
 
-		if (!locals.user) throw error(500);
-		if (!locals.user.hasAdmin) throw error(403);
+		const id: number = parseInt(params.id);
 
-		const id = Number(params.id);
-
-		const [queriedUser] = await db
-			.select()
+		const [oldQueriedUser] = await db
+			.select({
+				slackId: user.slackId
+			})
 			.from(user)
 			.where(eq(user.id, id));
 
-		if (!queriedUser) throw error(404);
+		if (!oldQueriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
 
+		const hackatimeTrust = (
+			await (
+				await fetch(
+					`https://hackatime.hackclub.com/api/v1/users/${oldQueriedUser.slackId}/trust_factor`
+				)
+			).json()
+		)['trust_level'];
+
+		if (!hackatimeTrust) {
+			return error(418, {
+				message: 'failed to fetch hackatime trust factor, please try again later'
+			});
+		}
+
+		// Log out user
+		if (hackatimeTrust === 'red') {
+			await db.delete(session).where(eq(session.userId, id));
+		}
+
+		await db
+			.update(user)
+			.set({
+				hackatimeTrust
+			})
+			.where(eq(user.id, id));
+
+		const [queriedUser] = await db.select().from(user).where(eq(user.id, id));
+
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
+
+		return {
+			queriedUser
+		};
+	},
+
+	logout: async ({ locals, params }) => {
+		if (!locals.user) {
+			throw error(500);
+		}
+		if (!locals.user.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
+
+		const id: number = parseInt(params.id);
+
+		const [queriedUser] = await db.select().from(user).where(eq(user.id, id));
+
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
+
+		// Log out user
+		await db.delete(session).where(eq(session.userId, id));
+
+		return {
+			queriedUser
+		};
+	},
+
+	changeTrust: async ({ locals, request, params }) => {
+		if (!locals.user) {
+			throw error(500);
+		}
+		if (!locals.user.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
+
+		const id: number = parseInt(params.id);
+
+		const data = await request.formData();
+		const trust = data.get('trust');
+
+		if (!trust || !['green', 'blue', 'yellow', 'red'].includes(trust.toString())) {
+			return fail(400, {
+				changeTrust: {
+					invalidTrust: true
+				}
+			});
+		}
+
+		// Log out user if trust is set to red
+		if (trust === 'red') {
+			await db.delete(session).where(eq(session.userId, id));
+		}
+
+		await db
+			.update(user)
+			.set({
+				trust: trust.toString() as 'green' | 'blue' | 'yellow' | 'red'
+			})
+			.where(eq(user.id, id));
+
+		const [queriedUser] = await db.select().from(user).where(eq(user.id, id));
+
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
+
+		return {
+			queriedUser
+		};
+	},
+
+	impersonate: async (event) => {
+		const { locals, params } = event;
+
+		if (!locals.user) {
+			throw error(500);
+		}
+		if (!locals.user.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
+
+		const id: number = parseInt(params.id);
+
+		const [queriedUser] = await db.select().from(user).where(eq(user.id, id));
+
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
+
+		// Log the impersonation
 		await db.insert(impersonateAuditLog).values({
 			adminUserId: locals.user.id,
 			targetUserId: id
 		});
 
-		const token = generateSessionToken();
-
-		await createSession(token, id);
-
+		const sessionToken = generateSessionToken();
+		await createSession(sessionToken, id);
 		setSessionTokenCookie(
 			event,
-			token,
+			sessionToken,
 			new Date(Date.now() + DAY_IN_MS * SESSION_EXPIRY_DAYS)
 		);
 
-		throw redirect(302, '/dashboard');
+		return redirect(302, '/dashboard');
 	},
 
-	/* ---------------- LOGOUT ---------------- */
-	logout: async ({ locals, params }) => {
-		if (!locals.user) throw error(500);
-		if (!locals.user.hasAdmin) throw error(403);
+	fetchPII: async (event) => {
+		const { locals, params } = event;
 
-		const id = Number(params.id);
+		if (!locals.user) {
+			throw error(500);
+		}
 
-		await db.delete(session).where(eq(session.userId, id));
+		// Pretty important line
+		if (!locals.user.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
 
-		return {
-			success: true
-		};
-	},
-
-	/* ---------------- FETCH PII (FIXED + NORMALIZED) ---------------- */
-	fetchPII: async ({ locals, params }) => {
-		if (!locals.user) throw error(500);
-		if (!locals.user.hasAdmin) throw error(403);
-
-		const id = Number(params.id);
+		const id: number = parseInt(params.id);
 
 		const [queriedUser] = await db
-			.select({ idvToken: user.idvToken })
+			.select({
+				idvToken: user.idvToken
+			})
 			.from(user)
 			.where(eq(user.id, id));
 
-		if (!queriedUser) throw error(404);
-
-		const empty = {
-			success: false,
-			errorMessage: '',
-			first_name: '',
-			last_name: '',
-			primary_email: '',
-			phone_number: '',
-			birthday: '',
-			address: null
-		};
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
 
 		if (!queriedUser.idvToken) {
 			return fail(400, {
-				fetchPII: { ...empty, errorMessage: 'Missing IDV token' }
+				fetchPII: {
+					success: false,
+					errorMessage: 'IDV token not found, ask them to re-login',
+					first_name: null,
+					last_name: null,
+					primary_email: null,
+					phone_number: null,
+					birthday: null,
+					address: null
+				}
 			});
 		}
 
@@ -228,45 +365,33 @@ export const actions = {
 			userData = await getUserData(token);
 		} catch {
 			return fail(400, {
-				fetchPII: { ...empty, errorMessage: 'Invalid or expired token' }
+				fetchPII: {
+					success: false,
+					errorMessage: 'IDV token revoked/expired, ask them to re-login',
+					first_name: null,
+					last_name: null,
+					primary_email: null,
+					phone_number: null,
+					birthday: null,
+					address: null
+				}
 			});
 		}
 
-		const address = Array.isArray(userData.addresses)
-			? userData.addresses.find((a: any) => a.primary) ??
-			  userData.addresses[0] ??
-			  null
-			: null;
+		const { first_name, last_name, primary_email, birthday, phone_number, addresses } = userData;
+
+		const address = addresses?.find((address: { primary: boolean }) => address.primary);
 
 		return {
 			fetchPII: {
 				success: true,
 				errorMessage: '',
-				first_name: userData.first_name ?? '',
-				last_name: userData.last_name ?? '',
-				primary_email:
-					userData.primary_email ??
-					userData.email ??
-					userData.emails?.[0]?.email ??
-					'',
-				phone_number:
-					userData.phone_number ??
-					userData.phone_numbers?.[0]?.number ??
-					'',
-				birthday: userData.birthday ?? userData.date_of_birth ?? '',
-				address: address
-					? {
-							id: address.id ?? '',
-							first_name: address.first_name ?? '',
-							last_name: address.last_name ?? '',
-							line_1: address.line_1 ?? '',
-							line_2: address.line_2 ?? '',
-							city: address.city ?? '',
-							state: address.state ?? '',
-							postal_code: address.postal_code ?? '',
-							country: address.country ?? ''
-						}
-					: null
+				first_name,
+				last_name,
+				primary_email,
+				phone_number,
+				birthday,
+				address
 			}
 		};
 	}
