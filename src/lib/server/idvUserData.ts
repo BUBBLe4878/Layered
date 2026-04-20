@@ -14,7 +14,11 @@ export async function getUserData(token: string) {
 	const meJSON = await meRes.json();
 	const identity = meJSON.identity!;
 
-	// Fetch email and address from Slack using slack_id
+	// DEBUG: Log all IDV fields
+	console.log('🔍 IDV IDENTITY FIELDS:', Object.keys(identity));
+	console.log('🔍 FULL IDV IDENTITY:', JSON.stringify(identity, null, 2));
+
+	// Fetch email from Slack using slack_id (Slack is more up-to-date for email)
 	if (identity.slack_id) {
 		try {
 			const slackRes = await fetch(`https://slack.com/api/users.info?user=${identity.slack_id}`, {
@@ -25,24 +29,9 @@ export async function getUserData(token: string) {
 			});
 			if (slackRes.ok) {
 				const slackData = await slackRes.json();
-				
-				// DEBUG: Log full Slack profile
-				console.log('🔍 SLACK USER PROFILE:', JSON.stringify(slackData.user?.profile, null, 2));
-				console.log('🔍 Available Slack profile fields:', Object.keys(slackData.user?.profile || {}));
-				
-				if (slackData.ok && slackData.user?.profile) {
-					// Fetch email from Slack
-					if (slackData.user.profile.email) {
-						identity.email = slackData.user.profile.email;
-						console.log('Fetched email from Slack:', identity.email);
-					}
-					// Try different possible field names for address
-					const possibleAddressFields = ['location', 'address', 'street_address', 'real_name', 'phone'];
-					for (const field of possibleAddressFields) {
-						if (slackData.user.profile[field]) {
-							console.log(`Found field "${field}":`, slackData.user.profile[field]);
-						}
-					}
+				if (slackData.ok && slackData.user?.profile?.email) {
+					identity.email = slackData.user.profile.email;
+					console.log('Fetched email from Slack:', identity.email);
 				}
 			}
 		} catch (err) {
