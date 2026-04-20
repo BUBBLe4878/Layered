@@ -314,7 +314,7 @@
 
 					<h3 class="mt-3 mb-2 text-xl font-bold">address</h3>
 
-					{#if form?.fetchPII.address}
+					{#if form?.fetchPII?.address && form.fetchPII.address.line_1}
 						<div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
 							<DataCard title="Address ID">
 								<code>{form.fetchPII.address.id}</code>
