@@ -7,7 +7,8 @@ import {
 	serial,
 	timestamp,
 	real,
-	json
+	json,
+	unique
 } from 'drizzle-orm/pg-core';
 
 export const hackatimeTrustEnum = pgEnum('hackatime_trust', ['green', 'blue', 'yellow', 'red']);
@@ -242,6 +243,33 @@ export const devlog = pgTable('devlog', {
 	updatedAt: timestamp().notNull().defaultNow()
 });
 
+// Devlog Interactions - NEW TABLES
+export const devlogLike = pgTable(
+	'devlog_like',
+	{
+		id: serial().primaryKey(),
+		devlogId: integer()
+			.notNull()
+			.references(() => devlog.id),
+		userId: integer()
+			.notNull()
+			.references(() => user.id),
+		createdAt: timestamp().notNull().defaultNow()
+	},
+	(table) => ({
+		uniqueConstraint: unique('devlog_like_unique').on(table.devlogId, table.userId)
+	})
+);
+
+export const devlogView = pgTable('devlog_view', {
+	id: serial().primaryKey(),
+	devlogId: integer()
+		.notNull()
+		.references(() => devlog.id),
+	userId: integer().references(() => user.id), // null if anonymous
+	createdAt: timestamp().notNull().defaultNow()
+});
+
 // Market
 
 export const marketItem = pgTable('market_item', {
@@ -360,3 +388,5 @@ export type T2Review = typeof t2Review.$inferSelect;
 export type MarketItem = typeof marketItem.$inferSelect;
 export type Club = typeof club.$inferSelect;
 export type ClubMembership = typeof clubMembership.$inferSelect;
+export type DevlogLike = typeof devlogLike.$inferSelect;
+export type DevlogView = typeof devlogView.$inferSelect;
