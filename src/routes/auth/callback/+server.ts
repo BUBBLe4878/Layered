@@ -14,6 +14,30 @@ import { encrypt } from '$lib/server/encryption.js';
 import { getUserData } from '$lib/server/idvUserData';
 import { airtableBase } from '$lib/server/airtable';
 
+async function fetchIDVUserInfo(token: string) {
+	try {
+		const response = await fetch(`https://${env.IDV_DOMAIN}/oauth/userinfo`, {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json'
+			}
+		});
+
+		if (!response.ok) {
+			console.error('Failed to fetch userinfo:', response.statusText);
+			return null;
+		}
+
+		const data = await response.json();
+		console.log('🔍 IDV USERINFO:', JSON.stringify(data, null, 2));
+		return data;
+	} catch (err) {
+		console.error('Error fetching userinfo:', err);
+		return null;
+	}
+}
+
 export async function GET(event) {
 	const url = event.url;
 	const code = url.searchParams.get('code');
@@ -44,7 +68,7 @@ export async function GET(event) {
 
 	const token = (await tokenRes.json()).access_token;
 
-	// Get user data
+	// Get user data from IDV
 	let userData;
 
 	try {
@@ -53,53 +77,28 @@ export async function GET(event) {
 		return redirect(302, '/auth/failed');
 	}
 
+	// Fetch comprehensive user info from userinfo endpoint
+	const userInfo = await fetchIDVUserInfo(token);
+
 	const { 
 		id, 
 		slack_id, 
 		first_name, 
 		last_name, 
 		primary_email, 
-		ysws_eligible,
-		// Additional fields from IDV
-		phone,
-		phoneNumber,
-		phone_number,
-		address,
-		street_address,
-		street,
-		city,
-		state,
-		province,
-		zipCode,
-		zip,
-		postal_code,
-		country,
-		dateOfBirth,
-		date_of_birth,
-		birthday,
-		age,
-		gender,
-		sex,
-		pronouns,
-		bio,
-		biography,
-		organization,
-		org,
-		title,
-		job_title,
-		company,
-		website,
-		website_url,
-		twitter,
-		twitter_handle,
-		github,
-		github_username,
-		linkedin,
-		linkedin_profile,
-		profilePicture,
-		profile_picture,
-		picture
+		ysws_eligible 
 	} = userData;
+
+	// Extract from userinfo endpoint
+	const {
+		given_name,
+		family_name,
+		email,
+		phone_number,
+		address, // This is a structured object
+		birthdate,
+		picture
+	} = userInfo || {};
 
 	if (
 		!ysws_eligible &&
@@ -110,13 +109,11 @@ export async function GET(event) {
 		return redirect(302, '/auth/ineligible');
 	}
 
-	// Use IDV data for profile (no Slack bot token required)
+	// Use IDV data for profile
 	const username = first_name && last_name ? `${first_name} ${last_name}` : first_name || 'User';
-	// Generate avatar using UI Avatars service with user's name - creates nice colorful initials
-	const profilePic = profilePicture || profile_picture || picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
+	const profilePic = picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
 
 	// Check Hackatime trust
-	// Bypasses check if hackatime fetching fails for some reason, e.g. hackatime down
 	let hackatimeTrust: string = 'blue';
 
 	try {
@@ -166,35 +163,45 @@ export async function GET(event) {
 
 	const ref = event.cookies.get('ref');
 
+	// Parse address if it's a structured object
+	let addressString = '';
+	let city = '';
+	let state = '';
+	let zipCode = '';
+	let country = '';
+
+	if (address) {
+		if (typeof address === 'object') {
+			addressString = address.street_address || '';
+			city = address.locality || '';
+			state = address.region || '';
+			zipCode = address.postal_code || '';
+			country = address.country || '';
+		} else if (typeof address === 'string') {
+			addressString = address;
+		}
+	}
+
 	// Prepare comprehensive user data
 	const comprehensiveUserData = {
 		idvToken: encrypt(token),
 		name: username,
-		firstName: first_name,
-		lastName: last_name,
-		email: primary_email,
-		phone: phone || phoneNumber || phone_number,
-		address: address || street_address || street,
+		firstName: given_name || first_name,
+		lastName: family_name || last_name,
+		email: email || primary_email,
+		phone: phone_number,
+		address: addressString,
 		city: city,
-		state: state || province,
-		zipCode: zipCode || zip || postal_code,
+		state: state,
+		zipCode: zipCode,
 		country: country,
-		dateOfBirth: dateOfBirth || date_of_birth || birthday ? new Date(dateOfBirth || date_of_birth || birthday) : null,
-		age: age,
-		gender: gender || sex,
-		pronouns: pronouns,
-		bio: bio || biography,
-		organization: organization || org,
-		title: title || job_title,
-		company: company,
-		website: website || website_url,
-		twitter: twitter || twitter_handle,
-		github: github || github_username,
-		linkedin: linkedin || linkedin_profile,
+		dateOfBirth: birthdate ? new Date(birthdate) : null,
 		profilePicture: profilePic,
 		lastLoginAt: new Date(Date.now()),
 		hackatimeTrust
 	};
+
+	console.log('✅ Comprehensive user data:', comprehensiveUserData);
 
 	if (databaseUser) {
 		// Update user with comprehensive data
@@ -234,7 +241,7 @@ export async function GET(event) {
 			await airtableBase('tblwUPbRqbRBnQl7G').create({
 				fldMYF9BuxKbRuSJt: first_name + ' ' + last_name, // Name
 				fldXbtQyDOFpWwGBQ: databaseUser.id, // User ID
-				fldkTgzCj0sz01QQM: primary_email, // Email
+				fldkTgzCj0sz01QQM: email || primary_email, // Email
 				fldeNiHX4OhZEDWM5: 0, // Project count
 				fld1Sssrs7K69cN0i: 0, // Verified ship count
 				fldaPDWM3wrIYOAEf: ref // Referral code
