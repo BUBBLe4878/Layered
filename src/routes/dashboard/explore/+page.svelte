@@ -68,12 +68,11 @@
 		const formData = new FormData();
 		formData.append('devlogId', devlogId.toString());
 
-		// POST to current page path + action name
+		// Add the /toggleLike action to the form data
+		formData.append('_action', 'toggleLike');
+
 		const response = await fetch(window.location.pathname, {
 			method: 'POST',
-			headers: {
-				'x-sveltekit-action': '/toggleLike'
-			},
 			body: formData
 		});
 
@@ -94,6 +93,7 @@
 		console.error('Like error:', error);
 	}
 }
+
 	async function changeSortOrder(newSort: SortType) {
 		if (newSort === sortBy) return;
 
