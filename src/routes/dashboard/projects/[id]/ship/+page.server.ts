@@ -125,7 +125,7 @@ export const actions = {
 
         // Double dipping
 		if (doubleDippingWith !== 'none' && doubleDippingWith !== 'enclosure') {
-			return error(400);
+			throw error(400, { message: 'invalid double dip selection' });
 		}
 
 		const printablesUrlObj = new URL(printablesUrlString.trim());
@@ -138,15 +138,19 @@ export const actions = {
 			.map((s) => s.trim())
 			.filter((s) => s.length > 0);
 		if (allowedLicenseIds.length === 0) {
-			return error(500, { message: 'license validation not configured' });
+			throw error(500, { message: 'license validation not configured' });
 		}
 
 		try {
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
 			const graphqlResponse = await fetch('https://api.printables.com/graphql/', {
 				method: 'POST',
 				headers: {
 					'content-type': 'application/json'
 				},
+				signal: controller.signal,
 				body: JSON.stringify({
 					operationName: 'PrintDetail',
 					query: `query PrintDetail($id: ID!) {
@@ -162,6 +166,9 @@ export const actions = {
 					variables: { id: modelId }
 				})
 			});
+
+			clearTimeout(timeoutId);
+
 			if (!graphqlResponse.ok) {
 				return fail(400, {
 					invalid_printables_url: true
@@ -208,11 +215,11 @@ export const actions = {
 		const editorFileValid = editorFileExists && editorFile.size <= MAX_UPLOAD_SIZE;
 
 		if (!editorUrlExists && !editorFileExists) {
-			return error(400, { message: "editor file or url doesn't exist" });
+			throw error(400, { message: "editor file or url doesn't exist" });
 		}
 
 		if (editorUrlExists && editorFileExists) {
-			return error(400, { message: 'editor file or url both exist' });
+			throw error(400, { message: 'editor file or url both exist' });
 		}
 
 		if (editorFileExists && !editorFileValid) {
@@ -264,97 +271,108 @@ export const actions = {
 			.limit(1);
 
 		if (!queriedProject) {
-			return error(404, { message: 'project not found' });
+			throw error(404, { message: 'project not found' });
 		}
 
 		// Make sure it has at least 1h
 		if (queriedProject.timeSpent < 60) {
-			return error(400, { message: 'minimum 1h needed to ship' });
+			throw error(400, { message: 'minimum 1h needed to ship' });
 		}
 
 		// Make sure it has at least 2 devlogs
 		if (queriedProject.devlogCount < 2) {
-			return error(400, { message: 'minimum 2 journal logs required to ship' });
+			throw error(400, { message: 'minimum 2 journal logs required to ship' });
 		}
 
 		if (queriedProject.description == '') {
-			return error(400, { message: 'project must have a description' });
+			throw error(400, { message: 'project must have a description' });
 		}
 
-		// Editor file
-		const editorFilePath = editorFileExists
-			? `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`
-			: null;
+		try {
+			if (!env.S3_BUCKET_NAME) {
+				throw new Error('S3_BUCKET_NAME is not configured');
+			}
 
-		if (editorFileExists) {
-			const editorFileCommand = new PutObjectCommand({
+			// Editor file
+			const editorFilePath = editorFileExists
+				? `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`
+				: null;
+
+			if (editorFileExists) {
+				const editorFileCommand = new PutObjectCommand({
+					Bucket: env.S3_BUCKET_NAME,
+					Key: editorFilePath!,
+					Body: Buffer.from(await editorFile.arrayBuffer())
+				});
+				await S3.send(editorFileCommand);
+			}
+
+			// Models
+			const modelPath = `ships/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
+
+			const modelCommand = new PutObjectCommand({
 				Bucket: env.S3_BUCKET_NAME,
-				Key: editorFilePath!,
-				Body: Buffer.from(await editorFile.arrayBuffer())
+				Key: modelPath,
+				Body: Buffer.from(await modelFile.arrayBuffer())
 			});
-			await S3.send(editorFileCommand);
-		}
+			await S3.send(modelCommand);
 
-		// Models
-		const modelPath = `ships/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
+			await db
+				.update(project)
+				.set({
+					status: 'submitted',
+					url: printablesUrlString,
+					editorFileType: editorUrlExists ? 'url' : 'upload',
+					editorUrl: editorUrlExists ? editorUrlString : undefined,
+					uploadedFileUrl: editorFileExists ? editorFilePath! : undefined,
 
-		const modelCommand = new PutObjectCommand({
-			Bucket: env.S3_BUCKET_NAME,
-			Key: modelPath,
-			Body: Buffer.from(await modelFile.arrayBuffer())
-		});
-		await S3.send(modelCommand);
+					modelFile: modelPath,
+					doubleDippingWith
+				})
+				.where(
+					and(
+						eq(project.id, queriedProject.id),
+						eq(project.userId, locals.user.id),
+						eq(project.deleted, false)
+					)
+				);
 
-		await db
-			.update(project)
-			.set({
-				status: 'submitted',
+			// Get club ID if submitting as club
+			let clubIdForShip: number | null = null;
+			if (submitAsClub) {
+				const [membership] = await db
+					.select({ clubId: clubMembership.clubId })
+					.from(clubMembership)
+					.where(eq(clubMembership.userId, locals.user.id))
+					.limit(1);
+				if (membership) {
+					clubIdForShip = membership.clubId;
+				}
+			}
+
+			await db.insert(ship).values({
+				userId: locals.user.id,
+				projectId: queriedProject.id,
 				url: printablesUrlString,
+
 				editorFileType: editorUrlExists ? 'url' : 'upload',
 				editorUrl: editorUrlExists ? editorUrlString : undefined,
 				uploadedFileUrl: editorFileExists ? editorFilePath! : undefined,
 
 				modelFile: modelPath,
-                doubleDippingWith
-			})
-			.where(
-				and(
-					eq(project.id, queriedProject.id),
-					eq(project.userId, locals.user.id),
-					eq(project.deleted, false)
-				)
+				clubId: clubIdForShip
+			});
+
+			void sendSlackDM(
+				locals.user.slackId,
+				`Hii :hyper-dino-wave:\n Your project <https://construct.hackclub.com/dashboard/projects/${queriedProject.id}|${queriedProject.name}> has been shipped and is now under review, we'll take a look and get back to you soon! :woooo:`
 			);
-
-		// Get club ID if submitting as club
-		let clubIdForShip: number | null = null;
-		if (submitAsClub) {
-			const [membership] = await db
-				.select({ clubId: clubMembership.clubId })
-				.from(clubMembership)
-				.where(eq(clubMembership.userId, locals.user.id))
-				.limit(1);
-			if (membership) {
-				clubIdForShip = membership.clubId;
-			}
+		} catch (err) {
+			console.error('Ship submission failed:', err);
+			return fail(500, {
+				ship_submit_error: true
+			});
 		}
-
-		await db.insert(ship).values({
-			userId: locals.user.id,
-			projectId: queriedProject.id,
-			url: printablesUrlString,
-
-			editorFileType: editorUrlExists ? 'url' : 'upload',
-			editorUrl: editorUrlExists ? editorUrlString : undefined,
-			uploadedFileUrl: editorFileExists ? editorFilePath! : undefined,
-
-			modelFile: modelPath,
-			clubId: clubIdForShip
-		});
-
-		await sendSlackDM(
-			locals.user.slackId,
-			`Hii :hyper-dino-wave:\n Your project <https://construct.hackclub.com/dashboard/projects/${queriedProject.id}|${queriedProject.name}> has been shipped and is now under review, we'll take a look and get back to you soon! :woooo:`
-		);
 
 		return redirect(303, '/dashboard/projects');
 	}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Lock, ExternalLink, Link, Download, Search, X, PlusCircle, Clock } from '@lucide/svelte';
+	import { Lock, ExternalLink, Link, Download, Search, X, PlusCircle, Clock, Ship } from '@lucide/svelte';
 	import relativeDate from 'tiny-relative-date';
 	import Devlog from '$lib/components/Devlog.svelte';
 	import { DEVLOG_MIN_TIME } from '$lib/defs';
@@ -8,6 +8,7 @@
 	export let data: PageData;
 
 	const { projects, s3PublicUrl } = data;
+	type DevlogItem = (typeof data.devlogs)[number];
 
 	// ── Filter definitions ──────────────────────────────────────────
 	const FILTERS = [
@@ -49,6 +50,20 @@
 	// ── Get selected project ────────────────────────────────────────
 	$: selectedProject = projects.find((p) => p.id === selectedProjectId);
 
+	// ── Precompute latest devlog per project ────────────────────────
+	$: latestDevlogByProjectId = (() => {
+		const map = new Map<number, DevlogItem>();
+
+		for (const entry of data.devlogs ?? []) {
+			const existing = map.get(entry.projectId);
+			if (!existing || new Date(entry.createdAt).getTime() > new Date(existing.createdAt).getTime()) {
+				map.set(entry.projectId, entry);
+			}
+		}
+
+		return map;
+	})();
+
 	// ── Get last devlog for selected project ────────────────────────
 	$: lastDevlog =
 		data.devlogs
@@ -69,16 +84,6 @@
 		return Math.max(0, DEVLOG_MIN_TIME - elapsed);
 	}
 	$: cooldownRemaining = calcCooldown(lastDevlog);
-
-	// ── Get last devlog image for any project (for sidebar thumbnail) ─
-	function getLastDevlogForProject(projectId: number) {
-		return (
-			data.devlogs
-				?.filter((d) => d.projectId === projectId)
-				?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] ??
-			null
-		);
-	}
 
 	// ── Helpers ─────────────────────────────────────────────────────
 	const isLocked = (project: (typeof projects)[0]) =>
@@ -195,9 +200,9 @@
 								{selectedProjectId === project.id ? 'shadow-lg ring-2 ring-primary-500' : 'hover:bg-primary-50'}
 							"
 						>
-							{#if getLastDevlogForProject(project.id)}
+							{#if latestDevlogByProjectId.get(project.id)}
 								<img
-									src={getLastDevlogForProject(project.id).image}
+									src={latestDevlogByProjectId.get(project.id).image}
 									alt="preview"
 									class="absolute inset-0 -z-1 h-full w-full object-cover opacity-20"
 								/>
@@ -310,6 +315,14 @@
 							>
 								Open full page
 							</a>
+							{#if selectedProject.status === 'building' || selectedProject.status === 'rejected'}
+								<a
+									class="button sm orange"
+									href={resolve('/dashboard/projects/[id]/ship', { id: `${selectedProject.id}` })}
+								>
+									<Ship size={18} /> Ship project
+								</a>
+							{/if}
 						</div>
 					</div>
 
