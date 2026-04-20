@@ -53,7 +53,53 @@ export async function GET(event) {
 		return redirect(302, '/auth/failed');
 	}
 
-	const { id, slack_id, first_name, last_name, primary_email, ysws_eligible } = userData;
+	const { 
+		id, 
+		slack_id, 
+		first_name, 
+		last_name, 
+		primary_email, 
+		ysws_eligible,
+		// Additional fields from IDV
+		phone,
+		phoneNumber,
+		phone_number,
+		address,
+		street_address,
+		street,
+		city,
+		state,
+		province,
+		zipCode,
+		zip,
+		postal_code,
+		country,
+		dateOfBirth,
+		date_of_birth,
+		birthday,
+		age,
+		gender,
+		sex,
+		pronouns,
+		bio,
+		biography,
+		organization,
+		org,
+		title,
+		job_title,
+		company,
+		website,
+		website_url,
+		twitter,
+		twitter_handle,
+		github,
+		github_username,
+		linkedin,
+		linkedin_profile,
+		profilePicture,
+		profile_picture,
+		picture
+	} = userData;
 
 	if (
 		!ysws_eligible &&
@@ -67,7 +113,7 @@ export async function GET(event) {
 	// Use IDV data for profile (no Slack bot token required)
 	const username = first_name && last_name ? `${first_name} ${last_name}` : first_name || 'User';
 	// Generate avatar using UI Avatars service with user's name - creates nice colorful initials
-	const profilePic = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
+	const profilePic = profilePicture || profile_picture || picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
 
 	// Check Hackatime trust
 	// Bypasses check if hackatime fetching fails for some reason, e.g. hackatime down
@@ -120,15 +166,39 @@ export async function GET(event) {
 
 	const ref = event.cookies.get('ref');
 
+	// Prepare comprehensive user data
+	const comprehensiveUserData = {
+		idvToken: encrypt(token),
+		name: username,
+		firstName: first_name,
+		lastName: last_name,
+		email: primary_email,
+		phone: phone || phoneNumber || phone_number,
+		address: address || street_address || street,
+		city: city,
+		state: state || province,
+		zipCode: zipCode || zip || postal_code,
+		country: country,
+		dateOfBirth: dateOfBirth || date_of_birth || birthday ? new Date(dateOfBirth || date_of_birth || birthday) : null,
+		age: age,
+		gender: gender || sex,
+		pronouns: pronouns,
+		bio: bio || biography,
+		organization: organization || org,
+		title: title || job_title,
+		company: company,
+		website: website || website_url,
+		twitter: twitter || twitter_handle,
+		github: github || github_username,
+		linkedin: linkedin || linkedin_profile,
+		profilePicture: profilePic,
+		lastLoginAt: new Date(Date.now()),
+		hackatimeTrust
+	};
+
 	if (databaseUser) {
-		// Update user (update name and profile picture and lastLoginAt on login)
-		const updateData: Parameters<typeof db.update>[0]['_']['set'] = {
-			idvToken: encrypt(token),
-			name: username,
-			profilePicture: profilePic,
-			lastLoginAt: new Date(Date.now()),
-			hackatimeTrust
-		};
+		// Update user with comprehensive data
+		const updateData: Parameters<typeof db.update>[0]['_']['set'] = comprehensiveUserData;
 
 		// Only update hasAdmin if user is super admin
 		if (isSuperAdmin) {
@@ -140,16 +210,12 @@ export async function GET(event) {
 			.set(updateData)
 			.where(eq(user.idvId, id));
 	} else {
-		// Create user
+		// Create user with comprehensive data
 		await db.insert(user).values({
 			idvId: id,
-			idvToken: encrypt(token),
 			slackId: slack_id,
-			name: username,
-			profilePicture: profilePic,
+			...comprehensiveUserData,
 			createdAt: new Date(Date.now()),
-			lastLoginAt: new Date(Date.now()),
-			hackatimeTrust,
 			referralId: ref,
 
 			hasT1Review: isSuperAdmin,
