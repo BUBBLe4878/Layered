@@ -6,6 +6,7 @@ import {
 	impersonateAuditLog,
 	currencyAuditLog
 } from '$lib/server/db/schema.js';
+
 import { error, fail, redirect } from '@sveltejs/kit';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Actions } from './$types';
@@ -17,58 +18,43 @@ import {
 	SESSION_EXPIRY_DAYS,
 	setSessionTokenCookie
 } from '$lib/server/auth';
+
 import { decrypt } from '$lib/server/encryption';
 import { getUserData } from '$lib/server/idvUserData';
 import { withSlackProfile } from '$lib/server/slack';
 
-// Reusable selection for most user queries (add/remove columns as needed)
-const userSelect = {
-	id: user.id,
-	firstName: user.firstName,
-	lastName: user.lastName,
-	email: user.email,
-	slackId: user.slackId,
-	trust: user.trust,
-	hackatimeTrust: user.hackatimeTrust,
-	clay: user.clay,
-	brick: user.brick,
-	shopScore: user.shopScore,
-	isPrinter: user.isPrinter,
-	hasT1Review: user.hasT1Review,
-	hasT2Review: user.hasT2Review,
-	hasAdmin: user.hasAdmin
-	// Add any other non-sensitive columns you use on the admin page here
-	// e.g. createdAt: user.createdAt, lastLogin: user.lastLogin, etc.
-} as const;
+/* =========================================================
+   LOAD
+========================================================= */
 
 export async function load({ locals, params }) {
-	if (!locals.user) {
-		throw error(500);
-	}
-	if (!locals.user.hasAdmin) {
-		throw error(403, { message: 'oi get out' });
-	}
+	if (!locals.user) throw error(500);
+	if (!locals.user.hasAdmin) throw error(403, { message: 'oi get out' });
 
-	const id: number = parseInt(params.id);
+	const id = Number(params.id);
 
+	// Get user
 	const [queriedUser] = await db
-		.select(userSelect)
+		.select()
 		.from(user)
 		.where(eq(user.id, id));
-
-	const [{ devlogCount }] = (await db
-		.select({
-			devlogCount: sql`COALESCE(COUNT(${devlog.id}), 0)`
-		})
-		.from(user)
-		.leftJoin(devlog, and(eq(devlog.userId, user.id), eq(devlog.deleted, false)))
-		.where(eq(user.id, id))
-		.groupBy(user.id)) ?? [{ devlogCount: 0 }];
 
 	if (!queriedUser) {
 		throw error(404, { message: 'user not found' });
 	}
 
+	// Devlog count
+	const [{ devlogCount }] =
+		(await db
+			.select({
+				devlogCount: sql<number>`COALESCE(COUNT(${devlog.id}), 0)`
+			})
+			.from(user)
+			.leftJoin(devlog, and(eq(devlog.userId, user.id), eq(devlog.deleted, false)))
+			.where(eq(user.id, id))
+			.groupBy(user.id)) ?? [{ devlogCount: 0 }];
+
+	// Slack enrichment
 	const queriedUserWithSlackProfile = await withSlackProfile(queriedUser);
 
 	return {
@@ -77,11 +63,17 @@ export async function load({ locals, params }) {
 	};
 }
 
-export const actions = {
-	privileges: async ({ locals, request, params }) => {
-		if (!locals.user?.hasAdmin) throw error(403, { message: 'oi get out' });
+/* =========================================================
+   ACTIONS
+========================================================= */
 
-		const id: number = parseInt(params.id);
+export const actions = {
+	/* -------------------- PRIVILEGES -------------------- */
+	privileges: async ({ locals, request, params }) => {
+		if (!locals.user) throw error(500);
+		if (!locals.user.hasAdmin) throw error(403);
+
+		const id = Number(params.id);
 		const data = await request.formData();
 
 		await db
@@ -94,17 +86,19 @@ export const actions = {
 			})
 			.where(eq(user.id, id));
 
-		const [queriedUser] = await db.select(userSelect).from(user).where(eq(user.id, id));
-
-		if (!queriedUser) throw error(404, { message: 'user not found' });
-
-		return { queriedUser };
+		return {
+			queriedUser: await db.query.user.findFirst({
+				where: eq(user.id, id)
+			})
+		};
 	},
 
+	/* -------------------- CURRENCY -------------------- */
 	currency: async ({ locals, request, params }) => {
-		if (!locals.user?.hasAdmin) throw error(403, { message: 'oi get out' });
+		if (!locals.user) throw error(500);
+		if (!locals.user.hasAdmin) throw error(403);
 
-		const id: number = parseInt(params.id);
+		const id = Number(params.id);
 		const data = await request.formData();
 
 		const clay = data.get('clay');
@@ -114,140 +108,66 @@ export const actions = {
 
 		if (
 			!clay ||
-			isNaN(parseFloat(clay.toString())) ||
+			isNaN(Number(clay)) ||
 			!brick ||
-			isNaN(parseFloat(brick.toString())) ||
+			isNaN(Number(brick)) ||
 			!shopScore ||
-			isNaN(parseFloat(shopScore.toString()))
+			isNaN(Number(shopScore))
 		) {
-			return fail(400, { currency: { invalidFields: true } });
+			return fail(400, {
+				currency: {
+					invalidFields: true
+				}
+			});
 		}
 
-		if (!reason?.trim()) {
+		if (!reason) {
 			throw error(400, { message: 'invalid reason' });
 		}
 
-		const [oldUser] = await db.select(userSelect).from(user).where(eq(user.id, id));
-		if (!oldUser) throw error(404, { message: 'user not found' });
+		const [queriedUser] = await db
+			.select()
+			.from(user)
+			.where(eq(user.id, id));
+
+		if (!queriedUser) {
+			throw error(404, { message: 'user not found' });
+		}
 
 		await db
 			.update(user)
 			.set({
-				clay: parseFloat(clay.toString()),
-				brick: parseFloat(brick.toString()),
-				shopScore: parseFloat(shopScore.toString())
+				clay: Number(clay),
+				brick: Number(brick),
+				shopScore: Number(shopScore)
 			})
 			.where(eq(user.id, id));
 
 		await db.insert(currencyAuditLog).values({
 			adminUserId: locals.user.id,
 			targetUserId: id,
-			oldClay: oldUser.clay,
-			oldBrick: oldUser.brick,
-			oldShopScore: oldUser.shopScore,
-			newClay: parseFloat(clay.toString()),
-			newBrick: parseFloat(brick.toString()),
-			newShopScore: parseFloat(shopScore.toString()),
+			oldClay: queriedUser.clay,
+			oldBrick: queriedUser.brick,
+			oldShopScore: queriedUser.shopScore,
+			newClay: Number(clay),
+			newBrick: Number(brick),
+			newShopScore: Number(shopScore),
 			reason
 		});
 
-		const [queriedUserAfter] = await db.select(userSelect).from(user).where(eq(user.id, id));
-
-		return { queriedUserAfter: queriedUserAfter! };
+		return {
+			queriedUserAfter: await db.query.user.findFirst({
+				where: eq(user.id, id)
+			})
+		};
 	},
 
-	refreshHackatime: async ({ locals, params }) => {
-		if (!locals.user?.hasAdmin) throw error(403, { message: 'oi get out' });
+	/* -------------------- FETCH PII -------------------- */
+	fetchPII: async ({ locals, params }) => {
+		if (!locals.user) throw error(500);
+		if (!locals.user.hasAdmin) throw error(403);
 
-		const id: number = parseInt(params.id);
-
-		const [oldUser] = await db
-			.select({ slackId: user.slackId })
-			.from(user)
-			.where(eq(user.id, id));
-
-		if (!oldUser) throw error(404, { message: 'user not found' });
-
-		// ... rest of your hackatime logic stays the same ...
-
-		const hackatimeTrust = (
-			await (await fetch(`https://hackatime.hackclub.com/api/v1/users/${oldUser.slackId}/trust_factor`)).json()
-		)['trust_level'];
-
-		if (!hackatimeTrust) {
-			return error(418, { message: 'failed to fetch hackatime trust factor' });
-		}
-
-		if (hackatimeTrust === 'red') {
-			await db.delete(session).where(eq(session.userId, id));
-		}
-
-		await db.update(user).set({ hackatimeTrust }).where(eq(user.id, id));
-
-		const [queriedUser] = await db.select(userSelect).from(user).where(eq(user.id, id));
-		return { queriedUser };
-	},
-
-	logout: async ({ locals, params }) => {
-		if (!locals.user?.hasAdmin) throw error(403, { message: 'oi get out' });
-
-		const id: number = parseInt(params.id);
-
-		const [queriedUser] = await db.select(userSelect).from(user).where(eq(user.id, id));
-		if (!queriedUser) throw error(404, { message: 'user not found' });
-
-		await db.delete(session).where(eq(session.userId, id));
-
-		return { queriedUser };
-	},
-
-	changeTrust: async ({ locals, request, params }) => {
-		if (!locals.user?.hasAdmin) throw error(403, { message: 'oi get out' });
-
-		const id: number = parseInt(params.id);
-		const data = await request.formData();
-		const trust = data.get('trust')?.toString();
-
-		if (!trust || !['green', 'blue', 'yellow', 'red'].includes(trust)) {
-			return fail(400, { changeTrust: { invalidTrust: true } });
-		}
-
-		if (trust === 'red') {
-			await db.delete(session).where(eq(session.userId, id));
-		}
-
-		await db.update(user).set({ trust: trust as 'green' | 'blue' | 'yellow' | 'red' }).where(eq(user.id, id));
-
-		const [queriedUser] = await db.select(userSelect).from(user).where(eq(user.id, id));
-		return { queriedUser };
-	},
-
-	impersonate: async (event) => {
-		const { locals, params } = event;
-		if (!locals.user?.hasAdmin) throw error(403, { message: 'oi get out' });
-
-		const id: number = parseInt(params.id);
-
-		const [queriedUser] = await db.select(userSelect).from(user).where(eq(user.id, id));
-		if (!queriedUser) throw error(404, { message: 'user not found' });
-
-		await db.insert(impersonateAuditLog).values({
-			adminUserId: locals.user.id,
-			targetUserId: id
-		});
-
-		const sessionToken = generateSessionToken();
-		await createSession(sessionToken, id);
-		setSessionTokenCookie(event, sessionToken, new Date(Date.now() + DAY_IN_MS * SESSION_EXPIRY_DAYS));
-
-		throw redirect(302, '/dashboard');
-	},
-
-	fetchPII: async (event) => {
-		const { locals, params } = event;
-		if (!locals.user?.hasAdmin) throw error(403, { message: 'oi get out' });
-
-		const id: number = parseInt(params.id);
+		const id = Number(params.id);
 
 		const [queriedUser] = await db
 			.select({ idvToken: user.idvToken })
@@ -260,7 +180,7 @@ export const actions = {
 			return fail(400, {
 				fetchPII: {
 					success: false,
-					errorMessage: 'IDV token not found, ask them to re-login',
+					errorMessage: 'IDV token missing',
 					first_name: null,
 					last_name: null,
 					primary_email: null,
@@ -272,6 +192,7 @@ export const actions = {
 		}
 
 		let userData;
+
 		try {
 			const token = decrypt(queriedUser.idvToken);
 			userData = await getUserData(token);
@@ -279,7 +200,7 @@ export const actions = {
 			return fail(400, {
 				fetchPII: {
 					success: false,
-					errorMessage: 'IDV token revoked/expired, ask them to re-login',
+					errorMessage: 'IDV token expired or invalid',
 					first_name: null,
 					last_name: null,
 					primary_email: null,
@@ -290,8 +211,16 @@ export const actions = {
 			});
 		}
 
-		const { first_name, last_name, primary_email, birthday, phone_number, addresses } = userData;
-		const address = addresses?.find((a: { primary: boolean }) => a.primary);
+		const {
+			first_name,
+			last_name,
+			primary_email,
+			birthday,
+			phone_number,
+			addresses
+		} = userData;
+
+		const address = addresses?.find((a: any) => a.primary);
 
 		return {
 			fetchPII: {
