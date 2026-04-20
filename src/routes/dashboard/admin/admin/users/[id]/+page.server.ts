@@ -1,4 +1,3 @@
-//comment to deploy
 import { db } from '$lib/server/db/index.js';
 import { user, devlog, session, impersonateAuditLog, currencyAuditLog } from '$lib/server/db/schema.js';
 import { error, fail, redirect } from '@sveltejs/kit';
@@ -297,6 +296,7 @@ export const actions = {
 		try {
 			const token = decrypt(queriedUser.idvToken);
 			userData = await getUserData(token);
+			console.log('Raw userData from IDV:', JSON.stringify(userData, null, 2));
 		} catch {
 			return fail(400, {
 				fetchPII: {
