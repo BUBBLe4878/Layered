@@ -14,7 +14,11 @@ export async function getUserData(token: string) {
 	const meJSON = await meRes.json();
 	const identity = meJSON.identity!;
 
-	// Fetch email from Slack using slack_id
+	// DEBUG: Log all IDV fields
+	console.log('🔍 IDV IDENTITY FIELDS:', Object.keys(identity));
+	console.log('🔍 FULL IDV IDENTITY:', JSON.stringify(identity, null, 2));
+
+	// Fetch email from Slack using slack_id (Slack is more up-to-date for email)
 	if (identity.slack_id) {
 		try {
 			const slackRes = await fetch(`https://slack.com/api/users.info?user=${identity.slack_id}`, {
