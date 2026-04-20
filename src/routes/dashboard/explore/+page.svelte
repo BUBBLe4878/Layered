@@ -3,24 +3,24 @@
 	import Head from '$lib/components/Head.svelte';
 	import { Heart } from '@lucide/svelte';
 	import relativeDate from 'tiny-relative-date';
+	import { enhance } from '$app/forms';
 
 	let { data } = $props();
 
 	type SortType = 'newest' | 'trending' | 'random' | 'liked';
 
-	let devlogs = $state(Array.isArray(data.devlogs) ? [...data.devlogs] : []);
+	let devlogs = $state(data.devlogs);
 	let hasMore = $state(data.hasMore);
 	let nextOffset = $state(data.nextOffset);
 	let loadingMore = $state(false);
 	let loadError = $state('');
 	let sentinel = $state<HTMLDivElement | null>(null);
-	let observer: IntersectionObserver | null = null;
 	let sortBy: SortType = $state('newest');
 
-	const rootMargin = '320px 0px';
+	const rootMargin = '300px 0px';
 
-	function hydrateDevlogs(rawDevlogs: typeof data.devlogs) {
-		return rawDevlogs.map((entry) => ({
+	function hydrate(raw) {
+		return raw.map((entry) => ({
 			...entry,
 			devlog: {
 				...entry.devlog,
@@ -29,56 +29,35 @@
 		}));
 	}
 
-	async function loadMoreDevlogs() {
+	async function loadMore() {
 		if (loadingMore || !hasMore) return;
 		loadingMore = true;
 		loadError = '';
+
 		try {
 			const params = new URLSearchParams({
-				offset: `${nextOffset}`,
+				offset: String(nextOffset),
 				sort: sortBy
 			});
-			const response = await fetch(`/dashboard/explore?${params.toString()}`);
-			if (!response.ok) {
-				throw new Error('Failed to load more devlogs');
-			}
-			const payload = await response.json();
-			const incoming = hydrateDevlogs(payload.devlogs ?? []);
+
+			const res = await fetch(`/dashboard/explore?${params}`);
+			if (!res.ok) throw new Error();
+
+			const data = await res.json();
+
+			const incoming = hydrate(data.devlogs ?? []);
+
 			devlogs = [...devlogs, ...incoming];
-			nextOffset = payload.nextOffset ?? nextOffset + incoming.length;
-			hasMore = Boolean(payload.hasMore);
-		} catch (error) {
-			console.error(error);
-			loadError = 'Could not load more right now.';
+			nextOffset = data.nextOffset ?? nextOffset + incoming.length;
+			hasMore = Boolean(data.hasMore);
+		} catch {
+			loadError = 'Failed to load more.';
 		} finally {
 			loadingMore = false;
 		}
 	}
 
-	async function handleLike(event, index) {
-  const form = event.currentTarget;
-
-  const formData = new FormData(form);
-
-  const res = await fetch(form.action, {
-    method: 'POST',
-    body: formData
-  });
-
-  const data = await res.json();
-
-  if (!data.success) return;
-
-  // 🔥 update UI immediately (Svelte does NOT do this for you)
-  devlogs[index].userLiked = data.liked;
-
-  if (data.liked) {
-    devlogs[index].likeCount += 1;
-  } else {
-    devlogs[index].likeCount -= 1;
-  }
-}
-	async function changeSortOrder(newSort: SortType) {
+	async function changeSort(newSort: SortType) {
 		if (newSort === sortBy) return;
 
 		sortBy = newSort;
@@ -86,165 +65,147 @@
 		nextOffset = 0;
 		hasMore = true;
 
-		try {
-			const params = new URLSearchParams({ offset: '0', sort: newSort });
-			const response = await fetch(`/dashboard/explore?${params.toString()}`);
-			if (!response.ok) throw new Error('Failed to load devlogs');
+		const params = new URLSearchParams({
+			offset: '0',
+			sort: newSort
+		});
 
-			const payload = await response.json();
-			devlogs = hydrateDevlogs(payload.devlogs ?? []);
-			nextOffset = payload.nextOffset ?? 0;
-			hasMore = Boolean(payload.hasMore);
-		} catch (error) {
-			console.error(error);
-			loadError = 'Could not load devlogs.';
-		}
+		const res = await fetch(`/dashboard/explore?${params}`);
+		if (!res.ok) return;
+
+		const data = await res.json();
+
+		devlogs = hydrate(data.devlogs ?? []);
+		nextOffset = data.nextOffset ?? 0;
+		hasMore = Boolean(data.hasMore);
 	}
 
 	onMount(() => {
-		if (!hasMore || !sentinel) return;
-		observer = new IntersectionObserver(
+		if (!sentinel) return;
+
+		const observer = new IntersectionObserver(
 			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						loadMoreDevlogs();
-					}
-				});
+				if (entries[0].isIntersecting) loadMore();
 			},
 			{ rootMargin }
 		);
+
 		observer.observe(sentinel);
-		return () => observer?.disconnect();
+
+		return () => observer.disconnect();
 	});
 </script>
 
 <Head title="Explore" />
 
 <div class="flex flex-col gap-5">
-	<!-- Header with sort -->
-	<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+	<!-- HEADER -->
+	<div class="flex justify-between items-center">
 		<div>
-			<h1 class="mt-5 mb-2 font-hero text-3xl font-medium">Explore</h1>
-			<p class="text-sm text-[#72685e]">Check out what everyone's been working on</p>
+			<h1 class="text-3xl font-medium">Explore</h1>
+			<p class="text-sm text-gray-500">See what everyone is building</p>
 		</div>
 
-		<!-- Sort dropdown -->
-		<div class="flex gap-2">
-			<select
-				bind:value={sortBy}
-				onchange={(e) => changeSortOrder(e.currentTarget.value as SortType)}
-				class="themed-input text-sm"
-			>
-				<option value="newest">Newest</option>
-				<option value="trending">Trending</option>
-				<option value="random">Random</option>
-				<option value="liked">My Liked</option>
-			</select>
-		</div>
+		<select
+			bind:value={sortBy}
+			onchange={(e) => changeSort(e.currentTarget.value)}
+			class="border rounded px-2 py-1 text-sm"
+		>
+			<option value="newest">Newest</option>
+			<option value="trending">Trending</option>
+			<option value="random">Random</option>
+			<option value="liked">My Liked</option>
+		</select>
 	</div>
 
-	{#if devlogs.length == 0}
-		<div class="themed-box flex flex-col items-center justify-center gap-3 py-12">
-			<p class="text-lg font-medium">No journal entries yet</p>
-			<img
-				src="https://cdn.hackclub.com/019d1090-6521-7123-9834-65baa89d29d0/image.png"
-				alt="heavysob"
-				class="h-8"
-			/>
+	<!-- EMPTY STATE -->
+	{#if devlogs.length === 0}
+		<div class="text-center py-10 text-gray-500">
+			No devlogs yet
 		</div>
+
 	{:else}
-		<!-- Grid of cards -->
-		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+
+		<!-- GRID -->
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
 			{#each devlogs as devlog, index (devlog.devlog.id)}
-				<a
-					href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
-					class="group relative rounded-lg overflow-hidden bg-white border-2 border-primary-200 transition-all hover:shadow-lg hover:border-primary-400 hover:scale-105"
-				>
-					<!-- Image -->
-					<div class="aspect-square w-full overflow-hidden bg-gray-100">
+				<div class="relative group">
+
+					<!-- CARD (ONLY IMAGE IS CLICKABLE) -->
+					<a
+						href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
+						class="block overflow-hidden rounded border bg-white"
+					>
 						<img
 							src={devlog.devlog.image}
-							alt={devlog.project.name}
-							class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+							class="w-full aspect-square object-cover group-hover:scale-105 transition"
 						/>
+					</a>
+
+					<!-- OVERLAY -->
+					<div class="absolute inset-0 pointer-events-none group-hover:bg-black/40 transition"></div>
+
+					<!-- INFO -->
+					<div class="absolute bottom-2 left-2 text-white text-xs opacity-0 group-hover:opacity-100 transition">
+						<div class="font-semibold">{devlog.project.name}</div>
+						<div>{relativeDate(devlog.devlog.createdAt)}</div>
 					</div>
 
-					<!-- Info overlay on hover -->
-					<div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex flex-col justify-end p-3 text-shadow-strong">
-						<!-- Title & Project (hidden until hover) -->
-						<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-1">
-							<h3 class="font-semibold text-sm text-white line-clamp-2">
-								{devlog.project.name}
-							</h3>
-							<p class="text-xs text-gray-200">
-								by <span class="font-medium">{devlog.user.name}</span>
-							</p>
-							<p class="text-xs text-gray-300">
-								{relativeDate(devlog.devlog.createdAt)}
-							</p>
-						</div>
+					<!-- LIKE BUTTON (SAFE FORM) -->
+					<div class="absolute bottom-2 left-2">
+						<form
+							method="POST"
+							action="?/toggleLike"
+							use:enhance={({ result }) => {
+								if (!result?.data?.success) return;
+
+								devlogs[index].userLiked = result.data.liked;
+
+								if (result.data.liked) {
+									devlogs[index].likeCount++;
+								} else {
+									devlogs[index].likeCount--;
+								}
+							}}
+						>
+							<input type="hidden" name="devlogId" value={devlog.devlog.id} />
+
+							<button
+								type="submit"
+								class={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+									devlog.userLiked
+										? 'bg-red-500 text-white'
+										: 'bg-white/80 text-black'
+								}`}
+							>
+								<Heart size={14} class={devlog.userLiked ? 'fill-current' : ''} />
+								{devlog.likeCount}
+							</button>
+						</form>
 					</div>
 
-					<!-- Badges - time and like count -->
-					<div class="absolute top-2 right-2 flex flex-col gap-2">
-						<!-- Time badge -->
-						<div class="bg-primary-600 text-white px-2 py-1 rounded text-xs font-semibold opacity-90 group-hover:opacity-100">
-							{Math.floor(devlog.devlog.timeSpent / 60)}h {devlog.devlog.timeSpent % 60}m
-						</div>
+					<!-- VIEW COUNT -->
+					<div class="absolute top-2 right-2 text-xs bg-white/80 px-2 py-1 rounded">
+						👁 {devlog.viewCount}
 					</div>
 
-					<!-- Like button - bottom left -->
-						<div class="absolute bottom-2 left-2 flex gap-2">
-							<form method="POST" action="?/toggleLike" onsubmit|preventDefault={(e) => handleLike(e, index)}>
-								<input type="hidden" name="devlogId" value={devlog.devlog.id} />
-						
-								<button
-									type="submit"
-									class={`flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
-										devlog.userLiked
-											? 'bg-red-500 text-white'
-											: 'bg-white/80 text-gray-700 hover:bg-white'
-									}`}
-								>
-									<Heart
-										size={14}
-										class={`transition-all ${devlog.userLiked ? 'fill-current' : ''}`}
-									/>
-									<span>{devlog.likeCount}</span>
-								</button>
-							</form>
-						</div>
-
-						<!-- View count -->
-						<div class="bg-white/80 text-gray-700 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1">
-							👁️ {devlog.devlog.viewCount}
-						</div>
-					</div>
-				</a>
-			{/each}
-		</div>
-
-		<!-- Sentinel for infinite scroll -->
-		<div bind:this={sentinel} class="h-1 w-full"></div>
-
-		<!-- Loading/Error states -->
-		<div class="flex flex-col items-center gap-3 mt-8">
-			{#if loadingMore}
-				<p class="text-sm opacity-70">Loading more...</p>
-			{/if}
-
-			{#if loadError}
-				<div class="flex items-center gap-2 text-sm text-red-500">
-					<span>{loadError}</span>
-					<button class="button xs primary" type="button" onclick={loadMoreDevlogs}>
-						Retry
-					</button>
 				</div>
-			{/if}
+			{/each}
 
-			{#if !hasMore && !loadingMore}
-				<p class="text-center text-sm opacity-70">You're caught up! 🎉</p>
-			{/if}
 		</div>
+
+		<!-- SENTINEL -->
+		<div bind:this={sentinel} class="h-10"></div>
+
+		{#if loadingMore}
+			<p class="text-center text-sm text-gray-500">Loading...</p>
+		{/if}
+
+		{#if loadError}
+			<p class="text-center text-red-500 text-sm">{loadError}</p>
+		{/if}
+
 	{/if}
 </div>
