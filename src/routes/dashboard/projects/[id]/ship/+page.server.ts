@@ -341,8 +341,12 @@ export const actions = {
 			});
 		}
 
-		if (!editorFileUrl || !modelFileUrl) {
-			console.error('Ship submission failed [upload-state]: missing uploaded file url(s)');
+		if (!modelFileUrl || (editorFileExists && !editorFileUrl)) {
+			console.error('Ship submission failed [upload-state]: missing required uploaded file url(s)', {
+				editorFileExists,
+				hasEditorFileUrl: Boolean(editorFileUrl),
+				hasModelFileUrl: Boolean(modelFileUrl)
+			});
 			return fail(500, {
 				ship_submit_error: true,
 				ship_error_message: 'Failed to prepare uploaded file URLs. Please retry.'
