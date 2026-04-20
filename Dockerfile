@@ -11,7 +11,7 @@ RUN npm prune --production
 
 FROM node:22-bullseye-slim
 WORKDIR /app
-COPY --from=builder /app/build build/
+COPY --from=builder /app/.svelte-kit .svelte-kit/
 COPY --from=builder /app/node_modules node_modules/
 COPY package.json .
 COPY drizzle.config.ts .
