@@ -210,7 +210,7 @@
 					<!-- Like button - bottom left -->
 					<div class="absolute bottom-2 left-2 flex gap-2">
 						<button
-							on:click={(e) => toggleLike(e, devlog.devlog.id, devlog.devlog.userLiked, index)}
+							onclick={(e) => toggleLike(e, devlog.devlog.id, devlog.devlog.userLiked, index)}
 							class={`flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
 								devlog.devlog.userLiked
 									? 'bg-red-500 text-white'
