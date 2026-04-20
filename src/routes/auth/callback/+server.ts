@@ -14,30 +14,6 @@ import { encrypt } from '$lib/server/encryption.js';
 import { getUserData } from '$lib/server/idvUserData';
 import { airtableBase } from '$lib/server/airtable';
 
-async function fetchIDVUserInfo(token: string) {
-	try {
-		const response = await fetch(`https://${env.IDV_DOMAIN}/oauth/userinfo`, {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${token}`,
-				'Content-Type': 'application/json'
-			}
-		});
-
-		if (!response.ok) {
-			console.error('Failed to fetch userinfo:', response.statusText);
-			return null;
-		}
-
-		const data = await response.json();
-		console.log('🔍 IDV USERINFO:', JSON.stringify(data, null, 2));
-		return data;
-	} catch (err) {
-		console.error('Error fetching userinfo:', err);
-		return null;
-	}
-}
-
 export async function GET(event) {
 	const url = event.url;
 	const code = url.searchParams.get('code');
@@ -68,7 +44,7 @@ export async function GET(event) {
 
 	const token = (await tokenRes.json()).access_token;
 
-	// Get user data from IDV
+	// Get user data
 	let userData;
 
 	try {
@@ -77,28 +53,7 @@ export async function GET(event) {
 		return redirect(302, '/auth/failed');
 	}
 
-	// Fetch comprehensive user info from userinfo endpoint
-	const userInfo = await fetchIDVUserInfo(token);
-
-	const { 
-		id, 
-		slack_id, 
-		first_name, 
-		last_name, 
-		primary_email, 
-		ysws_eligible 
-	} = userData;
-
-	// Extract from userinfo endpoint
-	const {
-		given_name,
-		family_name,
-		email,
-		phone_number,
-		address, // This is a structured object
-		birthdate,
-		picture
-	} = userInfo || {};
+	const { id, slack_id, first_name, last_name, primary_email, ysws_eligible } = userData;
 
 	if (
 		!ysws_eligible &&
@@ -109,11 +64,69 @@ export async function GET(event) {
 		return redirect(302, '/auth/ineligible');
 	}
 
-	// Use IDV data for profile
-	const username = first_name && last_name ? `${first_name} ${last_name}` : first_name || 'User';
-	const profilePic = picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
+	// Get slack data
+	const slackProfileURL = new URL('https://slack.com/api/users.info');
+	slackProfileURL.searchParams.set('user', slack_id);
+
+	const slackProfileBody = new URLSearchParams();
+	slackProfileBody.append('token', env.SLACK_BOT_TOKEN ?? '');
+
+	const slackProfileRes = await fetch(slackProfileURL, {
+		method: 'POST',
+		body: slackProfileBody
+	});
+
+	const slackProfileResJSON = await slackProfileRes.json();
+
+	if (!slackProfileResJSON.ok) {
+		console.error('Failed to fetch user profile');
+
+		return redirect(302, '/auth/failed');
+	}
+
+	const slackProfile = slackProfileResJSON['user'];
+
+	const profilePic =
+		slackProfile['profile']['image_1024'] ??
+		slackProfile['profile']['image_512'] ??
+		slackProfile['profile']['image_192'] ??
+		slackProfile['profile']['image_72'] ??
+		slackProfile['profile']['image_48'] ??
+		slackProfile['profile']['image_32'] ??
+		slackProfile['profile']['image_24'];
+
+	const username =
+		slackProfile['profile']['display_name'] !== ''
+			? slackProfile['profile']['display_name']
+			: slackProfile['profile']['real_name'];
+
+	if (env.BETA_CHANNEL_ID && env.BETA_CHANNEL_ID.length > 0) {
+		const channelMembersURL = new URL('https://slack.com/api/conversations.members');
+		channelMembersURL.searchParams.set('channel', env.BETA_CHANNEL_ID);
+
+		const channelMembersBody = new URLSearchParams();
+		channelMembersBody.append('token', env.SLACK_BOT_TOKEN ?? '');
+
+		const channelMembersRes = await fetch(channelMembersURL, {
+			method: 'POST',
+			body: channelMembersBody
+		});
+
+		const channelMembersResJSON = await channelMembersRes.json();
+
+		if (!channelMembersResJSON.ok) {
+			console.error('Failed to fetch channel members');
+
+			return redirect(302, '/auth/failed');
+		}
+
+		if (!channelMembersResJSON['members'].includes(slack_id)) {
+			return redirect(302, '/countdown');
+		}
+	}
 
 	// Check Hackatime trust
+	// Bypasses check if hackatime fetching fails for some reason, e.g. hackatime down
 	let hackatimeTrust: string = 'blue';
 
 	try {
@@ -163,66 +176,30 @@ export async function GET(event) {
 
 	const ref = event.cookies.get('ref');
 
-	// Parse address if it's a structured object
-	let addressString = '';
-	let city = '';
-	let state = '';
-	let zipCode = '';
-	let country = '';
-
-	if (address) {
-		if (typeof address === 'object') {
-			addressString = address.street_address || '';
-			city = address.locality || '';
-			state = address.region || '';
-			zipCode = address.postal_code || '';
-			country = address.country || '';
-		} else if (typeof address === 'string') {
-			addressString = address;
-		}
-	}
-
-	// Prepare comprehensive user data
-	const comprehensiveUserData = {
-		idvToken: encrypt(token),
-		name: username,
-		firstName: given_name || first_name,
-		lastName: family_name || last_name,
-		email: email || primary_email,
-		phone: phone_number,
-		address: addressString,
-		city: city,
-		state: state,
-		zipCode: zipCode,
-		country: country,
-		dateOfBirth: birthdate ? new Date(birthdate) : null,
-		profilePicture: profilePic,
-		lastLoginAt: new Date(Date.now()),
-		hackatimeTrust
-	};
-
-	console.log('✅ Comprehensive user data:', comprehensiveUserData);
-
 	if (databaseUser) {
-		// Update user with comprehensive data
-		const updateData: Parameters<typeof db.update>[0]['_']['set'] = comprehensiveUserData;
-
-		// Only update hasAdmin if user is super admin
-		if (isSuperAdmin) {
-			updateData.hasAdmin = true;
-		}
-
+		// Update user (update name and profile picture and lastLoginAt on login)
 		await db
 			.update(user)
-			.set(updateData)
+			.set({
+				idvToken: encrypt(token),
+				name: username,
+				profilePicture: profilePic,
+				lastLoginAt: new Date(Date.now()),
+				hackatimeTrust,
+				hasAdmin: isSuperAdmin ? true : undefined
+			})
 			.where(eq(user.idvId, id));
 	} else {
-		// Create user with comprehensive data
+		// Create user
 		await db.insert(user).values({
 			idvId: id,
+			idvToken: encrypt(token),
 			slackId: slack_id,
-			...comprehensiveUserData,
+			name: username,
+			profilePicture: profilePic,
 			createdAt: new Date(Date.now()),
+			lastLoginAt: new Date(Date.now()),
+			hackatimeTrust,
 			referralId: ref,
 
 			hasT1Review: isSuperAdmin,
@@ -241,7 +218,7 @@ export async function GET(event) {
 			await airtableBase('tblwUPbRqbRBnQl7G').create({
 				fldMYF9BuxKbRuSJt: first_name + ' ' + last_name, // Name
 				fldXbtQyDOFpWwGBQ: databaseUser.id, // User ID
-				fldkTgzCj0sz01QQM: email || primary_email, // Email
+				fldkTgzCj0sz01QQM: primary_email, // Email
 				fldeNiHX4OhZEDWM5: 0, // Project count
 				fld1Sssrs7K69cN0i: 0, // Verified ship count
 				fldaPDWM3wrIYOAEf: ref // Referral code
