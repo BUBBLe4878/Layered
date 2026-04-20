@@ -8,13 +8,21 @@
 	let { data } = $props();
 
 	let performanceModeEnabled = $state(false);
+	let performanceModeReady = $state(false);
+
+	function persistPerformanceMode() {
+		window.localStorage.setItem('enableModelRendering', (!performanceModeEnabled).toString());
+		window.dispatchEvent(
+			new CustomEvent('enableModelRenderingChanged', {
+				detail: { performanceModeEnabled }
+			})
+		);
+	}
 
 	onMount(() => {
 		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
-	});
-
-	$effect(() => {
-		window.localStorage.setItem('enableModelRendering', (!performanceModeEnabled).toString());
+		performanceModeReady = true;
+		persistPerformanceMode();
 	});
 </script>
 
@@ -71,9 +79,20 @@
 			When enabled, 3D previews are disabled across the site for better performance.
 		</p>
 		<label class="mt-3 flex flex-row items-center gap-2">
-			<input type="checkbox" class="checkbox" bind:checked={performanceModeEnabled} />
+			<input
+				type="checkbox"
+				class="checkbox"
+				bind:checked={performanceModeEnabled}
+				onchange={() => {
+					if (!performanceModeReady) return;
+					persistPerformanceMode();
+				}}
+			/>
 			<span class="text-sm">Enable performance mode (disable 3D previews)</span>
 		</label>
+		<p class="mt-2 text-xs text-gray-600">
+			Current status: {performanceModeEnabled ? 'On (3D previews disabled)' : 'Off (3D previews enabled)'}
+		</p>
 	</div>
 </div>
 

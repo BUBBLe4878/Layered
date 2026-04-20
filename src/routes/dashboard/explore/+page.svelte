@@ -82,9 +82,16 @@
 
 		window.addEventListener('storage', onStorage);
 
+		const onPerformanceModeChange = () => {
+			performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
+		};
+
+		window.addEventListener('enableModelRenderingChanged', onPerformanceModeChange);
+
 		if (!sentinel) {
 			return () => {
 				window.removeEventListener('storage', onStorage);
+				window.removeEventListener('enableModelRenderingChanged', onPerformanceModeChange);
 			};
 		}
 
@@ -99,6 +106,7 @@
 		return () => {
 			observer.disconnect();
 			window.removeEventListener('storage', onStorage);
+			window.removeEventListener('enableModelRenderingChanged', onPerformanceModeChange);
 		};
 	});
 </script>
@@ -147,11 +155,11 @@
 				}}
 			>
 				<!-- IMAGE LINK -->
-				<a
-					href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
-					class="block"
-				>
-					<div class="relative aspect-square w-full overflow-hidden">
+				<div class="relative aspect-square w-full overflow-hidden">
+					<a
+						href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
+						class="block h-full"
+					>
 						<img
 							src={devlog.devlog.image}
 							class={`h-full w-full object-cover transition-opacity duration-200 ${getHoverModelState(devlog.devlog.id, devlog.devlog.model) ? 'opacity-0' : 'opacity-100'}`}
@@ -165,8 +173,45 @@
 								/>
 							</div>
 						{/if}
+					</a>
+
+					<!-- LIKE BUTTON -->
+					<div class="absolute bottom-2 left-2 z-10">
+						<form
+							method="POST"
+							action="?/toggleLike"
+							use:enhance={() => {
+								return async ({ result }) => {
+									if (result?.data?.success) {
+										location.reload();
+									}
+								};
+							}}
+						>
+							<input type="hidden" name="devlogId" value={devlog.devlog.id} />
+
+							<button
+								type="submit"
+								class={`cursor-pointer flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold transition-all ${
+									devlog.userLiked
+										? 'bg-red-500 text-white'
+										: 'bg-white/80 text-gray-700 hover:bg-white'
+								}`}
+							>
+								<Heart
+									size={14}
+									class={`transition-all ${devlog.userLiked ? 'fill-current' : ''}`}
+								/>
+								<span>{devlog.likeCount}</span>
+							</button>
+						</form>
+					</div>
 					</div>
 
+				<a
+					href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
+					class="block"
+				>
 					<div class="flex flex-col gap-1.5 p-3">
 						<p class="truncate text-base font-semibold text-primary-900">{devlog.project.name}</p>
 						<p class="text-xs leading-relaxed text-gray-700">
@@ -180,40 +225,6 @@
 						</div>
 					</div>
 				</a>
-
-				<!-- LIKE BUTTON -->
-				<div class="absolute bottom-2 left-2 z-10">
-
-					<form
-						method="POST"
-						action="?/toggleLike"
-						use:enhance={() => {
-							return async ({ result }) => {
-								if (result?.data?.success) {
-									location.reload();
-								}
-							};
-						}}
-						class="absolute bottom-2 left-2"
-					>
-						<input type="hidden" name="devlogId" value={devlog.devlog.id} />
-					
-						<button
-							type="submit"
-							class={`cursor-pointer flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
-								devlog.userLiked
-									? 'bg-red-500 text-white'
-									: 'bg-white/80 text-gray-700 hover:bg-white'
-							}`}
-						>
-							<Heart
-								size={14}
-								class={`transition-all ${devlog.userLiked ? 'fill-current' : ''}`}
-							/>
-							<span>{devlog.likeCount}</span>
-						</button>
-					</form>
-				</div>
 
 				<!-- VIEW COUNT -->
 				<!--
