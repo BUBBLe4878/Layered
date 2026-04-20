@@ -282,12 +282,14 @@ export const actions = {
 		}
 
 		// Editor file
-		const editorFilePath = `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`;
+		const editorFilePath = editorFileExists
+			? `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`
+			: null;
 
 		if (editorFileExists) {
 			const editorFileCommand = new PutObjectCommand({
 				Bucket: env.S3_BUCKET_NAME,
-				Key: editorFilePath,
+				Key: editorFilePath!,
 				Body: Buffer.from(await editorFile.arrayBuffer())
 			});
 			await S3.send(editorFileCommand);
@@ -310,7 +312,7 @@ export const actions = {
 				url: printablesUrlString,
 				editorFileType: editorUrlExists ? 'url' : 'upload',
 				editorUrl: editorUrlExists ? editorUrlString : undefined,
-				uploadedFileUrl: editorFileExists ? editorFilePath : undefined,
+				uploadedFileUrl: editorFileExists ? editorFilePath! : undefined,
 
 				modelFile: modelPath,
                 doubleDippingWith
@@ -343,7 +345,7 @@ export const actions = {
 
 			editorFileType: editorUrlExists ? 'url' : 'upload',
 			editorUrl: editorUrlExists ? editorUrlString : undefined,
-			uploadedFileUrl: editorFileExists ? editorFilePath : undefined,
+			uploadedFileUrl: editorFileExists ? editorFilePath! : undefined,
 
 			modelFile: modelPath,
 			clubId: clubIdForShip
