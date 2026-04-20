@@ -132,6 +132,7 @@
 	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
 		{#each devlogs as devlog (devlog.devlog.id)}
+			{@const updatedAt = parseDate(devlog.devlog.createdAt)}
 			<div
 				class="themed-box-solid group relative overflow-hidden border border-primary-200 bg-white/80 p-0"
 				onmouseenter={() => {
@@ -145,8 +146,6 @@
 					}
 				}}
 			>
-				{@const updatedAt = parseDate(devlog.devlog.createdAt)}
-
 				<!-- IMAGE LINK -->
 				<a
 					href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
