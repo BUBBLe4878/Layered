@@ -347,6 +347,22 @@
 							</DataCard>
 						</div>
 					{/if}
+
+					{#if form?.fetchPII.addresses?.length > 1}
+						<h3 class="mt-3 mb-2 text-xl font-bold">all addresses</h3>
+						<div class="flex flex-col gap-2">
+							{#each form.fetchPII.addresses as addr, i}
+								<div class="themed-box p-3">
+									<p class="font-bold">Address {i + 1}</p>
+									<p class="text-sm">
+										{addr.first_name} {addr.last_name}, {addr.line_1}{addr.line_2
+											? `, ${addr.line_2}`
+											: ''}, {addr.city}, {addr.state}, {addr.postal_code}, {addr.country}
+									</p>
+								</div>
+							{/each}
+						</div>
+					{/if}
 				{:else}
 					<form
 						action="?/fetchPII"

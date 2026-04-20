@@ -13,8 +13,18 @@ import { S3 } from '$lib/server/s3';
 import { ship } from '$lib/server/db/schema.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
+function parseProjectId(rawId: string): number {
+	const id = Number.parseInt(rawId, 10);
+
+	if (!Number.isInteger(id) || id <= 0) {
+		throw error(404, { message: 'project not found' });
+	}
+
+	return id;
+}
+
 export async function load({ params, locals }) {
-	const id: number = parseInt(params.id);
+	const id = parseProjectId(params.id);
 
 	if (!locals.user) {
 		throw error(500);
@@ -52,6 +62,10 @@ export async function load({ params, locals }) {
 			project.name,
 			project.description,
 			project.url,
+			project.editorFileType,
+			project.editorUrl,
+			project.uploadedFileUrl,
+			project.modelFile,
 			project.createdAt,
 			project.status
 		)
@@ -84,7 +98,7 @@ export const actions = {
 			throw error(500);
 		}
 
-		const id: number = parseInt(params.id);
+		const id = parseProjectId(params.id);
 
 		const data = await request.formData();
 		const printablesUrl = data.get('printables_url');
