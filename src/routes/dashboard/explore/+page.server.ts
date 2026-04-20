@@ -3,10 +3,9 @@ import { devlog, project, user, devlogLike, devlogView } from '$lib/server/db/sc
 import { desc, eq, count, sql, and, gte } from 'drizzle-orm';
 
 export const _DEVLOGS_PAGE_SIZE = 15;
-
 export type SortType = 'newest' | 'trending' | 'random' | 'liked';
 
-export async function fetchExploreDevlogs(
+export async function _fetchExploreDevlogs(
 	offset: number,
 	sort: SortType = 'newest',
 	userId?: number,
@@ -94,10 +93,7 @@ export async function fetchExploreDevlogs(
 			.innerJoin(devlog, eq(devlogLike.devlogId, devlog.id))
 			.innerJoin(project, eq(devlog.projectId, project.id))
 			.innerJoin(user, eq(devlog.userId, user.id))
-			.leftJoin(
-				devlogLike,
-				eq(devlog.id, devlogLike.devlogId)
-			)
+			.leftJoin(devlogLike, eq(devlog.id, devlogLike.devlogId))
 			.where(and(eq(devlogLike.userId, userId || -1), eq(devlog.deleted, false)))
 			.groupBy(devlog.id, project.id, user.id)
 			.orderBy(desc(devlog.createdAt));
