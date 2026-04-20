@@ -348,7 +348,6 @@
 								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('tutorial')}`}></span>
 							{/if}
 						</a>
-					</a>
 				</div>
 
 				{#if hasAdminAccess}
