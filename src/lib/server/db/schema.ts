@@ -248,13 +248,13 @@ export const devlogLike = pgTable(
 	'devlog_like',
 	{
 		id: serial().primaryKey(),
-		devlogId: integer()
+		devlogId: integer('devlog_id')
 			.notNull()
 			.references(() => devlog.id),
-		userId: integer()
+		userId: integer('user_id')
 			.notNull()
 			.references(() => user.id),
-		createdAt: timestamp().notNull().defaultNow()
+		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
 	(table) => ({
 		uniqueConstraint: unique('devlog_like_unique').on(table.devlogId, table.userId)
@@ -263,11 +263,11 @@ export const devlogLike = pgTable(
 
 export const devlogView = pgTable('devlog_view', {
 	id: serial().primaryKey(),
-	devlogId: integer()
+	devlogId: integer('devlog_id')
 		.notNull()
 		.references(() => devlog.id),
-	userId: integer().references(() => user.id), // null if anonymous
-	createdAt: timestamp().notNull().defaultNow()
+	userId: integer('user_id').references(() => user.id), // null if anonymous
+	createdAt: timestamp('created_at').notNull().defaultNow()
 });
 
 // Market
