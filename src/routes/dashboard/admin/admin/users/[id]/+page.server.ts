@@ -7,7 +7,7 @@ import {
 	currencyAuditLog
 } from '$lib/server/db/schema.js';
 
-import { error, fail, redirect } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Actions } from './$types';
 
@@ -29,11 +29,10 @@ import { withSlackProfile } from '$lib/server/slack';
 
 export async function load({ locals, params }) {
 	if (!locals.user) throw error(500);
-	if (!locals.user.hasAdmin) throw error(403, { message: 'oi get out' });
+	if (!locals.user.hasAdmin) throw error(403, { message: 'no access' });
 
 	const id = Number(params.id);
 
-	// Get user
 	const [queriedUser] = await db
 		.select()
 		.from(user)
@@ -43,7 +42,6 @@ export async function load({ locals, params }) {
 		throw error(404, { message: 'user not found' });
 	}
 
-	// Devlog count
 	const [{ devlogCount }] =
 		(await db
 			.select({
@@ -54,11 +52,10 @@ export async function load({ locals, params }) {
 			.where(eq(user.id, id))
 			.groupBy(user.id)) ?? [{ devlogCount: 0 }];
 
-	// Slack enrichment
-	const queriedUserWithSlackProfile = await withSlackProfile(queriedUser);
+	const enriched = await withSlackProfile(queriedUser);
 
 	return {
-		queriedUser: queriedUserWithSlackProfile,
+		queriedUser: enriched,
 		devlogCount
 	};
 }
@@ -67,8 +64,8 @@ export async function load({ locals, params }) {
    ACTIONS
 ========================================================= */
 
-export const actions = {
-	/* -------------------- PRIVILEGES -------------------- */
+export const actions: Actions = {
+	/* ---------------- PRIVILEGES ---------------- */
 	privileges: async ({ locals, request, params }) => {
 		if (!locals.user) throw error(500);
 		if (!locals.user.hasAdmin) throw error(403);
@@ -93,7 +90,7 @@ export const actions = {
 		};
 	},
 
-	/* -------------------- CURRENCY -------------------- */
+	/* ---------------- CURRENCY ---------------- */
 	currency: async ({ locals, request, params }) => {
 		if (!locals.user) throw error(500);
 		if (!locals.user.hasAdmin) throw error(403);
@@ -101,23 +98,14 @@ export const actions = {
 		const id = Number(params.id);
 		const data = await request.formData();
 
-		const clay = data.get('clay');
-		const brick = data.get('brick');
-		const shopScore = data.get('market_score');
+		const clay = Number(data.get('clay'));
+		const brick = Number(data.get('brick'));
+		const shopScore = Number(data.get('market_score'));
 		const reason = data.get('reason')?.toString();
 
-		if (
-			!clay ||
-			isNaN(Number(clay)) ||
-			!brick ||
-			isNaN(Number(brick)) ||
-			!shopScore ||
-			isNaN(Number(shopScore))
-		) {
+		if ([clay, brick, shopScore].some((v) => isNaN(v))) {
 			return fail(400, {
-				currency: {
-					invalidFields: true
-				}
+				currency: { invalidFields: true }
 			});
 		}
 
@@ -125,33 +113,23 @@ export const actions = {
 			throw error(400, { message: 'invalid reason' });
 		}
 
-		const [queriedUser] = await db
-			.select()
-			.from(user)
-			.where(eq(user.id, id));
-
-		if (!queriedUser) {
-			throw error(404, { message: 'user not found' });
-		}
+		const [before] = await db.select().from(user).where(eq(user.id, id));
+		if (!before) throw error(404, { message: 'user not found' });
 
 		await db
 			.update(user)
-			.set({
-				clay: Number(clay),
-				brick: Number(brick),
-				shopScore: Number(shopScore)
-			})
+			.set({ clay, brick, shopScore })
 			.where(eq(user.id, id));
 
 		await db.insert(currencyAuditLog).values({
 			adminUserId: locals.user.id,
 			targetUserId: id,
-			oldClay: queriedUser.clay,
-			oldBrick: queriedUser.brick,
-			oldShopScore: queriedUser.shopScore,
-			newClay: Number(clay),
-			newBrick: Number(brick),
-			newShopScore: Number(shopScore),
+			oldClay: before.clay,
+			oldBrick: before.brick,
+			oldShopScore: before.shopScore,
+			newClay: clay,
+			newBrick: brick,
+			newShopScore: shopScore,
 			reason
 		});
 
@@ -162,91 +140,90 @@ export const actions = {
 		};
 	},
 
-	/* -------------------- FETCH PII -------------------- */
+	/* ---------------- FETCH PII ---------------- */
 	fetchPII: async ({ locals, params }) => {
-	if (!locals.user) throw error(500);
-	if (!locals.user.hasAdmin) throw error(403);
+		if (!locals.user) throw error(500);
+		if (!locals.user.hasAdmin) throw error(403);
 
-	const id = Number(params.id);
+		const id = Number(params.id);
 
-	const [queriedUser] = await db
-		.select({ idvToken: user.idvToken })
-		.from(user)
-		.where(eq(user.id, id));
+		const [row] = await db
+			.select({ idvToken: user.idvToken })
+			.from(user)
+			.where(eq(user.id, id));
 
-	if (!queriedUser) throw error(404, { message: 'user not found' });
+		if (!row) throw error(404, { message: 'user not found' });
 
-	if (!queriedUser.idvToken) {
-		return fail(400, {
-			fetchPII: {
-				success: false,
-				errorMessage: 'IDV token missing',
-				first_name: null,
-				last_name: null,
-				email: null,
-				phone_number: null,
-				birthday: null,
-				address: null
-			}
-		});
-	}
-
-	let userData;
-
-	try {
-		const token = decrypt(queriedUser.idvToken);
-		userData = await getUserData(token);
-	} catch {
-		return fail(400, {
-			fetchPII: {
-				success: false,
-				errorMessage: 'IDV token expired or invalid',
-				first_name: null,
-				last_name: null,
-				email: null,
-				phone_number: null,
-				birthday: null,
-				address: null
-			}
-		});
-	}
-
-	// 🔥 NORMALIZE DATA SAFELY (this is the important fix)
-	const first_name = userData.first_name ?? null;
-	const last_name = userData.last_name ?? null;
-
-	const email =
-		userData.primary_email ??
-		userData.email ??
-		userData.emails?.[0]?.email ??
-		null;
-
-	const phone_number =
-		userData.phone_number ??
-		userData.phone_numbers?.[0]?.number ??
-		null;
-
-	const birthday =
-		userData.birthday ??
-		userData.date_of_birth ??
-		null;
-
-	const address =
-		userData.address ??
-		userData.addresses?.find((a: any) => a.primary) ??
-		userData.addresses?.[0] ??
-		null;
-
-	return {
-		fetchPII: {
-			success: true,
-			errorMessage: '',
-			first_name,
-			last_name,
-			email,
-			phone_number,
-			birthday,
-			address
+		if (!row.idvToken) {
+			return fail(400, {
+				fetchPII: {
+					success: false,
+					errorMessage: 'missing token',
+					first_name: null,
+					last_name: null,
+					email: null,
+					phone_number: null,
+					birthday: null,
+					address: null
+				}
+			});
 		}
-	};
-}
+
+		let userData;
+
+		try {
+			const token = decrypt(row.idvToken);
+			userData = await getUserData(token);
+		} catch {
+			return fail(400, {
+				fetchPII: {
+					success: false,
+					errorMessage: 'invalid token',
+					first_name: null,
+					last_name: null,
+					email: null,
+					phone_number: null,
+					birthday: null,
+					address: null
+				}
+			});
+		}
+
+		const first_name = userData?.first_name ?? null;
+		const last_name = userData?.last_name ?? null;
+
+		const email =
+			userData?.primary_email ??
+			userData?.email ??
+			userData?.emails?.[0]?.email ??
+			null;
+
+		const phone_number =
+			userData?.phone_number ??
+			userData?.phone_numbers?.[0]?.number ??
+			null;
+
+		const birthday =
+			userData?.birthday ??
+			userData?.date_of_birth ??
+			null;
+
+		const address =
+			userData?.addresses?.find((a: any) => a.primary) ??
+			userData?.addresses?.[0] ??
+			null;
+
+		return {
+			fetchPII: {
+				success: true,
+				errorMessage: '',
+				first_name,
+				last_name,
+				email,
+				phone_number,
+				birthday,
+				address
+			}
+		};
+	}
+};
