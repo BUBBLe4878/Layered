@@ -78,17 +78,25 @@
 		<p class="mt-1 text-sm text-gray-700">
 			When enabled, 3D previews are disabled across the site for better performance.
 		</p>
-		<label class="mt-3 flex flex-row items-center gap-2">
+		<label class="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-primary-200 bg-primary-50/70 px-3 py-2 transition-colors hover:bg-primary-100/80">
 			<input
 				type="checkbox"
-				class="checkbox"
+				class="peer sr-only"
 				bind:checked={performanceModeEnabled}
 				onchange={() => {
 					if (!performanceModeReady) return;
 					persistPerformanceMode();
 				}}
 			/>
-			<span class="text-sm">Enable performance mode (disable 3D previews)</span>
+			<span
+				class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-primary-300 bg-white text-primary-600 transition-all peer-checked:border-primary-700 peer-checked:bg-primary-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400 peer-focus-visible:ring-offset-2"
+				aria-hidden="true"
+			>
+				{#if performanceModeEnabled}
+					<span class="text-sm font-bold leading-none">✓</span>
+				{/if}
+			</span>
+			<span class="text-sm font-medium">Enable performance mode (disable 3D previews)</span>
 		</label>
 		<p class="mt-2 text-xs text-gray-600">
 			Current status: {performanceModeEnabled ? 'On (3D previews disabled)' : 'Off (3D previews enabled)'}

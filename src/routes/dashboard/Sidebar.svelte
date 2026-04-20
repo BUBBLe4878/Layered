@@ -56,34 +56,43 @@
 
 	function navButtonClass(key: NavKey, isActive: boolean, compact = false) {
 		const base = compact
-			? 'header-nav-button pei-button pei1 relative flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm border'
-			: 'header-nav-button pei-button pei1 relative flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm border transition-colors';
+			? 'header-nav-button pei-button pei1 relative isolate flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm border'
+			: 'header-nav-button pei-button pei1 relative isolate flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm border transition-colors';
 
 		if (!isActive) {
 			return `${base} border-primary-400/50 bg-primary-700 hover:bg-primary-600`;
 		}
 
 		if (key === 'home') {
-			return `${base} border-yellow-200/95 bg-yellow-700 ring-2 ring-yellow-200/70 shadow-[0_0_0_2px_rgba(253,224,71,0.35)] after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-yellow-200`;
+			return `${base} border-yellow-200/95 bg-yellow-700 ring-2 ring-yellow-200/70 shadow-[0_0_0_2px_rgba(253,224,71,0.35)]`;
 		}
 
 		if (key === 'projects') {
-			return `${base} border-blue-200/95 bg-blue-700 ring-2 ring-blue-200/70 shadow-[0_0_0_2px_rgba(147,197,253,0.35)] after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-blue-200`;
+			return `${base} border-blue-200/95 bg-blue-700 ring-2 ring-blue-200/70 shadow-[0_0_0_2px_rgba(147,197,253,0.35)]`;
 		}
 
 		if (key === 'explore') {
-			return `${base} border-cyan-200/95 bg-cyan-700 ring-2 ring-cyan-200/70 shadow-[0_0_0_2px_rgba(165,243,252,0.35)] after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-cyan-200`;
+			return `${base} border-cyan-200/95 bg-cyan-700 ring-2 ring-cyan-200/70 shadow-[0_0_0_2px_rgba(165,243,252,0.35)]`;
 		}
 
 		if (key === 'market') {
-			return `${base} border-orange-200/95 bg-orange-700 ring-2 ring-orange-200/70 shadow-[0_0_0_2px_rgba(254,215,170,0.35)] after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-orange-200`;
+			return `${base} border-orange-200/95 bg-orange-700 ring-2 ring-orange-200/70 shadow-[0_0_0_2px_rgba(254,215,170,0.35)]`;
 		}
 
 		if (key === 'clubs') {
-			return `${base} border-purple-200/95 bg-purple-700 ring-2 ring-purple-200/70 shadow-[0_0_0_2px_rgba(233,213,255,0.35)] after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-purple-200`;
+			return `${base} border-purple-200/95 bg-purple-700 ring-2 ring-purple-200/70 shadow-[0_0_0_2px_rgba(233,213,255,0.35)]`;
 		}
 
-		return `${base} border-red-200/95 bg-red-700 ring-2 ring-red-200/70 shadow-[0_0_0_2px_rgba(254,202,202,0.35)] after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-red-200`;
+		return `${base} border-red-200/95 bg-red-700 ring-2 ring-red-200/70 shadow-[0_0_0_2px_rgba(254,202,202,0.35)]`;
+	}
+
+	function navIndicatorClass(key: NavKey) {
+		if (key === 'home') return 'bg-yellow-200';
+		if (key === 'projects') return 'bg-blue-200';
+		if (key === 'explore') return 'bg-cyan-200';
+		if (key === 'market') return 'bg-orange-200';
+		if (key === 'clubs') return 'bg-purple-200';
+		return 'bg-red-200';
 	}
 </script>
 
@@ -114,6 +123,9 @@
 			>
 				<House size={20} />
 				<span>Home</span>
+				{#if page.url.pathname === '/dashboard'}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('home')}`}></span>
+				{/if}
 			</a>
 
 			<!-- Projects -->
@@ -123,6 +135,9 @@
 			>
 				<PencilRuler size={20} />
 				<span>Projects</span>
+				{#if page.url.pathname.startsWith('/dashboard/projects')}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('projects')}`}></span>
+				{/if}
 			</a>
 
 			<!-- Explore -->
@@ -132,6 +147,9 @@
 			>
 				<Compass size={20} />
 				<span>Explore</span>
+				{#if page.url.pathname.startsWith('/dashboard/explore')}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('explore')}`}></span>
+				{/if}
 			</a>
 
 			<!-- Market -->
@@ -141,6 +159,9 @@
 			>
 				<Store size={20} />
 				<span>Market</span>
+				{#if page.url.pathname.startsWith('/dashboard/market')}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
+				{/if}
 			</a>
 
 			<!-- Club -->
@@ -150,6 +171,9 @@
 			>
 				<Users size={20} />
 				<span>Club</span>
+				{#if page.url.pathname.startsWith('/dashboard/clubs')}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('clubs')}`}></span>
+				{/if}
 			</a>
 
 			<!-- Tutorial -->
@@ -159,6 +183,9 @@
 			>
 				<BookOpen size={20} />
 				<span>Tutorials</span>
+				{#if page.url.pathname.startsWith('/dashboard/tutorial')}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('tutorial')}`}></span>
+				{/if}
 			</a>
 
 			<!-- Admin Button -->
@@ -253,6 +280,9 @@
 					>
 						<House size={18} />
 						<span>Home</span>
+						{#if page.url.pathname === '/dashboard'}
+							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('home')}`}></span>
+						{/if}
 					</a>
 					<a
 						href={resolve('/dashboard/projects')}
@@ -277,34 +307,47 @@
 					>
 						<Compass size={18} />
 						<span>Explore</span>
-					</a>
-					<a
-						href={resolve('/dashboard/market')}
-						class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'), true)}
-						onclick={() => (showMobileMenu = false)}
-					>
-						<Store size={18} />
-						<span>Market</span>
-					</a>
-					<a
-						href={resolve('/dashboard/clubs')}
-						class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'), true)}
-						onclick={() => (showMobileMenu = false)}
-					>
-						<Users size={18} />
-						<span>Club</span>
-					</a>
-					<a
-						href={resolve('/dashboard/tutorial')}
-						class={navButtonClass(
-							'tutorial',
-							page.url.pathname.startsWith('/dashboard/tutorial'),
-							true
-						)}
-						onclick={() => (showMobileMenu = false)}
-					>
-						<BookOpen size={18} />
-						<span>Tutorials</span>
+							{#if page.url.pathname.startsWith('/dashboard/explore')}
+								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('explore')}`}></span>
+							{/if}
+						</a>
+						<a
+							href={resolve('/dashboard/market')}
+							class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'), true)}
+							onclick={() => (showMobileMenu = false)}
+						>
+							<Store size={18} />
+							<span>Market</span>
+							{#if page.url.pathname.startsWith('/dashboard/market')}
+								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
+							{/if}
+						</a>
+						<a
+							href={resolve('/dashboard/clubs')}
+							class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'), true)}
+							onclick={() => (showMobileMenu = false)}
+						>
+							<Users size={18} />
+							<span>Club</span>
+							{#if page.url.pathname.startsWith('/dashboard/clubs')}
+								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('clubs')}`}></span>
+							{/if}
+						</a>
+						<a
+							href={resolve('/dashboard/tutorial')}
+							class={navButtonClass(
+								'tutorial',
+								page.url.pathname.startsWith('/dashboard/tutorial'),
+								true
+							)}
+							onclick={() => (showMobileMenu = false)}
+						>
+							<BookOpen size={18} />
+							<span>Tutorials</span>
+							{#if page.url.pathname.startsWith('/dashboard/tutorial')}
+								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('tutorial')}`}></span>
+							{/if}
+						</a>
 					</a>
 				</div>
 
