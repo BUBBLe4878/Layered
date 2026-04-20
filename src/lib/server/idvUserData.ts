@@ -15,5 +15,6 @@ export async function getUserData(token: string) {
 
 	const userDataJSON = await userDataRes.json();
 
+	console.log("IDV RAW RESPONSE:", userDataJSON);
 	return userDataJSON.identity!;
 }
