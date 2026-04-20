@@ -35,16 +35,20 @@ export async function load({ locals, params }) {
 	if (!queriedUser) {
 		throw error(404, { message: 'user not found' });
 	}
-
-	const [{ devlogCount }] =
-		(await db
-			.select({
-				devlogCount: sql<number>`COALESCE(COUNT(${devlog.id}), 0)`
-			})
-			.from(user)
-			.leftJoin(devlog, and(eq(devlog.userId, user.id), eq(devlog.deleted, false)))
-			.where(eq(user.id, id))
-			.groupBy(user.id))) ?? [{ devlogCount: 0 }];
+	
+	const result = await db
+		.select({
+			devlogCount: sql<number>`COALESCE(COUNT(${devlog.id}), 0)`
+		})
+		.from(user)
+		.leftJoin(
+			devlog,
+			and(eq(devlog.userId, user.id), eq(devlog.deleted, false))
+		)
+		.where(eq(user.id, id))
+		.groupBy(user.id);
+	
+	const devlogCount = result[0]?.devlogCount ?? 0;
 
 	const enrichedUser = await withSlackProfile(queriedUser);
 
