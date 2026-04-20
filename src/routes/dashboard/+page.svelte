@@ -7,14 +7,14 @@
 
 	let { data } = $props();
 
-	let enableModelRendering = $state(true);
+	let performanceModeEnabled = $state(false);
 
 	onMount(() => {
-		enableModelRendering = window.localStorage.getItem('enableModelRendering') !== 'false';
+		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
 	});
 
 	$effect(() => {
-		window.localStorage.setItem('enableModelRendering', enableModelRendering.toString());
+		window.localStorage.setItem('enableModelRendering', (!performanceModeEnabled).toString());
 	});
 </script>
 
@@ -67,10 +67,12 @@
 
 	<div class="themed-box-solid p-4">
 		<h2 class="text-lg font-bold">Performance mode</h2>
-		<p class="mt-1 text-sm text-gray-700">Enable or disable 3D model rendering in your browser.</p>
+		<p class="mt-1 text-sm text-gray-700">
+			When enabled, 3D previews are disabled across the site for better performance.
+		</p>
 		<label class="mt-3 flex flex-row items-center gap-2">
-			<input type="checkbox" class="checkbox" bind:checked={enableModelRendering} />
-			<span class="text-sm">Enable rendering 3D models</span>
+			<input type="checkbox" class="checkbox" bind:checked={performanceModeEnabled} />
+			<span class="text-sm">Enable performance mode (disable 3D previews)</span>
 		</label>
 	</div>
 </div>

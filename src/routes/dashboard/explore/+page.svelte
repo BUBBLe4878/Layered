@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Head from '$lib/components/Head.svelte';
-	import { Heart } from '@lucide/svelte';
-	import relativeDate from 'tiny-relative-date';
+	import { ChevronDown, Clock3, Heart } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
+	import Spinny3DPreview from '$lib/components/Spinny3DPreview.svelte';
 
 	let { data } = $props();
 
@@ -16,6 +16,11 @@
 	let loadError = $state('');
 	let sentinel = $state<HTMLDivElement | null>(null);
 	let sortBy: SortType = $state('newest');
+	let performanceModeEnabled = $state(false);
+	let hoveredDevlogId = $state<number | null>(null);
+
+	const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
+	const timeFormatter = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
 
 	const rootMargin = '300px 0px';
 
@@ -55,11 +60,33 @@
 		hasMore = json.hasMore;
 	}
 
+	function parseDate(value: Date | string) {
+		return value instanceof Date ? value : new Date(value);
+	}
+
+	function getHoverModelState(devlogId: number, modelUrl?: string | null) {
+		return !performanceModeEnabled && hoveredDevlogId === devlogId && Boolean(modelUrl);
+	}
+
 	// ---------------------------
 	// INFINITE SCROLL
 	// ---------------------------
 	onMount(() => {
-		if (!sentinel) return;
+		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
+
+		const onStorage = (event: StorageEvent) => {
+			if (event.key === 'enableModelRendering') {
+				performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
+			}
+		};
+
+		window.addEventListener('storage', onStorage);
+
+		if (!sentinel) {
+			return () => {
+				window.removeEventListener('storage', onStorage);
+			};
+		}
 
 		const observer = new IntersectionObserver(
 			([entry]) => {
@@ -69,7 +96,10 @@
 		);
 
 		observer.observe(sentinel);
-		return () => observer.disconnect();
+		return () => {
+			observer.disconnect();
+			window.removeEventListener('storage', onStorage);
+		};
 	});
 </script>
 
@@ -81,37 +111,79 @@
 	<div class="flex justify-between items-center">
 		<h1 class="text-3xl font-medium">Explore</h1>
 
-		<select
-			bind:value={sortBy}
-			onchange={(e) => changeSort(e.currentTarget.value as SortType)}
-			class="border px-2 py-1 rounded text-sm"
-		>
-			<option value="newest">Newest</option>
-			<option value="trending">Trending</option>
-			<option value="random">Random</option>
-			<option value="liked">Liked</option>
-		</select>
+		<div class="relative w-44">
+			<select
+				bind:value={sortBy}
+				onchange={(e) => changeSort(e.currentTarget.value as SortType)}
+				class="themed-input w-full appearance-none pr-9 text-sm font-medium"
+			>
+				<option value="newest">Newest</option>
+				<option value="trending">Trending</option>
+				<option value="random">Random</option>
+				<option value="liked">Liked</option>
+			</select>
+			<div class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-600">
+				<ChevronDown size={16} />
+			</div>
+		</div>
 	</div>
 
 	<!-- GRID -->
-	<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
-		{#each devlogs as devlog, index (devlog.devlog.id)}
-			<div class="relative group">
+		{#each devlogs as devlog (devlog.devlog.id)}
+			<div
+				class="themed-box-solid group relative overflow-hidden border border-primary-200 bg-white/80 p-0"
+				onmouseenter={() => {
+					if (!performanceModeEnabled) {
+						hoveredDevlogId = devlog.devlog.id;
+					}
+				}}
+				onmouseleave={() => {
+					if (hoveredDevlogId === devlog.devlog.id) {
+						hoveredDevlogId = null;
+					}
+				}}
+			>
+				{@const updatedAt = parseDate(devlog.devlog.createdAt)}
 
 				<!-- IMAGE LINK -->
 				<a
 					href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
-					class="block rounded overflow-hidden"
+					class="block"
 				>
-					<img
-						src={devlog.devlog.image}
-						class="aspect-square w-full object-cover"
-					/>
+					<div class="relative aspect-square w-full overflow-hidden">
+						<img
+							src={devlog.devlog.image}
+							class={`h-full w-full object-cover transition-opacity duration-200 ${getHoverModelState(devlog.devlog.id, devlog.devlog.model) ? 'opacity-0' : 'opacity-100'}`}
+						/>
+						{#if getHoverModelState(devlog.devlog.id, devlog.devlog.model)}
+							<div class="pointer-events-none absolute inset-0 bg-white/80">
+								<Spinny3DPreview
+									identifier={`explore-hover-${devlog.devlog.id}`}
+									modelUrl={devlog.devlog.model}
+									sizeCutoff={7.5 * 1024 * 1024}
+								/>
+							</div>
+						{/if}
+					</div>
+
+					<div class="flex flex-col gap-1.5 p-3">
+						<p class="truncate text-base font-semibold text-primary-900">{devlog.project.name}</p>
+						<p class="text-xs leading-relaxed text-gray-700">
+							{devlog.devlog.description || 'No update notes yet.'}
+						</p>
+						<div class="flex items-center gap-3 text-[11px] text-gray-600">
+							<span>
+								<Clock3 size={12} class="mr-1 inline" />
+								{dateFormatter.format(updatedAt)} at {timeFormatter.format(updatedAt)}
+							</span>
+						</div>
+					</div>
 				</a>
 
 				<!-- LIKE BUTTON -->
-				<div class="absolute bottom-2 left-2">
+				<div class="absolute bottom-2 left-2 z-10">
 
 					<form
 						method="POST"

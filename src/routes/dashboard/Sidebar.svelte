@@ -51,6 +51,40 @@
 	let hasAdminAccess = $derived(
 		user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin
 	);
+
+	type NavKey = 'home' | 'projects' | 'explore' | 'market' | 'clubs' | 'tutorial';
+
+	function navButtonClass(key: NavKey, isActive: boolean, compact = false) {
+		const base = compact
+			? 'header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm border'
+			: 'header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm border transition-colors';
+
+		if (!isActive) {
+			return `${base} border-primary-400/50 bg-primary-700 hover:bg-primary-600`;
+		}
+
+		if (key === 'home') {
+			return `${base} border-yellow-200/90 bg-yellow-700 ring-2 ring-yellow-200/60`;
+		}
+
+		if (key === 'projects') {
+			return `${base} border-blue-200/90 bg-blue-700 ring-2 ring-blue-200/60`;
+		}
+
+		if (key === 'explore') {
+			return `${base} border-cyan-200/90 bg-cyan-700 ring-2 ring-cyan-200/60`;
+		}
+
+		if (key === 'market') {
+			return `${base} border-orange-200/90 bg-orange-700 ring-2 ring-orange-200/60`;
+		}
+
+		if (key === 'clubs') {
+			return `${base} border-purple-200/90 bg-purple-700 ring-2 ring-purple-200/60`;
+		}
+
+		return `${base} border-red-200/90 bg-red-700 ring-2 ring-red-200/60`;
+	}
 </script>
 
 <!-- Top Header Navigation -->
@@ -76,8 +110,7 @@
 			<!-- Home -->
 			<a
 				href={resolve('/dashboard')}
-				class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-600 px-3 py-2 text-sm transition-colors hover:bg-primary-700"
-				class:bg-primary-700={page.url.pathname === '/dashboard'}
+				class={navButtonClass('home', page.url.pathname === '/dashboard')}
 			>
 				<House size={20} />
 				<span>Home</span>
@@ -86,8 +119,7 @@
 			<!-- Projects -->
 			<a
 				href={resolve('/dashboard/projects')}
-				class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 py-2 text-sm transition-colors hover:bg-primary-600"
-				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/projects')}
+				class={navButtonClass('projects', page.url.pathname.startsWith('/dashboard/projects'))}
 			>
 				<PencilRuler size={20} />
 				<span>Projects</span>
@@ -96,8 +128,7 @@
 			<!-- Explore -->
 			<a
 				href={resolve('/dashboard/explore')}
-				class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 py-2 text-sm transition-colors hover:bg-primary-600"
-				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/explore')}
+				class={navButtonClass('explore', page.url.pathname.startsWith('/dashboard/explore'))}
 			>
 				<Compass size={20} />
 				<span>Explore</span>
@@ -106,8 +137,7 @@
 			<!-- Market -->
 			<a
 				href={resolve('/dashboard/market')}
-				class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 py-2 text-sm transition-colors hover:bg-primary-600"
-				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/market')}
+				class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'))}
 			>
 				<Store size={20} />
 				<span>Market</span>
@@ -116,8 +146,7 @@
 			<!-- Club -->
 			<a
 				href={resolve('/dashboard/clubs')}
-				class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 py-2 text-sm transition-colors hover:bg-primary-600"
-				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/clubs')}
+				class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'))}
 			>
 				<Users size={20} />
 				<span>Club</span>
@@ -126,8 +155,7 @@
 			<!-- Tutorial -->
 			<a
 				href={resolve('/dashboard/tutorial')}
-				class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 py-2 text-sm transition-colors hover:bg-primary-600"
-				class:bg-primary-600={page.url.pathname.startsWith('/dashboard/tutorial')}
+				class={navButtonClass('tutorial', page.url.pathname.startsWith('/dashboard/tutorial'))}
 			>
 				<BookOpen size={20} />
 				<span>Tutorials</span>
@@ -220,7 +248,7 @@
 				<div class="grid grid-cols-2 gap-2">
 					<a
 						href={resolve('/dashboard')}
-						class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 text-sm"
+						class={navButtonClass('home', page.url.pathname === '/dashboard', true)}
 						onclick={() => (showMobileMenu = false)}
 					>
 						<House size={18} />
@@ -228,7 +256,11 @@
 					</a>
 					<a
 						href={resolve('/dashboard/projects')}
-						class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 text-sm"
+						class={navButtonClass(
+							'projects',
+							page.url.pathname.startsWith('/dashboard/projects'),
+							true
+						)}
 						onclick={() => (showMobileMenu = false)}
 					>
 						<PencilRuler size={18} />
@@ -236,7 +268,11 @@
 					</a>
 					<a
 						href={resolve('/dashboard/explore')}
-						class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 text-sm"
+						class={navButtonClass(
+							'explore',
+							page.url.pathname.startsWith('/dashboard/explore'),
+							true
+						)}
 						onclick={() => (showMobileMenu = false)}
 					>
 						<Compass size={18} />
@@ -244,7 +280,7 @@
 					</a>
 					<a
 						href={resolve('/dashboard/market')}
-						class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 text-sm"
+						class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'), true)}
 						onclick={() => (showMobileMenu = false)}
 					>
 						<Store size={18} />
@@ -252,7 +288,7 @@
 					</a>
 					<a
 						href={resolve('/dashboard/clubs')}
-						class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 text-sm"
+						class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'), true)}
 						onclick={() => (showMobileMenu = false)}
 					>
 						<Users size={18} />
@@ -260,7 +296,11 @@
 					</a>
 					<a
 						href={resolve('/dashboard/tutorial')}
-						class="header-nav-button pei-button pei1 flex h-10 items-center justify-center gap-1.5 rounded-lg bg-primary-700 px-3 text-sm"
+						class={navButtonClass(
+							'tutorial',
+							page.url.pathname.startsWith('/dashboard/tutorial'),
+							true
+						)}
 						onclick={() => (showMobileMenu = false)}
 					>
 						<BookOpen size={18} />
