@@ -5,7 +5,7 @@
 
 	let { url, editorFileType, uploadedFileUrl, editorUrl } = $props();
 
-	$: uploadedFileHref = getStorageUrl(page.data.s3PublicUrl, uploadedFileUrl);
+	const uploadedFileHref = $derived(getStorageUrl(page.data.s3PublicUrl, uploadedFileUrl));
 </script>
 
 <div class="flex flex-row gap-2">
