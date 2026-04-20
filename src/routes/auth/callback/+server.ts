@@ -1,4 +1,3 @@
-//add comment for server update
 import { redirect, error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db/index.js';
@@ -15,35 +14,10 @@ import { encrypt } from '$lib/server/encryption.js';
 import { getUserData } from '$lib/server/idvUserData';
 import { airtableBase } from '$lib/server/airtable';
 
-async function fetchIDVUserInfo(token: string) {
-	try {
-		const response = await fetch(`https://${env.IDV_DOMAIN}/oauth/userinfo`, {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${token}`,
-				'Content-Type': 'application/json'
-			}
-		});
-
-		if (!response.ok) {
-			console.error('Failed to fetch userinfo:', response.statusText);
-			return null;
-		}
-
-		const data = await response.json();
-		console.log('🔍 IDV USERINFO:', JSON.stringify(data, null, 2));
-		return data;
-	} catch (err) {
-		console.error('Error fetching userinfo:', err);
-		return null;
-	}
-}
-
 export async function GET(event) {
 	const url = event.url;
 	const code = url.searchParams.get('code');
 
-	// !urlState || !code
 	if (!code) {
 		return error(400, { message: 'no oauth code, hmm what happened here' });
 	}
@@ -69,17 +43,15 @@ export async function GET(event) {
 
 	const token = (await tokenRes.json()).access_token;
 
-	// Get user data from IDV
+	// Get user data from /api/v1/me
 	let userData;
 
 	try {
 		userData = await getUserData(token);
+		console.log('✅ getUserData returned:', JSON.stringify(userData, null, 2));
 	} catch {
 		return redirect(302, '/auth/failed');
 	}
-
-	// Fetch comprehensive user info from userinfo endpoint
-	const userInfo = await fetchIDVUserInfo(token);
 
 	const { 
 		id, 
@@ -90,17 +62,6 @@ export async function GET(event) {
 		ysws_eligible 
 	} = userData;
 
-	// Extract from userinfo endpoint
-	const {
-		given_name,
-		family_name,
-		email,
-		phone_number,
-		address, // This is a structured object
-		birthdate,
-		picture
-	} = userInfo || {};
-
 	if (
 		!ysws_eligible &&
 		!(
@@ -110,9 +71,8 @@ export async function GET(event) {
 		return redirect(302, '/auth/ineligible');
 	}
 
-	// Use IDV data for profile
 	const username = first_name && last_name ? `${first_name} ${last_name}` : first_name || 'User';
-	const profilePic = picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
+	const profilePic = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
 
 	// Check Hackatime trust
 	let hackatimeTrust: string = 'blue';
@@ -133,27 +93,17 @@ export async function GET(event) {
 		/* empty */
 	}
 
-	if (!hackatimeTrust) {
-		// console.error();
-		// return redirect(302, '/auth/create-hackatime-account');
-		// return error(503, {
-		// 	message: 'failed to fetch hackatime trust factor, please try again later'
-		// });
-	} else if (hackatimeTrust === 'red') {
-		// Prevent login
+	if (hackatimeTrust === 'red') {
 		return redirect(302, 'https://fraud.land');
 	}
 
-	// Create user if doesn't exist
 	let [databaseUser] = await db.select().from(user).where(eq(user.idvId, id)).limit(1);
 
 	if (databaseUser?.trust === 'red') {
-		// Prevent login
 		return redirect(302, 'https://fraud.land');
 	}
 
 	if (!['blue', 'green', 'yellow', 'red'].includes(hackatimeTrust)) {
-		// weird hackatime issue, assume blue
 		hackatimeTrust = 'blue';
 	}
 
@@ -164,51 +114,23 @@ export async function GET(event) {
 
 	const ref = event.cookies.get('ref');
 
-	// Parse address if it's a structured object
-	let addressString = '';
-	let city = '';
-	let state = '';
-	let zipCode = '';
-	let country = '';
-
-	if (address) {
-		if (typeof address === 'object') {
-			addressString = address.street_address || '';
-			city = address.locality || '';
-			state = address.region || '';
-			zipCode = address.postal_code || '';
-			country = address.country || '';
-		} else if (typeof address === 'string') {
-			addressString = address;
-		}
-	}
-
-	// Prepare comprehensive user data
-	const comprehensiveUserData = {
+	// Store whatever data we get from IDV
+	const userDataToStore = {
 		idvToken: encrypt(token),
 		name: username,
-		firstName: given_name || first_name,
-		lastName: family_name || last_name,
-		email: email || primary_email,
-		phone: phone_number,
-		address: addressString,
-		city: city,
-		state: state,
-		zipCode: zipCode,
-		country: country,
-		dateOfBirth: birthdate ? new Date(birthdate) : null,
+		firstName: first_name,
+		lastName: last_name,
+		email: primary_email,
 		profilePicture: profilePic,
 		lastLoginAt: new Date(Date.now()),
 		hackatimeTrust
 	};
 
-	console.log('✅ Comprehensive user data:', comprehensiveUserData);
+	console.log('💾 Storing user data:', userDataToStore);
 
 	if (databaseUser) {
-		// Update user with comprehensive data
-		const updateData: Parameters<typeof db.update>[0]['_']['set'] = comprehensiveUserData;
+		const updateData: Parameters<typeof db.update>[0]['_']['set'] = userDataToStore;
 
-		// Only update hasAdmin if user is super admin
 		if (isSuperAdmin) {
 			updateData.hasAdmin = true;
 		}
@@ -218,11 +140,10 @@ export async function GET(event) {
 			.set(updateData)
 			.where(eq(user.idvId, id));
 	} else {
-		// Create user with comprehensive data
 		await db.insert(user).values({
 			idvId: id,
 			slackId: slack_id,
-			...comprehensiveUserData,
+			...userDataToStore,
 			createdAt: new Date(Date.now()),
 			referralId: ref,
 
@@ -234,18 +155,17 @@ export async function GET(event) {
 		[databaseUser] = await db.select().from(user).where(eq(user.idvId, id)).limit(1);
 
 		if (!databaseUser) {
-			// Something went _really_ wrong
 			return error(500);
 		}
 
 		if (ref && airtableBase) {
 			await airtableBase('tblwUPbRqbRBnQl7G').create({
-				fldMYF9BuxKbRuSJt: first_name + ' ' + last_name, // Name
-				fldXbtQyDOFpWwGBQ: databaseUser.id, // User ID
-				fldkTgzCj0sz01QQM: email || primary_email, // Email
-				fldeNiHX4OhZEDWM5: 0, // Project count
-				fld1Sssrs7K69cN0i: 0, // Verified ship count
-				fldaPDWM3wrIYOAEf: ref // Referral code
+				fldMYF9BuxKbRuSJt: first_name + ' ' + last_name,
+				fldXbtQyDOFpWwGBQ: databaseUser.id,
+				fldkTgzCj0sz01QQM: primary_email,
+				fldeNiHX4OhZEDWM5: 0,
+				fld1Sssrs7K69cN0i: 0,
+				fldaPDWM3wrIYOAEf: ref
 			});
 		}
 	}
