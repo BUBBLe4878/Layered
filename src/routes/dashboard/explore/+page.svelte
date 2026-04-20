@@ -55,44 +55,39 @@
 		}
 	}
 
-	async function toggleLike(
-	e: MouseEvent,
-	devlogId: number,
-	currentLiked: boolean,
-	index: number
-) {
-	e.preventDefault();
-	e.stopPropagation();
+	async function handleLike(
+		e: SubmitEvent,
+		devlogId: number,
+		currentLiked: boolean,
+		index: number
+	) {
+		e.preventDefault();
+		e.stopPropagation();
 
-	try {
-		const formData = new FormData();
-		formData.append('devlogId', devlogId.toString());
+		const form = e.target as HTMLFormElement;
+		const formData = new FormData(form);
 
-		// Add the /toggleLike action to the form data
-		formData.append('_action', 'toggleLike');
+		try {
+			const response = await fetch(form.action, {
+				method: 'POST',
+				body: formData
+			});
 
-		const response = await fetch(window.location.pathname, {
-			method: 'POST',
-			body: formData
-		});
+			if (!response.ok) {
+				throw new Error('Failed to update like');
+			}
 
-		if (!response.ok) {
-			throw new Error('Failed to update like');
+			// Toggle state
+			devlogs[index].devlog.userLiked = !currentLiked;
+			if (!currentLiked) {
+				devlogs[index].devlog.likeCount += 1;
+			} else {
+				devlogs[index].devlog.likeCount -= 1;
+			}
+		} catch (error) {
+			console.error('Like error:', error);
 		}
-
-		const result = await response.json();
-
-		// Toggle based on currentLiked
-		devlogs[index].devlog.userLiked = !currentLiked;
-		if (!currentLiked) {
-			devlogs[index].devlog.likeCount += 1;
-		} else {
-			devlogs[index].devlog.likeCount -= 1;
-		}
-	} catch (error) {
-		console.error('Like error:', error);
 	}
-}
 
 	async function changeSortOrder(newSort: SortType) {
 		if (newSort === sortBy) return;
@@ -211,20 +206,28 @@
 
 					<!-- Like button - bottom left -->
 					<div class="absolute bottom-2 left-2 flex gap-2">
-						<button
-							onclick={(e) => toggleLike(e, devlog.devlog.id, devlog.devlog.userLiked, index)}
-							class={`flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
-								devlog.devlog.userLiked
-									? 'bg-red-500 text-white'
-									: 'bg-white/80 text-gray-700 hover:bg-white'
-							}`}
+						<form
+							method="POST"
+							action="?/toggleLike"
+							on:submit={(e) =>
+								handleLike(e, devlog.devlog.id, devlog.devlog.userLiked, index)}
 						>
-							<Heart
-								size={14}
-								class={`transition-all ${devlog.devlog.userLiked ? 'fill-current' : ''}`}
-							/>
-							<span>{devlog.devlog.likeCount}</span>
-						</button>
+							<input type="hidden" name="devlogId" value={devlog.devlog.id} />
+							<button
+								type="submit"
+								class={`flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
+									devlog.devlog.userLiked
+										? 'bg-red-500 text-white'
+										: 'bg-white/80 text-gray-700 hover:bg-white'
+								}`}
+							>
+								<Heart
+									size={14}
+									class={`transition-all ${devlog.devlog.userLiked ? 'fill-current' : ''}`}
+								/>
+								<span>{devlog.devlog.likeCount}</span>
+							</button>
+						</form>
 
 						<!-- View count -->
 						<div class="bg-white/80 text-gray-700 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1">
