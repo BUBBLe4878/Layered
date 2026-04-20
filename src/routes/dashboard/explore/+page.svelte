@@ -160,28 +160,29 @@
 							action="?/toggleLike"
 							use:enhance={({ result }) => {
 								if (!result?.data?.success) return;
-
-								devlogs[index].userLiked = result.data.liked;
-
-								if (result.data.liked) {
-									devlogs[index].likeCount++;
-								} else {
-									devlogs[index].likeCount--;
-								}
+						
+								const liked = result.data.liked;
+						
+								// update state
+								devlogs[index].userLiked = liked;
+								devlogs[index].likeCount += liked ? 1 : -1;
+						
+								// 🔥 force Svelte 5 reactivity refresh
+								devlogs = devlogs.slice();
 							}}
 						>
 							<input type="hidden" name="devlogId" value={devlog.devlog.id} />
-
+						
 							<button
 								type="submit"
-								class={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+								class={`cursor-pointer flex items-center gap-1 px-2 py-1 rounded text-xs transition-all ${
 									devlog.userLiked
 										? 'bg-red-500 text-white'
-										: 'bg-white/80 text-black'
+										: 'bg-white/80 text-gray-700 hover:bg-white'
 								}`}
 							>
 								<Heart size={14} class={devlog.userLiked ? 'fill-current' : ''} />
-								{devlog.likeCount}
+								<span>{devlog.likeCount}</span>
 							</button>
 						</form>
 					</div>
