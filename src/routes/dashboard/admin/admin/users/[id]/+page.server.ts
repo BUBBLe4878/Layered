@@ -164,75 +164,89 @@ export const actions = {
 
 	/* -------------------- FETCH PII -------------------- */
 	fetchPII: async ({ locals, params }) => {
-		if (!locals.user) throw error(500);
-		if (!locals.user.hasAdmin) throw error(403);
+	if (!locals.user) throw error(500);
+	if (!locals.user.hasAdmin) throw error(403);
 
-		const id = Number(params.id);
+	const id = Number(params.id);
 
-		const [queriedUser] = await db
-			.select({ idvToken: user.idvToken })
-			.from(user)
-			.where(eq(user.id, id));
+	const [queriedUser] = await db
+		.select({ idvToken: user.idvToken })
+		.from(user)
+		.where(eq(user.id, id));
 
-		if (!queriedUser) throw error(404, { message: 'user not found' });
+	if (!queriedUser) throw error(404, { message: 'user not found' });
 
-		if (!queriedUser.idvToken) {
-			return fail(400, {
-				fetchPII: {
-					success: false,
-					errorMessage: 'IDV token missing',
-					first_name: null,
-					last_name: null,
-					primary_email: null,
-					phone_number: null,
-					birthday: null,
-					address: null
-				}
-			});
-		}
+	if (!queriedUser.idvToken) {
+		return fail(400, {
+			fetchPII: {
+				success: false,
+				errorMessage: 'IDV token missing',
+				first_name: null,
+				last_name: null,
+				email: null,
+				phone_number: null,
+				birthday: null,
+				address: null
+			}
+		});
+	}
 
-		let userData;
+	let userData;
 
-		try {
-			const token = decrypt(queriedUser.idvToken);
-			userData = await getUserData(token);
-		} catch {
-			return fail(400, {
-				fetchPII: {
-					success: false,
-					errorMessage: 'IDV token expired or invalid',
-					first_name: null,
-					last_name: null,
-					primary_email: null,
-					phone_number: null,
-					birthday: null,
-					address: null
-				}
-			});
-		}
+	try {
+		const token = decrypt(queriedUser.idvToken);
+		userData = await getUserData(token);
+	} catch {
+		return fail(400, {
+			fetchPII: {
+				success: false,
+				errorMessage: 'IDV token expired or invalid',
+				first_name: null,
+				last_name: null,
+				email: null,
+				phone_number: null,
+				birthday: null,
+				address: null
+			}
+		});
+	}
 
-		const {
+	// 🔥 NORMALIZE DATA SAFELY (this is the important fix)
+	const first_name = userData.first_name ?? null;
+	const last_name = userData.last_name ?? null;
+
+	const email =
+		userData.primary_email ??
+		userData.email ??
+		userData.emails?.[0]?.email ??
+		null;
+
+	const phone_number =
+		userData.phone_number ??
+		userData.phone_numbers?.[0]?.number ??
+		null;
+
+	const birthday =
+		userData.birthday ??
+		userData.date_of_birth ??
+		null;
+
+	const address =
+		userData.address ??
+		userData.addresses?.find((a: any) => a.primary) ??
+		userData.addresses?.[0] ??
+		null;
+
+	return {
+		fetchPII: {
+			success: true,
+			errorMessage: '',
 			first_name,
 			last_name,
-			primary_email,
-			birthday,
+			email,
 			phone_number,
-			addresses
-		} = userData;
-
-		const address = addresses?.find((a: any) => a.primary);
-
-		return {
-			fetchPII: {
-				success: true,
-				errorMessage: '',
-				first_name,
-				last_name,
-				primary_email,
-				phone_number,
-				birthday,
-				address
-			}
-		};
-	}
-} satisfies Actions;
+			birthday,
+			address
+		}
+	};
+}
