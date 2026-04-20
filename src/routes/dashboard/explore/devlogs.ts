@@ -94,10 +94,6 @@ export async function fetchExploreDevlogs(
 			.innerJoin(devlog, eq(devlogLike.devlogId, devlog.id))
 			.innerJoin(project, eq(devlog.projectId, project.id))
 			.innerJoin(user, eq(devlog.userId, user.id))
-			.leftJoin(
-				devlogLike,
-				eq(devlog.id, devlogLike.devlogId)
-			)
 			.where(and(eq(devlogLike.userId, userId || -1), eq(devlog.deleted, false)))
 			.groupBy(devlog.id, project.id, user.id)
 			.orderBy(desc(devlog.createdAt));
