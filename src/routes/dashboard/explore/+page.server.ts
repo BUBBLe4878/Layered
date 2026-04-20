@@ -1,12 +1,16 @@
-import { DEVLOGS_PAGE_SIZE, fetchExploreDevlogs } from './devlogs.js';
+import { DEVLOGS_PAGE_SIZE, fetchExploreDevlogs, type SortType } from './devlogs.js';
 
-export async function load() {
-    const devlogs = await fetchExploreDevlogs(0);
-    const nextOffset = devlogs.length;
+export async function load({ url, locals }) {
+	const sortParam = url.searchParams.get('sort') as SortType | null;
+	const sort: SortType = sortParam || 'newest';
 
-    return {
-        devlogs,
-        nextOffset,
-        hasMore: devlogs.length === DEVLOGS_PAGE_SIZE
-    };
+	const devlogs = await fetchExploreDevlogs(0, sort, locals.user?.id);
+	const nextOffset = devlogs.length;
+	const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
+
+	return {
+		devlogs,
+		nextOffset,
+		hasMore
+	};
 }
