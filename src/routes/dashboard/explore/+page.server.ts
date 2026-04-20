@@ -27,29 +27,25 @@ export async function load({ url, locals }) {
 
 export const actions = {
 	toggleLike: async ({ request, locals }) => {
-		// 🔐 auth check
 		if (!locals.user?.id) {
-			return json({
+			return {
 				success: false,
 				error: 'Not authenticated'
-			});
+			};
 		}
 
 		const form = await request.formData();
 		const raw = form.get('devlogId');
-
 		const devlogId = Number(raw);
 
-		// 🛑 validation
 		if (!devlogId || Number.isNaN(devlogId)) {
-			return json({
+			return {
 				success: false,
 				error: 'Invalid devlogId'
-			});
+			};
 		}
 
 		try {
-			// check if like exists
 			const existing = await db
 				.select()
 				.from(devlogLike)
@@ -62,7 +58,6 @@ export const actions = {
 
 			const alreadyLiked = existing.length > 0;
 
-			// toggle DB state
 			if (alreadyLiked) {
 				await db
 					.delete(devlogLike)
@@ -79,26 +74,26 @@ export const actions = {
 				});
 			}
 
-			// 🔥 ALWAYS get real count from DB (fixes 2→4 bug)
-			const likeCountResult = await db
-				.select({ count: devlogLike.id })
-				.from(devlogLike)
-				.where(eq(devlogLike.devlogId, devlogId));
-			
-			const likeCount = likeCountResult.length;
+			// count likes (safe version)
+			const likeCount = (
+				await db
+					.select({ id: devlogLike.id })
+					.from(devlogLike)
+					.where(eq(devlogLike.devlogId, devlogId))
+			).length;
 
-			return json({
+			return {
 				success: true,
 				liked: !alreadyLiked,
 				likeCount
-			});
+			};
 		} catch (err) {
-			console.error('toggleLike error:', err);
+			console.error(err);
 
-			return json({
+			return {
 				success: false,
 				error: 'Database error'
-			});
+			};
 		}
 	}
 };
