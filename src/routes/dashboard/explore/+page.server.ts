@@ -2,7 +2,7 @@ import { db } from '$lib/server/db/index.js';
 import { devlog, project, user, devlogLike, devlogView } from '$lib/server/db/schema.js';
 import { desc, eq, count, sql, and, gte } from 'drizzle-orm';
 
-export const DEVLOGS_PAGE_SIZE = 15;
+export const _DEVLOGS_PAGE_SIZE = 15;
 
 export type SortType = 'newest' | 'trending' | 'random' | 'liked';
 
@@ -10,7 +10,7 @@ export async function fetchExploreDevlogs(
 	offset: number,
 	sort: SortType = 'newest',
 	userId?: number,
-	limit = DEVLOGS_PAGE_SIZE
+	limit = _DEVLOGS_PAGE_SIZE
 ) {
 	const baseQuery = db
 		.select({
