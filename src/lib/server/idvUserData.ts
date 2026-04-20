@@ -1,28 +1,7 @@
 import { env } from '$env/dynamic/private';
 
-async function fetchIDVEndpoint(token: string, endpoint: string) {
-	try {
-		const res = await fetch(`https://${env.IDV_DOMAIN}/api/v1/${endpoint}`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${token}`
-			}
-		});
-		if (!res.ok) {
-			console.log(`IDV ${endpoint} returned ${res.status}`);
-			return null;
-		}
-		const data = await res.json();
-		console.log(`IDV ${endpoint}:`, JSON.stringify(data, null, 2));
-		return data;
-	} catch (err) {
-		console.log(`IDV ${endpoint} error:`, err);
-		return null;
-	}
-}
-
 export async function getUserData(token: string) {
-	// Try the main endpoint
+	// Fetch from IDV
 	const meRes = await fetch(`https://${env.IDV_DOMAIN}/api/v1/me`, {
 		method: 'GET',
 		headers: {
@@ -35,14 +14,26 @@ export async function getUserData(token: string) {
 	const meJSON = await meRes.json();
 	const identity = meJSON.identity!;
 
-	// Try alternative endpoints for additional data
-	console.log('Fetching from alternative IDV endpoints...');
-	await fetchIDVEndpoint(token, 'me/profile');
-	await fetchIDVEndpoint(token, 'me/details');
-	await fetchIDVEndpoint(token, 'me/pii');
-	await fetchIDVEndpoint(token, 'me/contact');
-	await fetchIDVEndpoint(token, 'me/address');
-	await fetchIDVEndpoint(token, 'profile');
+	// Fetch email from Slack using slack_id
+	if (identity.slack_id) {
+		try {
+			const slackRes = await fetch(`https://slack.com/api/users.info?user=${identity.slack_id}`, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${env.SLACK_BOT_TOKEN}`
+				}
+			});
+			if (slackRes.ok) {
+				const slackData = await slackRes.json();
+				if (slackData.ok && slackData.user?.profile?.email) {
+					identity.email = slackData.user.profile.email;
+					console.log('Fetched email from Slack:', identity.email);
+				}
+			}
+		} catch (err) {
+			console.log('Failed to fetch from Slack:', err);
+		}
+	}
 
 	return identity;
 }
