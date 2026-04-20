@@ -246,8 +246,8 @@
 		{/if}
 		{#if form?.ship_submit_error}
 			<p class="mt-1 text-sm text-primary-500">
-				Ship failed on the server. Please try again in a minute. If this keeps happening, ask an admin
-				to check server logs for "Ship submission failed".
+				{form?.ship_error_message ??
+					'Ship failed on the server. Please try again in a minute. If this keeps happening, ask an admin to check server logs for "Ship submission failed".'}
 			</p>
 		{/if}
 	</div>

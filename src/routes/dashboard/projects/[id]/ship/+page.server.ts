@@ -141,9 +141,10 @@ export const actions = {
 			throw error(500, { message: 'license validation not configured' });
 		}
 
+		let timeoutId: ReturnType<typeof setTimeout> | null = null;
 		try {
 			const controller = new AbortController();
-			const timeoutId = setTimeout(() => controller.abort(), 10_000);
+			timeoutId = setTimeout(() => controller.abort(), 10_000);
 
 			const graphqlResponse = await fetch('https://api.printables.com/graphql/', {
 				method: 'POST',
@@ -166,8 +167,6 @@ export const actions = {
 					variables: { id: modelId }
 				})
 			});
-
-			clearTimeout(timeoutId);
 
 			if (!graphqlResponse.ok) {
 				return fail(400, {
@@ -194,6 +193,8 @@ export const actions = {
 			return fail(400, {
 				invalid_printables_url: true
 			});
+		} finally {
+			if (timeoutId) clearTimeout(timeoutId);
 		}
 
 		// Editor URL
@@ -288,16 +289,20 @@ export const actions = {
 			throw error(400, { message: 'project must have a description' });
 		}
 
+		if (!env.S3_BUCKET_NAME || !env.S3_API_URL || !env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY) {
+			console.error('Ship submission failed [config]: Missing one or more S3 environment variables');
+			return fail(500, {
+				ship_submit_error: true,
+				ship_error_message: 'Storage is not configured on the server. Ask an admin to set S3 env vars.'
+			});
+		}
+
+		// Editor file
+		const editorFilePath = editorFileExists
+			? `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`
+			: null;
+
 		try {
-			if (!env.S3_BUCKET_NAME) {
-				throw new Error('S3_BUCKET_NAME is not configured');
-			}
-
-			// Editor file
-			const editorFilePath = editorFileExists
-				? `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`
-				: null;
-
 			if (editorFileExists) {
 				const editorFileCommand = new PutObjectCommand({
 					Bucket: env.S3_BUCKET_NAME,
@@ -306,17 +311,33 @@ export const actions = {
 				});
 				await S3.send(editorFileCommand);
 			}
+		} catch (err) {
+			console.error('Ship submission failed [s3-editor-upload]:', err);
+			return fail(500, {
+				ship_submit_error: true,
+				ship_error_message: 'Failed to upload editor file. Please retry in a moment.'
+			});
+		}
 
-			// Models
-			const modelPath = `ships/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
+		// Models
+		const modelPath = `ships/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
 
+		try {
 			const modelCommand = new PutObjectCommand({
 				Bucket: env.S3_BUCKET_NAME,
 				Key: modelPath,
 				Body: Buffer.from(await modelFile.arrayBuffer())
 			});
 			await S3.send(modelCommand);
+		} catch (err) {
+			console.error('Ship submission failed [s3-model-upload]:', err);
+			return fail(500, {
+				ship_submit_error: true,
+				ship_error_message: 'Failed to upload the 3MF model file. Please retry in a moment.'
+			});
+		}
 
+		try {
 			await db
 				.update(project)
 				.set({
@@ -336,20 +357,28 @@ export const actions = {
 						eq(project.deleted, false)
 					)
 				);
+		} catch (err) {
+			console.error('Ship submission failed [db-project-update]:', err);
+			return fail(500, {
+				ship_submit_error: true,
+				ship_error_message: 'Failed to save project ship state. Please retry.'
+			});
+		}
 
-			// Get club ID if submitting as club
-			let clubIdForShip: number | null = null;
-			if (submitAsClub) {
-				const [membership] = await db
-					.select({ clubId: clubMembership.clubId })
-					.from(clubMembership)
-					.where(eq(clubMembership.userId, locals.user.id))
-					.limit(1);
-				if (membership) {
-					clubIdForShip = membership.clubId;
-				}
+		// Get club ID if submitting as club
+		let clubIdForShip: number | null = null;
+		if (submitAsClub) {
+			const [membership] = await db
+				.select({ clubId: clubMembership.clubId })
+				.from(clubMembership)
+				.where(eq(clubMembership.userId, locals.user.id))
+				.limit(1);
+			if (membership) {
+				clubIdForShip = membership.clubId;
 			}
+ 		}
 
+		try {
 			await db.insert(ship).values({
 				userId: locals.user.id,
 				projectId: queriedProject.id,
@@ -362,17 +391,18 @@ export const actions = {
 				modelFile: modelPath,
 				clubId: clubIdForShip
 			});
-
-			void sendSlackDM(
-				locals.user.slackId,
-				`Hii :hyper-dino-wave:\n Your project <https://construct.hackclub.com/dashboard/projects/${queriedProject.id}|${queriedProject.name}> has been shipped and is now under review, we'll take a look and get back to you soon! :woooo:`
-			);
 		} catch (err) {
-			console.error('Ship submission failed:', err);
+			console.error('Ship submission failed [db-ship-insert]:', err);
 			return fail(500, {
-				ship_submit_error: true
+				ship_submit_error: true,
+				ship_error_message: 'Failed to create ship record in database. Please retry.'
 			});
 		}
+
+		void sendSlackDM(
+			locals.user.slackId,
+			`Hii :hyper-dino-wave:\n Your project <https://construct.hackclub.com/dashboard/projects/${queriedProject.id}|${queriedProject.name}> has been shipped and is now under review, we'll take a look and get back to you soon! :woooo:`
+		);
 
 		return redirect(303, '/dashboard/projects');
 	}
