@@ -32,7 +32,7 @@
 	let containerElement: HTMLDivElement | null = null;
 	let observer: IntersectionObserver | null = null;
 
-	$: resolvedModelUrl = getStorageUrl(page.data.s3PublicUrl, modelUrl);
+	const resolvedModelUrl = $derived(getStorageUrl(page.data.s3PublicUrl, modelUrl));
 
 	function loadModel() {
 		if (!resolvedModelUrl) {
