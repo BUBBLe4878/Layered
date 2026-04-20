@@ -12,6 +12,7 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3 } from '$lib/server/s3';
 import { ship } from '$lib/server/db/schema.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import { put } from '@vercel/blob';
 
 function parseProjectId(rawId: string): number {
 	const id = Number.parseInt(rawId, 10);
@@ -289,51 +290,62 @@ export const actions = {
 			throw error(400, { message: 'project must have a description' });
 		}
 
-		if (!env.S3_BUCKET_NAME || !env.S3_API_URL || !env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY) {
-			console.error('Ship submission failed [config]: Missing one or more S3 environment variables');
-			return fail(500, {
-				ship_submit_error: true,
-				ship_error_message: 'Storage is not configured on the server. Ask an admin to set S3 env vars.'
-			});
-		}
+		const useR2 = Boolean(env.S3_BUCKET_NAME && env.S3_API_URL && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY);
 
-		// Editor file
-		const editorFilePath = editorFileExists
-			? `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`
-			: null;
+		let editorFileUrl: string | null = null;
+		let modelFileUrl: string | null = null;
 
 		try {
 			if (editorFileExists) {
-				const editorFileCommand = new PutObjectCommand({
-					Bucket: env.S3_BUCKET_NAME,
-					Key: editorFilePath!,
-					Body: Buffer.from(await editorFile.arrayBuffer())
+				if (useR2) {
+					const editorFilePath = `ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`;
+					const editorFileCommand = new PutObjectCommand({
+						Bucket: env.S3_BUCKET_NAME!,
+						Key: editorFilePath,
+						Body: Buffer.from(await editorFile.arrayBuffer())
+					});
+					await S3.send(editorFileCommand);
+					editorFileUrl = editorFilePath;
+				} else {
+					const editorBlob = await put(
+						`ships/editor-files/${crypto.randomUUID()}${extname(editorFile.name)}`,
+						editorFile,
+						{ access: 'public' }
+					);
+					editorFileUrl = editorBlob.url;
+				}
+			}
+
+			if (useR2) {
+				const modelPath = `ships/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
+				const modelCommand = new PutObjectCommand({
+					Bucket: env.S3_BUCKET_NAME!,
+					Key: modelPath,
+					Body: Buffer.from(await modelFile.arrayBuffer())
 				});
-				await S3.send(editorFileCommand);
+				await S3.send(modelCommand);
+				modelFileUrl = modelPath;
+			} else {
+				const modelBlob = await put(
+					`ships/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`,
+					modelFile,
+					{ access: 'public' }
+				);
+				modelFileUrl = modelBlob.url;
 			}
 		} catch (err) {
-			console.error('Ship submission failed [s3-editor-upload]:', err);
+			console.error('Ship submission failed [upload]:', err);
 			return fail(500, {
 				ship_submit_error: true,
-				ship_error_message: 'Failed to upload editor file. Please retry in a moment.'
+				ship_error_message: 'Failed to upload ship assets. Please retry in a moment.'
 			});
 		}
 
-		// Models
-		const modelPath = `ships/models/${crypto.randomUUID()}${extname(modelFile.name).toLowerCase()}`;
-
-		try {
-			const modelCommand = new PutObjectCommand({
-				Bucket: env.S3_BUCKET_NAME,
-				Key: modelPath,
-				Body: Buffer.from(await modelFile.arrayBuffer())
-			});
-			await S3.send(modelCommand);
-		} catch (err) {
-			console.error('Ship submission failed [s3-model-upload]:', err);
+		if (!editorFileUrl || !modelFileUrl) {
+			console.error('Ship submission failed [upload-state]: missing uploaded file url(s)');
 			return fail(500, {
 				ship_submit_error: true,
-				ship_error_message: 'Failed to upload the 3MF model file. Please retry in a moment.'
+				ship_error_message: 'Failed to prepare uploaded file URLs. Please retry.'
 			});
 		}
 
@@ -345,9 +357,9 @@ export const actions = {
 					url: printablesUrlString,
 					editorFileType: editorUrlExists ? 'url' : 'upload',
 					editorUrl: editorUrlExists ? editorUrlString : undefined,
-					uploadedFileUrl: editorFileExists ? editorFilePath! : undefined,
+					uploadedFileUrl: editorFileExists ? editorFileUrl : undefined,
 
-					modelFile: modelPath,
+					modelFile: modelFileUrl,
 					doubleDippingWith
 				})
 				.where(
@@ -386,9 +398,9 @@ export const actions = {
 
 				editorFileType: editorUrlExists ? 'url' : 'upload',
 				editorUrl: editorUrlExists ? editorUrlString : undefined,
-				uploadedFileUrl: editorFileExists ? editorFilePath! : undefined,
+				uploadedFileUrl: editorFileExists ? editorFileUrl : undefined,
 
-				modelFile: modelPath,
+				modelFile: modelFileUrl,
 				clubId: clubIdForShip
 			});
 		} catch (err) {

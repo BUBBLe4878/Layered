@@ -12,6 +12,7 @@
 	import Spinny3DPreview from '$lib/components/Spinny3DPreview.svelte';
 	import { getIdFromLapseUrl, getLapse, type Lapse } from '$lib/lapse';
 	import DoubleDippingBanner from '$lib/components/DoubleDippingBanner.svelte';
+	import { getStorageUrl } from '$lib/utils';
 
 	const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
@@ -190,7 +191,7 @@
 		<div class="max-h-120 min-h-full w-full xl:w-[60%]">
 			<Spinny3DPreview
 				identifier="project-model"
-				modelUrl={data.s3PublicUrl + '/' + data.project.modelFile}
+				modelUrl={getStorageUrl(data.s3PublicUrl, data.project.modelFile)}
 				sizeCutoff={8 * 1024 * 1024}
 			/>
 		</div>

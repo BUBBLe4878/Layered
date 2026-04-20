@@ -3,7 +3,7 @@
 	import Devlog from '$lib/components/Devlog.svelte';
 	import Head from '$lib/components/Head.svelte';
 	import { enhance } from '$app/forms';
-	import { projectStatuses, getProjectLinkType } from '$lib/utils.js';
+	import { projectStatuses, getProjectLinkType, getStorageUrl } from '$lib/utils.js';
 	import ProjectLinks from '$lib/components/ProjectLinks.svelte';
 	import Spinny3DPreview from '$lib/components/Spinny3DPreview.svelte';
 	import { Download } from '@lucide/svelte';
@@ -11,6 +11,7 @@
 	import DoubleDippingBanner from '$lib/components/DoubleDippingBanner.svelte';
 
 	let { data } = $props();
+	let projectModelUrl = $derived(getStorageUrl(data.s3PublicUrl, data.project.project.modelFile));
 
 	let formPending = $state(false);
 </script>
@@ -103,7 +104,7 @@
 				<div class="mt-2 flex flex-row">
 					<h2 class="grow text-2xl font-bold">3D model</h2>
 					<a
-						href={`${data.s3PublicUrl}/${data.project.project.modelFile}`}
+						href={projectModelUrl}
 						download
 						class="button primary flex flex-col justify-center rounded-lg px-3 hover:outline-3 focus:outline-3"
 					>
@@ -114,7 +115,7 @@
 				<div class="themed-box flex h-100 flex-col gap-3 overflow-clip">
 					<Spinny3DPreview
 						identifier="model"
-						modelUrl={`${data.s3PublicUrl}/${data.project.project.modelFile}`}
+						modelUrl={projectModelUrl}
 						sizeCutoff={8 * 1024 * 1024}
 					/>
 				</div>

@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Download, ExternalLink, Link } from '@lucide/svelte';
+	import { getStorageUrl } from '$lib/utils';
 
 	let { url, editorFileType, uploadedFileUrl, editorUrl } = $props();
+
+	$: uploadedFileHref = getStorageUrl(page.data.s3PublicUrl, uploadedFileUrl);
 </script>
 
 <div class="flex flex-row gap-2">
@@ -18,7 +21,7 @@
 		<div class="flex">
 			<a
 				class="button sm primary relative z-2"
-				href={`${page.data.s3PublicUrl}/${uploadedFileUrl}`}
+				href={uploadedFileHref}
 				target="_blank"
 			>
 				<Download />

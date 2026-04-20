@@ -2,7 +2,8 @@
 	import * as THREE from 'three';
 	import { ThreeMFLoader, OrbitControls, OBJLoader, STLLoader } from 'three/examples/jsm/Addons.js';
 	import { onDestroy, onMount } from 'svelte';
-	import fileSizeFromUrl from '$lib/utils';
+	import { page } from '$app/state';
+	import fileSizeFromUrl, { getStorageUrl } from '$lib/utils';
 
 	let {
 		identifier,
@@ -31,8 +32,10 @@
 	let containerElement: HTMLDivElement | null = null;
 	let observer: IntersectionObserver | null = null;
 
+	$: resolvedModelUrl = getStorageUrl(page.data.s3PublicUrl, modelUrl);
+
 	function loadModel() {
-		if (!modelUrl) {
+		if (!resolvedModelUrl) {
 			return;
 		}
 
@@ -172,7 +175,7 @@
 		}
 
 		// File extension
-		let extension = modelUrl.slice(modelUrl.lastIndexOf('.'));
+		let extension = resolvedModelUrl.slice(resolvedModelUrl.lastIndexOf('.'));
 
 		function parseObject(object: THREE.Group<THREE.Object3DEventMap>) {
 			object = object as THREE.Group<THREE.Object3DEventMap> & { children: THREE.Mesh[] };
@@ -280,7 +283,7 @@
 		}
 
 		loader.load(
-			modelUrl,
+			resolvedModelUrl,
 			(geoOrObject) =>
 				geoOrObject instanceof THREE.BufferGeometry
 					? parseGeometry(geoOrObject)
@@ -383,7 +386,7 @@
 			observer.observe(containerElement);
 		}
 
-		fileSizeFromUrl(modelUrl).then((size) => {
+		fileSizeFromUrl(resolvedModelUrl).then((size) => {
 			fileSize = size;
 
 			if (

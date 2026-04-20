@@ -94,6 +94,22 @@ export function getProjectLinkType(
 	return 'unknown';
 }
 
+export function getStorageUrl(publicBaseUrl: string | null | undefined, storedValue: string | null | undefined) {
+	if (!storedValue) {
+		return null;
+	}
+
+	if (/^https?:\/\//i.test(storedValue)) {
+		return storedValue;
+	}
+
+	if (!publicBaseUrl) {
+		return storedValue;
+	}
+
+	return `${publicBaseUrl.replace(/\/$/, '')}/${storedValue.replace(/^\//, '')}`;
+}
+
 export function arraysEqual(a: unknown[], b: unknown[]) {
   if (a.length !== b.length) return false;
   return a.every((value: unknown, index: number) => value === b[index]);
