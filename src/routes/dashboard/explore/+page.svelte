@@ -207,10 +207,10 @@
 					<!-- Like button - bottom left -->
 					<div class="absolute bottom-2 left-2 flex gap-2">
 						<form
-							method="POST"
-							action="?/toggleLike"
-							on:submit={(e) =>
-								handleLike(e, devlog.devlog.id, devlog.devlog.userLiked, index)}
+						  method="POST"
+						  action="?/toggleLike"
+						  onsubmit={(e) =>
+							handleLike(e, devlog.devlog.id, devlog.devlog.userLiked, index)}
 						>
 							<input type="hidden" name="devlogId" value={devlog.devlog.id} />
 							<button
