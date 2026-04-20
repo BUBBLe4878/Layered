@@ -25,16 +25,23 @@ export async function getUserData(token: string) {
 			});
 			if (slackRes.ok) {
 				const slackData = await slackRes.json();
+				
+				// DEBUG: Log full Slack profile
+				console.log('🔍 SLACK USER PROFILE:', JSON.stringify(slackData.user?.profile, null, 2));
+				console.log('🔍 Available Slack profile fields:', Object.keys(slackData.user?.profile || {}));
+				
 				if (slackData.ok && slackData.user?.profile) {
 					// Fetch email from Slack
 					if (slackData.user.profile.email) {
 						identity.email = slackData.user.profile.email;
 						console.log('Fetched email from Slack:', identity.email);
 					}
-					// Fetch address from Slack
-					if (slackData.user.profile.location) {
-						identity.address = slackData.user.profile.location;
-						console.log('Fetched address from Slack:', identity.address);
+					// Try different possible field names for address
+					const possibleAddressFields = ['location', 'address', 'street_address', 'real_name', 'phone'];
+					for (const field of possibleAddressFields) {
+						if (slackData.user.profile[field]) {
+							console.log(`Found field "${field}":`, slackData.user.profile[field]);
+						}
 					}
 				}
 			}
