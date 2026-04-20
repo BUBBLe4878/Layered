@@ -56,41 +56,43 @@
 	}
 
 	async function toggleLike(
-		e: MouseEvent,
-		devlogId: number,
-		currentLiked: boolean,
-		index: number
-	) {
-		e.preventDefault();
-		e.stopPropagation();
+	e: MouseEvent,
+	devlogId: number,
+	currentLiked: boolean,
+	index: number
+) {
+	e.preventDefault();
+	e.stopPropagation();
 
-		try {
-			const response = await fetch('/api/devlog', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					action: currentLiked ? 'unlike' : 'like',
-					devlogId
-				})
-			});
+	try {
+		// Change 1: Use FormData instead of JSON
+		const formData = new FormData();
+		formData.append('devlogId', devlogId.toString());
 
-			if (!response.ok) {
-				throw new Error('Failed to update like');
-			}
+		// Change 2: Call ?/toggleLike (the server action) instead of /api/devlog
+		const response = await fetch('?/toggleLike', {
+			method: 'POST',
+			body: formData
+			// Don't set Content-Type header - FormData handles it
+		});
 
-			const result = await response.json();
-
-			// Update the local state
-			devlogs[index].devlog.userLiked = result.liked;
-			if (result.liked) {
-				devlogs[index].devlog.likeCount += 1;
-			} else {
-				devlogs[index].devlog.likeCount -= 1;
-			}
-		} catch (error) {
-			console.error('Like error:', error);
+		if (!response.ok) {
+			throw new Error('Failed to update like');
 		}
+
+		const result = await response.json();
+
+		// Change 3: Toggle based on currentLiked (not result.liked)
+		devlogs[index].devlog.userLiked = !currentLiked;
+		if (!currentLiked) {
+			devlogs[index].devlog.likeCount += 1;
+		} else {
+			devlogs[index].devlog.likeCount -= 1;
+		}
+	} catch (error) {
+		console.error('Like error:', error);
 	}
+}
 
 	async function changeSortOrder(newSort: SortType) {
 		if (newSort === sortBy) return;
