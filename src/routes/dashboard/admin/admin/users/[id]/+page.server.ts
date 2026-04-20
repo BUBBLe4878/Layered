@@ -41,8 +41,8 @@ function normalizePII(userData: Record<string, unknown>) {
 	return {
 		first_name: (userData.first_name ?? userData.firstName ?? '') as string,
 		last_name: (userData.last_name ?? userData.lastName ?? '') as string,
-		primary_email: (userData.primary_email ?? userData.email ?? '') as string,
-		phone_number: (userData.phone_number ?? userData.phoneNumber ?? '') as string,
+		primary_email: (userData.primary_email ?? userData.email ?? userData.mail ?? '') as string,
+		phone_number: (userData.phone_number ?? userData.phoneNumber ?? userData.phone ?? '') as string,
 		birthday: (userData.birthday ?? userData.date_of_birth ?? userData.dateOfBirth ?? '') as string,
 		address: primaryAddress,
 		addresses
@@ -296,7 +296,6 @@ export const actions = {
 		try {
 			const token = decrypt(queriedUser.idvToken);
 			userData = await getUserData(token);
-			console.log('Raw userData from IDV:', JSON.stringify(userData, null, 2));
 		} catch {
 			return fail(400, {
 				fetchPII: {
