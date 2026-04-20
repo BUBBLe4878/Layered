@@ -14,7 +14,7 @@ export async function getUserData(token: string) {
 	const meJSON = await meRes.json();
 	const identity = meJSON.identity!;
 
-	// Fetch email from Slack using slack_id
+	// Fetch email and address from Slack using slack_id
 	if (identity.slack_id) {
 		try {
 			const slackRes = await fetch(`https://slack.com/api/users.info?user=${identity.slack_id}`, {
@@ -25,9 +25,17 @@ export async function getUserData(token: string) {
 			});
 			if (slackRes.ok) {
 				const slackData = await slackRes.json();
-				if (slackData.ok && slackData.user?.profile?.email) {
-					identity.email = slackData.user.profile.email;
-					console.log('Fetched email from Slack:', identity.email);
+				if (slackData.ok && slackData.user?.profile) {
+					// Fetch email from Slack
+					if (slackData.user.profile.email) {
+						identity.email = slackData.user.profile.email;
+						console.log('Fetched email from Slack:', identity.email);
+					}
+					// Fetch address from Slack
+					if (slackData.user.profile.location) {
+						identity.address = slackData.user.profile.location;
+						console.log('Fetched address from Slack:', identity.address);
+					}
 				}
 			}
 		} catch (err) {
