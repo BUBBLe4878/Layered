@@ -145,9 +145,11 @@
 				</div>
 
 				<!-- VIEW COUNT -->
+				<!--
 				<div class="absolute top-2 right-2 text-xs bg-white/80 px-2 py-1 rounded">
 					👁 {devlog.viewCount}
 				</div>
+				-->
 
 			</div>
 		{/each}
