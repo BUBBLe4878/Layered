@@ -194,30 +194,26 @@
 					</div>
 
 					<!-- Like button - bottom left -->
-					<div class="absolute bottom-2 left-2 flex gap-2">
-						<form method="POST" action="?/toggleLike" onsubmit|preventDefault={handleLike}>
-						  <input type="hidden" name="devlogId" value={devlog.devlog.id} />
+						<div class="absolute bottom-2 left-2 flex gap-2">
+							<form method="POST" action="?/toggleLike" onsubmit|preventDefault={(e) => handleLike(e, index)}>
+								<input type="hidden" name="devlogId" value={devlog.devlog.id} />
 						
-						  <button type="submit">
-						    {devlog.userLiked ? 'Unlike' : 'Like'}
-						  </button>
-						</form>
-							<input type="hidden" name="devlogId" value={devlog.devlog.id} />
-							<button
-								type="submit"
-								class={`flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
-									devlog.devlog.userLiked
-										? 'bg-red-500 text-white'
-										: 'bg-white/80 text-gray-700 hover:bg-white'
-								}`}
-							>
-								<Heart
-									size={14}
-									class={`transition-all ${devlog.devlog.userLiked ? 'fill-current' : ''}`}
-								/>
-								<span>{devlog.devlog.likeCount}</span>
-							</button>
-						</form>
+								<button
+									type="submit"
+									class={`flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all ${
+										devlog.userLiked
+											? 'bg-red-500 text-white'
+											: 'bg-white/80 text-gray-700 hover:bg-white'
+									}`}
+								>
+									<Heart
+										size={14}
+										class={`transition-all ${devlog.userLiked ? 'fill-current' : ''}`}
+									/>
+									<span>{devlog.likeCount}</span>
+								</button>
+							</form>
+						</div>
 
 						<!-- View count -->
 						<div class="bg-white/80 text-gray-700 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1">
