@@ -33,21 +33,17 @@ function normalizePII(userData: Record<string, unknown>) {
 			: [];
 
 	const primaryAddress =
-		addresses.find((a) =>
-			Boolean(
-				(a as { primary?: boolean; is_primary?: boolean }).primary ??
-					(a as { is_primary?: boolean }).is_primary
-			)
-		) ?? null;
+		addresses.find((a) => {
+			const addr = a as { primary?: boolean; is_primary?: boolean };
+			return addr.primary === true || addr.is_primary === true;
+		}) ?? (addresses.length > 0 ? addresses[0] : null);
 
 	return {
-		first_name: (userData.first_name ?? userData.firstName ?? null) as string | null,
-		last_name: (userData.last_name ?? userData.lastName ?? null) as string | null,
-		primary_email: (userData.primary_email ?? userData.email ?? null) as string | null,
-		phone_number: (userData.phone_number ?? userData.phoneNumber ?? null) as string | null,
-		birthday: (userData.birthday ?? userData.date_of_birth ?? userData.dateOfBirth ?? null) as
-			| string
-			| null,
+		first_name: (userData.first_name ?? userData.firstName ?? '') as string,
+		last_name: (userData.last_name ?? userData.lastName ?? '') as string,
+		primary_email: (userData.primary_email ?? userData.email ?? userData.mail ?? '') as string,
+		phone_number: (userData.phone_number ?? userData.phoneNumber ?? userData.phone ?? '') as string,
+		birthday: (userData.birthday ?? userData.date_of_birth ?? userData.dateOfBirth ?? '') as string,
 		address: primaryAddress,
 		addresses
 	};
@@ -285,11 +281,11 @@ export const actions = {
 				fetchPII: {
 					success: false,
 					errorMessage: 'IDV token not found, ask them to re-login',
-					first_name: null,
-					last_name: null,
-					primary_email: null,
-					phone_number: null,
-					birthday: null,
+					first_name: '',
+					last_name: '',
+					primary_email: '',
+					phone_number: '',
+					birthday: '',
 					address: null,
 					addresses: []
 				}
@@ -305,11 +301,11 @@ export const actions = {
 				fetchPII: {
 					success: false,
 					errorMessage: 'IDV token revoked/expired, ask them to re-login',
-					first_name: null,
-					last_name: null,
-					primary_email: null,
-					phone_number: null,
-					birthday: null,
+					first_name: '',
+					last_name: '',
+					primary_email: '',
+					phone_number: '',
+					birthday: '',
 					address: null,
 					addresses: []
 				}
