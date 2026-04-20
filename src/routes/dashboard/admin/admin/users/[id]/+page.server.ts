@@ -1,13 +1,7 @@
 import { db } from '$lib/server/db/index.js';
-import {
-	user,
-	devlog,
-	session,
-	impersonateAuditLog,
-	currencyAuditLog
-} from '$lib/server/db/schema.js';
+import { user, devlog, session, impersonateAuditLog, currencyAuditLog } from '$lib/server/db/schema.js';
 
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Actions } from './$types';
 
@@ -29,7 +23,7 @@ import { withSlackProfile } from '$lib/server/slack';
 
 export async function load({ locals, params }) {
 	if (!locals.user) throw error(500);
-	if (!locals.user.hasAdmin) throw error(403, { message: 'no access' });
+	if (!locals.user.hasAdmin) throw error(403, { message: 'oi get out' });
 
 	const id = Number(params.id);
 
@@ -50,12 +44,12 @@ export async function load({ locals, params }) {
 			.from(user)
 			.leftJoin(devlog, and(eq(devlog.userId, user.id), eq(devlog.deleted, false)))
 			.where(eq(user.id, id))
-			.groupBy(user.id)) ?? [{ devlogCount: 0 }];
+			.groupBy(user.id))) ?? [{ devlogCount: 0 }];
 
-	const enriched = await withSlackProfile(queriedUser);
+	const enrichedUser = await withSlackProfile(queriedUser);
 
 	return {
-		queriedUser: enriched,
+		queriedUser: enrichedUser,
 		devlogCount
 	};
 }
@@ -64,7 +58,7 @@ export async function load({ locals, params }) {
    ACTIONS
 ========================================================= */
 
-export const actions: Actions = {
+export const actions = {
 	/* ---------------- PRIVILEGES ---------------- */
 	privileges: async ({ locals, request, params }) => {
 		if (!locals.user) throw error(500);
@@ -103,7 +97,7 @@ export const actions: Actions = {
 		const shopScore = Number(data.get('market_score'));
 		const reason = data.get('reason')?.toString();
 
-		if ([clay, brick, shopScore].some((v) => isNaN(v))) {
+		if (isNaN(clay) || isNaN(brick) || isNaN(shopScore)) {
 			return fail(400, {
 				currency: { invalidFields: true }
 			});
@@ -113,8 +107,12 @@ export const actions: Actions = {
 			throw error(400, { message: 'invalid reason' });
 		}
 
-		const [before] = await db.select().from(user).where(eq(user.id, id));
-		if (!before) throw error(404, { message: 'user not found' });
+		const [queriedUser] = await db
+			.select()
+			.from(user)
+			.where(eq(user.id, id));
+
+		if (!queriedUser) throw error(404, { message: 'user not found' });
 
 		await db
 			.update(user)
@@ -124,9 +122,9 @@ export const actions: Actions = {
 		await db.insert(currencyAuditLog).values({
 			adminUserId: locals.user.id,
 			targetUserId: id,
-			oldClay: before.clay,
-			oldBrick: before.brick,
-			oldShopScore: before.shopScore,
+			oldClay: queriedUser.clay,
+			oldBrick: queriedUser.brick,
+			oldShopScore: queriedUser.shopScore,
 			newClay: clay,
 			newBrick: brick,
 			newShopScore: shopScore,
@@ -140,28 +138,132 @@ export const actions: Actions = {
 		};
 	},
 
-	/* ---------------- FETCH PII ---------------- */
-	return {
-	fetchPII: {
-		success: true,
-		errorMessage: '',
-		first_name: first_name ?? '',
-		last_name: last_name ?? '',
-		primary_email: email ?? '',
-		phone_number: phone_number ?? '',
-		birthday: birthday ?? '',
-		address: address
-			? {
-					id: address.id ?? '',
-					first_name: address.first_name ?? '',
-					last_name: address.last_name ?? '',
-					line_1: address.line_1 ?? '',
-					line_2: address.line_2 ?? '',
-					city: address.city ?? '',
-					state: address.state ?? '',
-					postal_code: address.postal_code ?? '',
-					country: address.country ?? ''
-				}
-			: null
+	/* ---------------- IMPERSONATE ---------------- */
+	impersonate: async (event) => {
+		const { locals, params } = event;
+
+		if (!locals.user) throw error(500);
+		if (!locals.user.hasAdmin) throw error(403);
+
+		const id = Number(params.id);
+
+		const [queriedUser] = await db
+			.select()
+			.from(user)
+			.where(eq(user.id, id));
+
+		if (!queriedUser) throw error(404);
+
+		await db.insert(impersonateAuditLog).values({
+			adminUserId: locals.user.id,
+			targetUserId: id
+		});
+
+		const token = generateSessionToken();
+
+		await createSession(token, id);
+
+		setSessionTokenCookie(
+			event,
+			token,
+			new Date(Date.now() + DAY_IN_MS * SESSION_EXPIRY_DAYS)
+		);
+
+		throw redirect(302, '/dashboard');
+	},
+
+	/* ---------------- LOGOUT ---------------- */
+	logout: async ({ locals, params }) => {
+		if (!locals.user) throw error(500);
+		if (!locals.user.hasAdmin) throw error(403);
+
+		const id = Number(params.id);
+
+		await db.delete(session).where(eq(session.userId, id));
+
+		return {
+			success: true
+		};
+	},
+
+	/* ---------------- FETCH PII (FIXED + NORMALIZED) ---------------- */
+	fetchPII: async ({ locals, params }) => {
+		if (!locals.user) throw error(500);
+		if (!locals.user.hasAdmin) throw error(403);
+
+		const id = Number(params.id);
+
+		const [queriedUser] = await db
+			.select({ idvToken: user.idvToken })
+			.from(user)
+			.where(eq(user.id, id));
+
+		if (!queriedUser) throw error(404);
+
+		const empty = {
+			success: false,
+			errorMessage: '',
+			first_name: '',
+			last_name: '',
+			primary_email: '',
+			phone_number: '',
+			birthday: '',
+			address: null
+		};
+
+		if (!queriedUser.idvToken) {
+			return fail(400, {
+				fetchPII: { ...empty, errorMessage: 'Missing IDV token' }
+			});
+		}
+
+		let userData;
+
+		try {
+			const token = decrypt(queriedUser.idvToken);
+			userData = await getUserData(token);
+		} catch {
+			return fail(400, {
+				fetchPII: { ...empty, errorMessage: 'Invalid or expired token' }
+			});
+		}
+
+		const address = Array.isArray(userData.addresses)
+			? userData.addresses.find((a: any) => a.primary) ??
+			  userData.addresses[0] ??
+			  null
+			: null;
+
+		return {
+			fetchPII: {
+				success: true,
+				errorMessage: '',
+				first_name: userData.first_name ?? '',
+				last_name: userData.last_name ?? '',
+				primary_email:
+					userData.primary_email ??
+					userData.email ??
+					userData.emails?.[0]?.email ??
+					'',
+				phone_number:
+					userData.phone_number ??
+					userData.phone_numbers?.[0]?.number ??
+					'',
+				birthday: userData.birthday ?? userData.date_of_birth ?? '',
+				address: address
+					? {
+							id: address.id ?? '',
+							first_name: address.first_name ?? '',
+							last_name: address.last_name ?? '',
+							line_1: address.line_1 ?? '',
+							line_2: address.line_2 ?? '',
+							city: address.city ?? '',
+							state: address.state ?? '',
+							postal_code: address.postal_code ?? '',
+							country: address.country ?? ''
+						}
+					: null
+			}
+		};
 	}
-};
+} satisfies Actions;
