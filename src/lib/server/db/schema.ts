@@ -27,8 +27,39 @@ export const user = pgTable('user', {
 	idvId: text().notNull().unique(), // IDV ID
 	idvToken: text(), // IDV token (stored encrypted)
 	slackId: text().notNull().unique(), // Slack ID
-	profilePicture: text().notNull(), // Profile pic URL
-	name: text().notNull(), // Username on Slack
+	profilePicture: text(), // Profile pic URL
+
+	// Personal Info
+	name: text().notNull(), // Full name
+	firstName: text(), // First name
+	lastName: text(), // Last name
+	email: text(), // Email address
+	phone: text(), // Phone number
+	
+	// Contact Info
+	address: text(), // Street address
+	city: text(), // City
+	state: text(), // State/Province
+	zipCode: text(), // ZIP/Postal code
+	country: text(), // Country
+
+	// Demographics
+	dateOfBirth: timestamp(), // Date of birth
+	age: integer(), // Age
+	gender: text(), // Gender
+	pronouns: text(), // Pronouns (e.g., "he/him")
+
+	// Profile
+	bio: text(), // Bio/about
+
+	// Professional
+	organization: text(), // Organization/company
+	title: text(), // Job title
+	company: text(), // Company name
+	website: text(), // Website URL
+	twitter: text(), // Twitter handle
+	github: text(), // GitHub username
+	linkedin: text(), // LinkedIn profile
 
 	hackatimeTrust: hackatimeTrustEnum().notNull(), // Hackatime trust
 	trust: trustEnum().notNull().default('blue'), // User trust, used if hackatime trust can't be used
