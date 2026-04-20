@@ -55,40 +55,29 @@
 		}
 	}
 
-	async function handleLike(
-		e: SubmitEvent,
-		devlogId: number,
-		currentLiked: boolean,
-		index: number
-	) {
-		e.preventDefault();
-		e.stopPropagation();
+	async function handleLike(event, index) {
+  const form = event.currentTarget;
 
-		const form = e.target as HTMLFormElement;
-		const formData = new FormData(form);
+  const formData = new FormData(form);
 
-		try {
-			const response = await fetch(form.action, {
-				method: 'POST',
-				body: formData
-			});
+  const res = await fetch(form.action, {
+    method: 'POST',
+    body: formData
+  });
 
-			if (!response.ok) {
-				throw new Error('Failed to update like');
-			}
+  const data = await res.json();
 
-			// Toggle state
-			devlogs[index].devlog.userLiked = !currentLiked;
-			if (!currentLiked) {
-				devlogs[index].devlog.likeCount += 1;
-			} else {
-				devlogs[index].devlog.likeCount -= 1;
-			}
-		} catch (error) {
-			console.error('Like error:', error);
-		}
-	}
+  if (!data.success) return;
 
+  // 🔥 update UI immediately (Svelte does NOT do this for you)
+  devlogs[index].userLiked = data.liked;
+
+  if (data.liked) {
+    devlogs[index].likeCount += 1;
+  } else {
+    devlogs[index].likeCount -= 1;
+  }
+}
 	async function changeSortOrder(newSort: SortType) {
 		if (newSort === sortBy) return;
 
@@ -206,12 +195,13 @@
 
 					<!-- Like button - bottom left -->
 					<div class="absolute bottom-2 left-2 flex gap-2">
-						<form
-						  method="POST"
-						  action="?/toggleLike"
-						  onsubmit={(e) =>
-							handleLike(e, devlog.devlog.id, devlog.devlog.userLiked, index)}
-						>
+						<form method="POST" action="?/toggleLike" onsubmit|preventDefault={handleLike}>
+						  <input type="hidden" name="devlogId" value={devlog.devlog.id} />
+						
+						  <button type="submit">
+						    {devlog.userLiked ? 'Unlike' : 'Like'}
+						  </button>
+						</form>
 							<input type="hidden" name="devlogId" value={devlog.devlog.id} />
 							<button
 								type="submit"
