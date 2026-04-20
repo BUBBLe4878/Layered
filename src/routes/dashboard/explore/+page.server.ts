@@ -48,7 +48,6 @@ export async function load({ url, locals }) {
 	}
 }
 
-// Add this export to +page.server.ts
 export const actions = {
 	toggleLike: async ({ request, locals }) => {
 		console.log('🔵 toggleLike action called');
@@ -86,15 +85,15 @@ export const actions = {
 							eq(devlogLike.userId, locals.user.id)
 						)
 					);
+				return { success: true, liked: false };
 			} else {
 				console.log('➕ Inserting like');
 				await db.insert(devlogLike).values({
 					devlogId,
 					userId: locals.user.id
 				});
+				return { success: true, liked: true };
 			}
-			
-			return { success: true };
 		} catch (err) {
 			console.error('❌ Like toggle error:', err);
 			return { error: 'Failed to toggle like' };
