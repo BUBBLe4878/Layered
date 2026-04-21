@@ -111,7 +111,7 @@
 		background-size: contain;
 		background-repeat: no-repeat;
 		background-position: center;
-		opacity: 0;
+		opacity: 1;
 	}
 
 	.benchy-overlay {
@@ -120,7 +120,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: white;
+		background-color: #FFFFFF;
 		z-index: 10;
 		pointer-events: none;
 		transition: clip-path 0.3s ease;
