@@ -3,6 +3,9 @@
 
 	let { data } = $props();
 
+	console.log('[Benchy] raw data:', data);
+	console.log('[Benchy] requestedUser:', data?.requestedUser);
+
 	// ─────────────────────────────────────────
 	// Config
 	// ─────────────────────────────────────────
@@ -12,59 +15,72 @@
 	const PRINT_TIME_HOURS = 3.5;
 
 	// ─────────────────────────────────────────
-	// SAFE DATA ACCESS (prevents SSR crashes)
+	// DEBUG: clay extraction
 	// ─────────────────────────────────────────
-	let clay = $derived(() =>
-		Number(data?.requestedUser?.clay ?? 0)
-	);
+	let clay = $derived(() => {
+		const raw = data?.requestedUser?.clay;
+
+		console.log('[Benchy] raw clay value:', raw);
+		console.log('[Benchy] clay type:', typeof raw);
+
+		const safe = Number(raw ?? 0);
+
+		console.log('[Benchy] normalized clay:', safe);
+
+		return safe;
+	});
 
 	// ─────────────────────────────────────────
-	// Derived UI values (NaN-proof)
+	// Derived UI values (debug wrapped)
 	// ─────────────────────────────────────────
 	let percent = $derived.by(() => {
-		const safe = Math.max(0, clay);
-		return Math.min(100, Math.round((safe / MAX_CLAY) * 100));
+		const value = Math.round((clay / MAX_CLAY) * 100);
+		console.log('[Benchy] percent:', value);
+		return value;
 	});
 
 	let revealPercent = $derived.by(() => {
-		const safe = Math.max(0, clay);
-		return Math.min(100, (safe / MAX_CLAY) * 100);
+		const value = (clay / MAX_CLAY) * 100;
+		console.log('[Benchy] revealPercent:', value);
+		return value;
 	});
 
 	let printTime = $derived.by(() => {
-		const safe = Math.max(0, clay);
-		return ((safe / MAX_CLAY) * PRINT_TIME_HOURS).toFixed(1);
+		const value = ((clay / MAX_CLAY) * PRINT_TIME_HOURS).toFixed(1);
+		console.log('[Benchy] printTime:', value);
+		return value;
 	});
 
 	// ─────────────────────────────────────────
-	// Image loading (safe DOM access)
+	// Image debug
 	// ─────────────────────────────────────────
 	onMount(() => {
+		console.log('[Benchy] mounted');
+
 		const el = document.getElementById('benchyReveal');
-		if (!el) return;
+
+		console.log('[Benchy] DOM element:', el);
+
+		if (!el) {
+			console.warn('[Benchy] benchyReveal element missing');
+			return;
+		}
 
 		const img = new Image();
 
 		img.onload = () => {
+			console.log('[Benchy] image loaded');
 			el.style.backgroundImage = `url('${benchyImageUrl}')`;
 		};
 
 		img.onerror = () => {
-			console.error('Failed to load image:', benchyImageUrl);
+			console.error('[Benchy] image failed:', benchyImageUrl);
 
 			el.style.background =
 				'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
 
 			el.innerHTML = `
-				<div style="
-					display:flex;
-					align-items:center;
-					justify-content:center;
-					width:100%;
-					height:100%;
-					color:white;
-					font-weight:bold;
-				">
+				<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:white;font-weight:bold;">
 					🚢 Benchy Print
 				</div>
 			`;
