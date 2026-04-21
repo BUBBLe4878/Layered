@@ -8,26 +8,18 @@ export async function load({ locals }) {
 		throw error(500);
 	}
 
-	const [{ projectCount }] = (await db
-		.select({
-			projectCount: count()
-		})
+	const [{ projectCount }] = await db
+		.select({ projectCount: count() })
 		.from(project)
-		.where(and(eq(project.userId, locals.user.id), eq(project.deleted, false)))
-		.limit(1)) ?? [{ projectCount: 0 }];
+		.where(and(eq(project.userId, locals.user.id), eq(project.deleted, false)));
 
-	const [{ devlogCount }] = (await db
-		.select({
-			devlogCount: count()
-		})
+	const [{ devlogCount }] = await db
+		.select({ devlogCount: count() })
 		.from(devlog)
-		.where(and(eq(devlog.userId, locals.user.id), eq(devlog.deleted, false)))
-		.limit(1)) ?? [{ devlogCount: 0 }];
+		.where(and(eq(devlog.userId, locals.user.id), eq(devlog.deleted, false)));
 
-	const [{ shipCount }] = (await db
-		.select({
-			shipCount: count()
-		})
+	const [{ shipCount }] = await db
+		.select({ shipCount: count() })
 		.from(project)
 		.where(
 			and(
@@ -35,12 +27,18 @@ export async function load({ locals }) {
 				ne(project.status, 'building'),
 				eq(project.deleted, false)
 			)
-		)
-		.limit(1)) ?? [{ shipCount: 0 }];
+		);
 
 	return {
-		projectCount,
-		devlogCount,
-		shipCount
+		projectCount: projectCount ?? 0,
+		devlogCount: devlogCount ?? 0,
+		shipCount: shipCount ?? 0,
+
+		// ✅ ADD THIS (fixes Benchy)
+		requestedUser: {
+			id: locals.user.id,
+			clay: locals.user.clay ?? 0,
+			brick: locals.user.brick ?? 0
+		}
 	};
 }
