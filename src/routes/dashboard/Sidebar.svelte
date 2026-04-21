@@ -207,10 +207,10 @@
 		<div class="hidden shrink-0 items-center gap-2 md:flex">
 			<!-- Layers (Clay) Display -->
 			<div
-				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
+				class="flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Layers"
 			>
-				<Layers size={16} class="text-yellow-300" />
+				<Layers size={13} class="text-yellow-300" />
 				<div class="hidden text-xs sm:block">
 					<p class="truncate font-medium text-yellow-100">{Math.floor(user.clay)} Layers</p>
 				</div>
@@ -218,10 +218,9 @@
 
 			<!-- Benchies (Brick) Display -->
 			<div
-				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
+				class="flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Benchies"
 			>
-				<span class="text-lg">🚢</span>
 				<div class="hidden text-xs sm:block">
 					<p class="truncate font-medium text-yellow-100">{Math.floor(user.brick)} Benchies</p>
 				</div>
