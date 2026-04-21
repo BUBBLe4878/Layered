@@ -124,20 +124,6 @@
 		{#if stats}
 			<div class="stat-card" style="margin-top: 16px;">
 				<div class="stat-label">Your Stats</div>
-				<div class="stats-grid">
-					<div class="mini-stat">
-						<div class="mini-label">Projects</div>
-						<div class="mini-value">{stats.projectCount}</div>
-					</div>
-					<div class="mini-stat">
-						<div class="mini-label">Devlogs</div>
-						<div class="mini-value">{stats.devlogCount}</div>
-					</div>
-					<div class="mini-stat">
-						<div class="mini-label">Ships</div>
-						<div class="mini-value">{stats.shipCount}</div>
-					</div>
-				</div>
 			</div>
 		{/if}
 	</div>
