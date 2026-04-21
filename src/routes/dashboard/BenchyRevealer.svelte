@@ -125,7 +125,7 @@
 		pointer-events: none;
 		transition: clip-path 0.3s ease;
 	}
-
+/*
 	.layer-lines {
 		position: absolute;
 		width: 100%;
@@ -142,7 +142,7 @@
 			transparent 3px
 		);
 	}
-
+*/
 	.layer-value {
 		font-size: 18px;
 		font-weight: 700;
