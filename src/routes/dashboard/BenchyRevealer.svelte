@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	let layers = $state(0);
-	let benchyImageUrl = '/img/catfoot.png';
+	let benchyImageUrl = 'https://forum.drucktipps3d.de/attachment/86802-20230609-114633-jpg/';
 	
 	const MAX_LAYERS = 100;
 	const PRINT_TIME_HOURS = 3.5;
@@ -21,38 +21,34 @@
 
 	onMount(() => {
 		// Load the Benchy image
-		const img = new Image();
-		img.onload = function() {
-			const canvas = document.createElement('canvas');
-			canvas.width = img.width;
-			canvas.height = img.height;
-			const ctx = canvas.getContext('2d');
-			ctx?.drawImage(img, 0, 0);
-			
-			const imageData = canvas.toDataURL();
-			const revealElement = document.getElementById('benchyReveal');
-			if (revealElement) {
-				revealElement.style.backgroundImage = `url('${imageData}')`;
-			}
-		};
-		img.onerror = function() {
-			const revealElement = document.getElementById('benchyReveal');
-			if (revealElement) {
+		const revealElement = document.getElementById('benchyReveal');
+		if (revealElement) {
+			const img = new Image();
+			img.onload = function() {
+				revealElement.style.backgroundImage = `url('${benchyImageUrl}')`;
+				console.log('Image loaded:', benchyImageUrl);
+			};
+			img.onerror = function() {
+				console.error('Image failed to load:', benchyImageUrl);
 				revealElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
 				revealElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:white;font-weight:bold;">🚢 Benchy Print</div>';
-			}
-		};
-		img.crossOrigin = 'anonymous';
-		img.src = benchyImageUrl;
+			};
+			img.crossOrigin = 'anonymous';
+			img.src = benchyImageUrl;
+		}
 	});
 </script>
 
 <div class="benchy-container-wrapper">
-	<h1>Your Progress</h1>
+	<div class="benchy-header">
+		<h2 class="benchy-title">🚢 Benchy Layer Revealer</h2>
+		<p class="benchy-subtitle">Drag the slider to reveal your 3D print layer by layer</p>
+	</div>
+
 	<div class="benchy-container">
 		<div class="layer-lines"></div>
 		<div class="benchy-reveal" id="benchyReveal"></div>
-		<div class="benchy-overlay" style="clip-path: inset(0 0 {100 - revealPercent}% 0)"></div>
+		<div class="benchy-overlay" style="clip-path: inset({100 - revealPercent}% 0 0 0)"></div>
 	</div>
 
 	<div class="controls">
@@ -136,7 +132,7 @@
 		background-size: contain;
 		background-repeat: no-repeat;
 		background-position: center;
-		opacity: 0.3;
+		opacity: 1;
 	}
 
 	.benchy-overlay {
