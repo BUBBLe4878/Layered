@@ -57,8 +57,8 @@ const userSelect = {
 	slackId: user.slackId,
 	trust: user.trust,
 	hackatimeTrust: user.hackatimeTrust,
-	clay: user.clay,
-	brick: user.brick,
+	benchies: user.benchies,
+	layer: user.layer,
 	shopScore: user.shopScore,
 	hasBasePrinter: user.hasBasePrinter,
 	stickersShipped: user.stickersShipped,
@@ -135,8 +135,8 @@ export const actions = {
 		const id = parseUserId(params.id);
 		const data = await request.formData();
 
-		const benchies = data.get('clay');
-		const layers = data.get('brick');
+		const benchies = data.get('benchies');
+		const layers = data.get('layer');
 		const shopScore = data.get('printshop_score');
 		const reason = data.get('reason')?.toString();
 
@@ -161,8 +161,8 @@ export const actions = {
 		await db
 			.update(user)
 			.set({
-				clay: parseFloat(benchies.toString()),
-				brick: parseFloat(layers.toString()),
+				benchies: parseFloat(benchies.toString()),
+				layer: parseFloat(layers.toString()),
 				shopScore: parseFloat(shopScore.toString())
 			})
 			.where(eq(user.id, id));
@@ -170,11 +170,11 @@ export const actions = {
 		await db.insert(currencyAuditLog).values({
 			adminUserId: locals.user.id,
 			targetUserId: id,
-			oldClay: oldUser.clay,
-			oldBrick: oldUser.brick,
+			oldBenchies: oldUser.benchies,
+			oldLayer: oldUser.layer,
 			oldShopScore: oldUser.shopScore,
-			newClay: parseFloat(benchies.toString()),
-			newBrick: parseFloat(layers.toString()),
+			newBenchies: parseFloat(benchies.toString()),
+			newLayer: parseFloat(layers.toString()),
 			newShopScore: parseFloat(shopScore.toString()),
 			reason
 		});

@@ -20,7 +20,7 @@
 	// ─────────────────────────────────────────
 	// DEBUG: benchies extraction
 	// ─────────────────────────────────────────
-	let benchies = $derived(userData?.clay ?? 0);
+	let benchies = $derived(userData?.benchies ?? 0);
 
 	console.log('[Benchy] benchies value:', benchies);
 

@@ -161,8 +161,8 @@
 							<span class="text-sm font-medium">Benchies</span>
 							<input
 								type="number"
-								name="clay"
-								value={form?.currency?.fields.clay ?? user.clay}
+								name="benchies"
+								value={form?.currency?.fields.benchies ?? user.benchies}
 								class="themed-input-on-box"
 								placeholder="Benchies"
 								step="0.01"
@@ -173,8 +173,8 @@
 							<span class="text-sm font-medium">Layers</span>
 							<input
 								type="number"
-								name="brick"
-								value={form?.currency?.fields.brick ?? user.brick}
+								name="layer"
+								value={form?.currency?.fields.layer ?? user.layer}
 								class="themed-input-on-box"
 								placeholder="Layers"
 								step="0.01"

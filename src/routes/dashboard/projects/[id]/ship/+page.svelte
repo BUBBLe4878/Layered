@@ -296,9 +296,9 @@
 			{:else}
 				<p class="mt-2">
 					You'll get <span class="font-bold"
-						>{payoutEstimate.clay
-							? Math.round(payoutEstimate.clay * 10) / 10 + ' benchies'
-							: Math.round((payoutEstimate.bricks ?? 0) * 10) / 10 + ' layers'}</span
+						>{payoutEstimate.benchies
+							? Math.round(payoutEstimate.benchies * 10) / 10 + ' benchies'
+							: Math.round((payoutEstimate.layers ?? 0) * 10) / 10 + ' layers'}</span
 					>
 				</p>
 				<p>

@@ -76,11 +76,11 @@
 							>{order.user?.name}</a
 						>
 					</p>
-					{#if order.order.bricksPaid != null}
-						<p class="text-sm">Layers paid: {order.order.bricksPaid}</p>
+					{#if order.order.layersPaid != null}
+						<p class="text-sm">Layers paid: {order.order.layersPaid}</p>
 					{/if}
-					{#if order.order.clayPaid != null}
-						<p class="text-sm">Benchies paid: {order.order.clayPaid}</p>
+					{#if order.order.benchiesPaid != null}
+						<p class="text-sm">Benchies paid: {order.order.benchiesPaid}</p>
 					{/if}
 					<p class="text-sm text-primary-400">
 						<abbr title={`${order.order.timestamp.toUTCString()}`}>

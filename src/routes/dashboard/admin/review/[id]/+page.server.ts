@@ -133,11 +133,11 @@ export const actions = {
 		});
 
 		if (queriedProject.status === 'submitted' && action !== 'add_comment') {
-			// Clay payout for reviewer
+			// Benchies payout for reviewer
 			await db
 				.update(user)
 				.set({
-					clay: locals.user.clay + T1_PAYOUT_CLAY
+					benchies: locals.user.benchies + T1_PAYOUT_CLAY
 				})
 				.where(eq(user.id, locals.user.id));
 		}

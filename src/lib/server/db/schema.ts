@@ -64,8 +64,8 @@ export const user = pgTable('user', {
 	hackatimeTrust: hackatimeTrustEnum().notNull(), // Hackatime trust
 	trust: trustEnum().notNull().default('blue'), // User trust, used if hackatime trust can't be used
 
-	clay: real().notNull().default(0),
-	brick: real().notNull().default(0),
+	benchies: real().notNull().default(0),
+	layer: real().notNull().default(0),
 
 	shopScore: real().notNull().default(0),
 
@@ -329,8 +329,8 @@ export const ovenpheusLog = pgTable('ovenpheus_log', {
 	id: serial().primaryKey(),
 	userId: integer().references(() => user.id),
 
-	clay: real().notNull(),
-	bricksReceived: real().notNull(),
+	benchies: real().notNull(),
+	layersReceived: real().notNull(),
 
 	timestamp: timestamp().notNull().defaultNow()
 });
@@ -350,7 +350,7 @@ export const printshopItemOrder = pgTable('printshop_item_order', {
 	printshopItemId: integer().references(() => printshopItem.id),
 
 	addressId: text().notNull(),
-	bricksPaid: integer().notNull(),
+	layersPaid: integer().notNull(),
 
 	status: printshopOrderStatus().notNull().default('awaiting_approval'),
 	userNotes: text().notNull(),
@@ -367,8 +367,8 @@ export const printerOrder = pgTable('printshop_printer_order', {
 		.notNull(),
 	printer: json().notNull().$type<{ path: number[] }>(),
 
-	clayPaid: integer(),
-	bricksPaid: integer(),
+	benchiesPaid: integer(),
+	layersPaid: integer(),
 
 	timestamp: timestamp().notNull().defaultNow()
 });
@@ -396,12 +396,12 @@ export const currencyAuditLog = pgTable('currency_audit_log', {
 		.references(() => user.id), // User whose balance was impacted
 	reason: text().notNull(),
 
-	oldClay: real().notNull(),
-	oldBrick: real().notNull(),
+	oldBenchies: real().notNull(),
+	oldLayer: real().notNull(),
 	oldShopScore: real().notNull(),
 
-	newClay: real().notNull(),
-	newBrick: real().notNull(),
+	newBenchies: real().notNull(),
+	newLayer: real().notNull(),
 	newShopScore: real().notNull(),
 
 	timestamp: timestamp().notNull().defaultNow()

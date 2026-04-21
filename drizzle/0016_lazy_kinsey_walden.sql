@@ -20,7 +20,7 @@ CREATE TABLE "printshop_item_order" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"userId" integer,
 	"addressId" text NOT NULL,
-	"bricksPaid" integer NOT NULL,
+	"layersPaid" integer NOT NULL,
 	"status" "printshop_order_status" DEFAULT 'awaiting_approval' NOT NULL,
 	"userNotes" text NOT NULL,
 	"notes" text NOT NULL,

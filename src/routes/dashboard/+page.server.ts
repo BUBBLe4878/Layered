@@ -69,8 +69,8 @@ export async function load({ locals }) {
 				id: slackUser.id,
 				name: slackUser.name,
 				profilePicture: slackUser.profilePicture,
-				clay: slackUser.clay ?? 0,
-				brick: slackUser.brick ?? 0,
+				benchies: slackUser.benchies ?? 0,
+				layer: slackUser.layer ?? 0,
 				isPrinter: slackUser.isPrinter,
 				hasAdmin: slackUser.hasAdmin
 			},

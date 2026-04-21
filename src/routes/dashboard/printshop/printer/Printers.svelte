@@ -24,8 +24,8 @@
 	let selectedPrinterPriceLayers = $derived(
 		selectedPrinter
 			? calculateMarketPrice(
-					selectedPrinter.minBrick ?? 0,
-					selectedPrinter.maxBrick ?? 0,
+					selectedPrinter.minLayer ?? 0,
+					selectedPrinter.maxLayer ?? 0,
 					selectedPrinter.minShopScore ?? 0,
 					selectedPrinter.maxShopScore ?? 0,
 					data.user.shopScore
@@ -33,8 +33,8 @@
 			: null
 	);
 	let canAffordPrinter = $derived(
-		(selectedPrinter?.isBasePrinter && data.user.clay >= BASE_PRINTER_CLAY) ||
-			(!selectedPrinter?.isBasePrinter && data.user.brick >= (selectedPrinterPriceLayers ?? 0))
+		(selectedPrinter?.isBasePrinter && data.user.benchies >= BASE_PRINTER_CLAY) ||
+			(!selectedPrinter?.isBasePrinter && data.user.layer >= (selectedPrinterPriceLayers ?? 0))
 	);
 
 	let purchaseablePrinters: number[][] = $derived(getPurchaseablePrinters(data.user.printer.path));
@@ -231,8 +231,8 @@
 							{BASE_PRINTER_CLAY} benchies
 						{:else}
 							<span class="text-primary-400">
-								{#if (selectedPrinterPriceLayers ?? 0) < (selectedPrinter?.maxBrick ?? 0)}
-									<span class="text-primary-500 line-through">{selectedPrinter?.maxBrick}</span>
+								{#if (selectedPrinterPriceLayers ?? 0) < (selectedPrinter?.maxLayer ?? 0)}
+									<span class="text-primary-500 line-through">{selectedPrinter?.maxLayer}</span>
 										{selectedPrinterPriceLayers} layers
 								{:else}
 										{selectedPrinterPriceLayers} layers

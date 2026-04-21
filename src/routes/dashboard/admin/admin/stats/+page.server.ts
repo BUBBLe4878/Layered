@@ -15,13 +15,13 @@ export async function load({ locals }) {
 		.select({
 			count: count(),
 			total: {
-				clay: sql<number>`sum(${user.clay})`,
-				brick: sql<number>`sum(${user.brick})`,
+				benchies: sql<number>`sum(${user.benchies})`,
+				layer: sql<number>`sum(${user.layer})`,
 				shopScore: sql<number>`sum(${user.shopScore})`
 			},
 			average: {
-				clay: sql<number>`avg(${user.clay})`,
-				brick: sql<number>`avg(${user.brick})`,
+				benchies: sql<number>`avg(${user.benchies})`,
+				layer: sql<number>`avg(${user.layer})`,
 				shopScore: sql<number>`avg(${user.shopScore})`
 			}
 		})

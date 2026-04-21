@@ -2,8 +2,8 @@ CREATE TABLE "printshop_printer_order" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"userId" integer NOT NULL,
 	"printer" json NOT NULL,
-	"clayPaid" integer,
-	"bricksPaid" integer,
+	"benchiesPaid" integer,
+	"layersPaid" integer,
 	"timestamp" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

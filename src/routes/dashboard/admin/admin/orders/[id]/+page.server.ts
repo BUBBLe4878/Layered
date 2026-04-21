@@ -25,7 +25,7 @@ export async function load({ locals, params }) {
 				userId: printshopItemOrder.userId,
 				printshopItemId: printshopItemOrder.printshopItemId,
 				addressId: printshopItemOrder.addressId,
-				bricksPaid: printshopItemOrder.bricksPaid,
+				layersPaid: printshopItemOrder.layersPaid,
 				status: printshopItemOrder.status,
 				userNotes: printshopItemOrder.userNotes,
 				notes: printshopItemOrder.notes,
@@ -42,7 +42,7 @@ export async function load({ locals, params }) {
 				name: user.name,
 				slackId: user.slackId,
 				idvToken: user.idvToken,
-				brick: user.brick
+				layer: user.layer
 			}
 		})
 		.from(printshopItemOrder)
@@ -158,7 +158,7 @@ export const actions = {
 				order: {
 					id: printshopItemOrder.id,
 					userId: printshopItemOrder.userId,
-					bricksPaid: printshopItemOrder.bricksPaid
+					layersPaid: printshopItemOrder.layersPaid
 				},
 				printshopItem: {
 					name: printshopItem.name
@@ -166,7 +166,7 @@ export const actions = {
 				user: {
 					id: user.id,
 					slackId: user.slackId,
-					brick: user.brick
+					layer: user.layer
 				}
 			})
 			.from(printshopItemOrder)
@@ -185,11 +185,11 @@ export const actions = {
 			throw error(404, { message: 'order not found' });
 		}
 
-		// Refund the bricks
+		// Refund the layers
 		await db
 			.update(user)
 			.set({
-				brick: orderData.user!.brick + orderData.order.bricksPaid
+				layer: orderData.user!.layer + orderData.order.layersPaid
 			})
 			.where(eq(user.id, orderData.order.userId));
 
@@ -204,7 +204,7 @@ export const actions = {
 		if (orderData.user?.slackId) {
 			await sendSlackDM(
 				orderData.user.slackId,
-				`Your order for ${orderData.printshopItem?.name || 'a printshop item'} has been refunded! :oop:\nYou got your ${orderData.order.bricksPaid} bricks back`
+				`Your order for ${orderData.printshopItem?.name || 'a printshop item'} has been refunded! :oop:\nYou got your ${orderData.order.layersPaid} layers back`
 			);
 		}
 
@@ -260,7 +260,7 @@ export const actions = {
 		if (orderData.user?.slackId) {
 			await sendSlackDM(
 				orderData.user.slackId,
-				`Your order for ${orderData.printshopItem?.name || 'a printshop item'} has been denied :dcolon:\nYou didn't get any of your bricks back :hmmm:`
+				`Your order for ${orderData.printshopItem?.name || 'a printshop item'} has been denied :dcolon:\nYou didn't get any of your layers back :hmmm:`
 			);
 		}
 

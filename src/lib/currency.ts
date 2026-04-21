@@ -1,21 +1,21 @@
 import {
 	BETA_DATE_CUTOFF,
 	BETA_MULTIPLIER,
-	BRICKS_PER_HOUR,
+	LAYERS_PER_HOUR,
 	CLAY_PER_HOUR,
 	PRINT_MINUTES_PER_GRAM
 } from './defs';
 
-export function minutesToClay(minutes: number) {
+export function minutesToBenchies(minutes: number) {
 	const hours = minutes / 60;
 
 	return hours * CLAY_PER_HOUR;
 }
 
-export function minutesToBricks(minutes: number) {
+export function minutesToLayers(minutes: number) {
 	const hours = minutes / 60;
 
-	return hours * BRICKS_PER_HOUR;
+	return hours * LAYERS_PER_HOUR;
 }
 
 export function calculateMinutes(timeSpent: number, printGrams: number) {
@@ -28,10 +28,10 @@ export function calculateCurrencyPayout(
 	dateCreated: Date
 ) {
 	return dateCreated.getTime() < BETA_DATE_CUTOFF.getTime()
-		? { clay: null, bricks: minutesToBricks(minutes) * BETA_MULTIPLIER }
+		? { benchies: null, layers: minutesToLayers(minutes) * BETA_MULTIPLIER }
 		: hasBasePrinter
-			? { clay: null, bricks: minutesToBricks(minutes) }
-			: { clay: minutesToClay(minutes), bricks: null };
+			? { benchies: null, layers: minutesToLayers(minutes) }
+			: { benchies: minutesToBenchies(minutes), layers: null };
 }
 
 export function calculatePayouts(

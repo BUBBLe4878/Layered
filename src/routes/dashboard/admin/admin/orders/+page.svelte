@@ -151,7 +151,7 @@
 						>
 					</p>
 					<p class="mt-1 text-sm">
-						Layers paid: {order.order.bricksPaid}
+						Layers paid: {order.order.layersPaid}
 					</p>
 					<div class="flex flex-row gap-4">
 						<p class="grow text-sm">

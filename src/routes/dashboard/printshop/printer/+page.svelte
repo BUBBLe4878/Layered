@@ -43,6 +43,6 @@
 
 <!-- <div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 		{#each data.printshopItems as item (item.id)}
-			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.brick} />
+			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.layer} />
 		{/each}
 	</div> -->

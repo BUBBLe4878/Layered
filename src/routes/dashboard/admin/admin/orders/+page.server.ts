@@ -66,7 +66,7 @@ async function getOrders(
 				userId: printshopItemOrder.userId,
 				printshopItemId: printshopItemOrder.printshopItemId,
 				addressId: printshopItemOrder.addressId,
-				bricksPaid: printshopItemOrder.bricksPaid,
+				layersPaid: printshopItemOrder.layersPaid,
 				status: printshopItemOrder.status,
 				userNotes: printshopItemOrder.userNotes,
 				notes: printshopItemOrder.notes,

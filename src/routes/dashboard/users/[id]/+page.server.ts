@@ -57,8 +57,8 @@ export async function load({ locals, params }) {
 			hasAdmin: requestedUserWithSlackProfile.hasAdmin,
 
 			shopScore: requestedUserWithSlackProfile.shopScore,
-			clay: requestedUserWithSlackProfile.clay,
-			brick: requestedUserWithSlackProfile.brick,
+			benchies: requestedUserWithSlackProfile.benchies,
+			layer: requestedUserWithSlackProfile.layer,
 
 			createdAt: requestedUserWithSlackProfile.createdAt,
 			lastLoginAt:

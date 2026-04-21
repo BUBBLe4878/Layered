@@ -86,7 +86,7 @@ export const actions = {
 
 		// Check if user can afford
 		if (
-			itemWithPrice.computedPrice > locals.user.brick ||
+			itemWithPrice.computedPrice > locals.user.layer ||
 			itemWithPrice.minRequiredShopScore > locals.user.shopScore
 		) {
 			throw error(403, { message: "you can't afford this" });
@@ -95,7 +95,7 @@ export const actions = {
 		await db
 			.update(user)
 			.set({
-				brick: locals.user.brick - itemWithPrice.computedPrice
+				layer: locals.user.layer - itemWithPrice.computedPrice
 			})
 			.where(eq(user.id, locals.user.id));
 
@@ -103,7 +103,7 @@ export const actions = {
 			userId: locals.user.id,
 			printshopItemId: id,
 			addressId,
-			bricksPaid: itemWithPrice.computedPrice,
+			layersPaid: itemWithPrice.computedPrice,
 			userNotes: notes
 		});
 
