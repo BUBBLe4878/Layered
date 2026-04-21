@@ -147,15 +147,9 @@
 		text-align: right;
 	}
 
-	.stats {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-		margin-bottom: 16px;
-	}
-
 	.stat-card {
-		background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+		width:100%;
+		background-color: #FAF6F1;
 		border-radius: 12px;
 		padding: 16px;
 		border: 1px solid #e0e7ff;
