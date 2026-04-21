@@ -14,7 +14,7 @@
 	// ─────────────────────────────────────────
 	// Core state (single source of truth)
 	// ─────────────────────────────────────────
-	let clay = $derived(() => data.requestedUser.clay ?? 0);
+	let clay = $derived(data.requestedUser.clay ?? 0);
 
 	// ─────────────────────────────────────────
 	// Derived UI values
