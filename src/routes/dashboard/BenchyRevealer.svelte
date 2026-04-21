@@ -17,18 +17,7 @@
 	// ─────────────────────────────────────────
 	// DEBUG: clay extraction
 	// ─────────────────────────────────────────
-	let clay = $derived(() => {
-		const raw = data?.requestedUser?.clay;
-
-		console.log('[Benchy] raw clay value:', raw);
-		console.log('[Benchy] clay type:', typeof raw);
-
-		const safe = Number(raw ?? 0);
-
-		console.log('[Benchy] normalized clay:', safe);
-
-		return safe;
-	});
+	let clay = $derived(data.user.clay ?? 0);
 
 	// ─────────────────────────────────────────
 	// Derived UI values (debug wrapped)
