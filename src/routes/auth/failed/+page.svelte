@@ -9,4 +9,5 @@
     
     <p>Authentication failed.</p>
     <a href="/auth/idv" class="underline">Try again?</a>
+	<img src="https://slack-files.com/T09V59WQY1E-F0AU4N7B1KQ-20523a2fe6" alt ="auth failed cat"/>
 </div>

@@ -1,14 +1,22 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
+	import BenchyRevealer from './BenchyRevealer.svelte';
 	import { BarChart3, BookOpen, Compass, PencilRuler, Store } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
-
-	let { data } = $props();
+	import { page } from '$app/stores';
 
 	let performanceModeEnabled = $state(false);
 	let performanceModeReady = $state(false);
+
+	// ✅ Use $page.data instead of props
+	let projectCount = $derived($page.data?.stats?.projectCount ?? 0);
+	let devlogCount = $derived($page.data?.stats?.devlogCount ?? 0);
+	let shipCount = $derived($page.data?.stats?.shipCount ?? 0);
+
+	console.log('[Dashboard] page.data:', $page.data);
+	console.log('[Dashboard] stats:', $page.data?.stats);
 
 	function persistPerformanceMode() {
 		window.localStorage.setItem('enableModelRendering', (!performanceModeEnabled).toString());
@@ -37,17 +45,17 @@
 	</div>
 
 	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-		<div class="themed-box-solid p-4">
+		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Projects</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{data.projectCount}</p>
+			<p class="mt-1 text-3xl font-bold text-primary-900">{projectCount}</p>
 		</div>
-		<div class="themed-box-solid p-4">
+		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal Entries</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{data.devlogCount}</p>
+			<p class="mt-1 text-3xl font-bold text-primary-900">{devlogCount}</p>
 		</div>
-		<div class="themed-box-solid p-4">
+		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Shipped</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{data.shipCount}</p>
+			<p class="mt-1 text-3xl font-bold text-primary-900">{shipCount}</p>
 		</div>
 	</div>
 </div>
@@ -55,21 +63,21 @@
 <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
 	<div
 		class="flex flex-col gap-0.5 p-4 outline-primary-500 lg:col-span-2"
-		class:animate-outline-ping={data.shipCount == 0}
-		class:outline={data.shipCount == 0}
-		class:themed-box-solid-prominent={data.shipCount == 0}
-		class:themed-box-solid={data.shipCount > 0}
+		class:animate-outline-ping={shipCount == 0}
+		class:outline={shipCount == 0}
+		class:themed-box-solid-prominent={shipCount == 0}
+		class:themed-box-solid={shipCount > 0}
 	>
 		<div class="mb-2 flex items-center gap-2">
 			<BarChart3 size={20} class="text-primary-800" />
 			<h2 class="text-xl font-bold">Progress checklist</h2>
 		</div>
 		<div class="flex flex-col gap-0.5">
-			<ChecklistItem completed={data.projectCount > 0}
+			<ChecklistItem completed={projectCount > 0}
 				><a href={resolve('/dashboard/projects/create')} class="underline">Create</a> your first project</ChecklistItem
 			>
-			<ChecklistItem completed={data.devlogCount > 0}>Make your first journal entry</ChecklistItem>
-			<ChecklistItem completed={data.shipCount > 0}>Ship your project</ChecklistItem>
+			<ChecklistItem completed={devlogCount > 0}>Make your first journal entry</ChecklistItem>
+			<ChecklistItem completed={shipCount > 0}>Ship your project</ChecklistItem>
 		</div>
 	</div>
 
@@ -145,4 +153,8 @@
 			<p class="text-xs text-gray-700">Guides for learning CAD</p>
 		</div>
 	</a>
+</div>
+
+<div class="mt-4">
+	<BenchyRevealer />
 </div>

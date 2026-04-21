@@ -18,7 +18,6 @@ export async function GET(event) {
 	const url = event.url;
 	const code = url.searchParams.get('code');
 
-	// !urlState || !code
 	if (!code) {
 		return error(400, { message: 'no oauth code, hmm what happened here' });
 	}
@@ -44,16 +43,24 @@ export async function GET(event) {
 
 	const token = (await tokenRes.json()).access_token;
 
-	// Get user data
+	// Get user data from /api/v1/me
 	let userData;
 
 	try {
 		userData = await getUserData(token);
+		console.log('✅ getUserData returned:', JSON.stringify(userData, null, 2));
 	} catch {
 		return redirect(302, '/auth/failed');
 	}
 
-	const { id, slack_id, first_name, last_name, primary_email, ysws_eligible } = userData;
+	const { 
+		id, 
+		slack_id, 
+		first_name, 
+		last_name, 
+		primary_email, 
+		ysws_eligible 
+	} = userData;
 
 	if (
 		!ysws_eligible &&
@@ -64,69 +71,10 @@ export async function GET(event) {
 		return redirect(302, '/auth/ineligible');
 	}
 
-	// Get slack data
-	const slackProfileURL = new URL('https://slack.com/api/users.info');
-	slackProfileURL.searchParams.set('user', slack_id);
-
-	const slackProfileBody = new URLSearchParams();
-	slackProfileBody.append('token', env.SLACK_BOT_TOKEN ?? '');
-
-	const slackProfileRes = await fetch(slackProfileURL, {
-		method: 'POST',
-		body: slackProfileBody
-	});
-
-	const slackProfileResJSON = await slackProfileRes.json();
-
-	if (!slackProfileResJSON.ok) {
-		console.error('Failed to fetch user profile');
-
-		return redirect(302, '/auth/failed');
-	}
-
-	const slackProfile = slackProfileResJSON['user'];
-
-	const profilePic =
-		slackProfile['profile']['image_1024'] ??
-		slackProfile['profile']['image_512'] ??
-		slackProfile['profile']['image_192'] ??
-		slackProfile['profile']['image_72'] ??
-		slackProfile['profile']['image_48'] ??
-		slackProfile['profile']['image_32'] ??
-		slackProfile['profile']['image_24'];
-
-	const username =
-		slackProfile['profile']['display_name'] !== ''
-			? slackProfile['profile']['display_name']
-			: slackProfile['profile']['real_name'];
-
-	if (env.BETA_CHANNEL_ID && env.BETA_CHANNEL_ID.length > 0) {
-		const channelMembersURL = new URL('https://slack.com/api/conversations.members');
-		channelMembersURL.searchParams.set('channel', env.BETA_CHANNEL_ID);
-
-		const channelMembersBody = new URLSearchParams();
-		channelMembersBody.append('token', env.SLACK_BOT_TOKEN ?? '');
-
-		const channelMembersRes = await fetch(channelMembersURL, {
-			method: 'POST',
-			body: channelMembersBody
-		});
-
-		const channelMembersResJSON = await channelMembersRes.json();
-
-		if (!channelMembersResJSON.ok) {
-			console.error('Failed to fetch channel members');
-
-			return redirect(302, '/auth/failed');
-		}
-
-		if (!channelMembersResJSON['members'].includes(slack_id)) {
-			return redirect(302, '/countdown');
-		}
-	}
+	const username = first_name && last_name ? `${first_name} ${last_name}` : first_name || 'User';
+	const profilePic = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&size=1024`;
 
 	// Check Hackatime trust
-	// Bypasses check if hackatime fetching fails for some reason, e.g. hackatime down
 	let hackatimeTrust: string = 'blue';
 
 	try {
@@ -145,27 +93,17 @@ export async function GET(event) {
 		/* empty */
 	}
 
-	if (!hackatimeTrust) {
-		// console.error();
-		// return redirect(302, '/auth/create-hackatime-account');
-		// return error(503, {
-		// 	message: 'failed to fetch hackatime trust factor, please try again later'
-		// });
-	} else if (hackatimeTrust === 'red') {
-		// Prevent login
+	if (hackatimeTrust === 'red') {
 		return redirect(302, 'https://fraud.land');
 	}
 
-	// Create user if doesn't exist
 	let [databaseUser] = await db.select().from(user).where(eq(user.idvId, id)).limit(1);
 
 	if (databaseUser?.trust === 'red') {
-		// Prevent login
 		return redirect(302, 'https://fraud.land');
 	}
 
 	if (!['blue', 'green', 'yellow', 'red'].includes(hackatimeTrust)) {
-		// weird hackatime issue, assume blue
 		hackatimeTrust = 'blue';
 	}
 
@@ -176,30 +114,37 @@ export async function GET(event) {
 
 	const ref = event.cookies.get('ref');
 
+	// Store whatever data we get from IDV
+	const userDataToStore = {
+		idvToken: encrypt(token),
+		name: username,
+		firstName: first_name,
+		lastName: last_name,
+		email: primary_email,
+		profilePicture: profilePic,
+		lastLoginAt: new Date(Date.now()),
+		hackatimeTrust
+	};
+
+	console.log('💾 Storing user data:', userDataToStore);
+
 	if (databaseUser) {
-		// Update user (update name and profile picture and lastLoginAt on login)
+		const updateData: Parameters<typeof db.update>[0]['_']['set'] = userDataToStore;
+
+		if (isSuperAdmin) {
+			updateData.hasAdmin = true;
+		}
+
 		await db
 			.update(user)
-			.set({
-				idvToken: encrypt(token),
-				name: username,
-				profilePicture: profilePic,
-				lastLoginAt: new Date(Date.now()),
-				hackatimeTrust,
-				hasAdmin: isSuperAdmin ? true : undefined
-			})
+			.set(updateData)
 			.where(eq(user.idvId, id));
 	} else {
-		// Create user
 		await db.insert(user).values({
 			idvId: id,
-			idvToken: encrypt(token),
 			slackId: slack_id,
-			name: username,
-			profilePicture: profilePic,
+			...userDataToStore,
 			createdAt: new Date(Date.now()),
-			lastLoginAt: new Date(Date.now()),
-			hackatimeTrust,
 			referralId: ref,
 
 			hasT1Review: isSuperAdmin,
@@ -210,18 +155,17 @@ export async function GET(event) {
 		[databaseUser] = await db.select().from(user).where(eq(user.idvId, id)).limit(1);
 
 		if (!databaseUser) {
-			// Something went _really_ wrong
 			return error(500);
 		}
 
 		if (ref && airtableBase) {
 			await airtableBase('tblwUPbRqbRBnQl7G').create({
-				fldMYF9BuxKbRuSJt: first_name + ' ' + last_name, // Name
-				fldXbtQyDOFpWwGBQ: databaseUser.id, // User ID
-				fldkTgzCj0sz01QQM: primary_email, // Email
-				fldeNiHX4OhZEDWM5: 0, // Project count
-				fld1Sssrs7K69cN0i: 0, // Verified ship count
-				fldaPDWM3wrIYOAEf: ref // Referral code
+				fldMYF9BuxKbRuSJt: first_name + ' ' + last_name,
+				fldXbtQyDOFpWwGBQ: databaseUser.id,
+				fldkTgzCj0sz01QQM: primary_email,
+				fldeNiHX4OhZEDWM5: 0,
+				fld1Sssrs7K69cN0i: 0,
+				fldaPDWM3wrIYOAEf: ref
 			});
 		}
 	}

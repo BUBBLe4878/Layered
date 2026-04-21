@@ -8,8 +8,12 @@ export async function load({ locals }) {
 	}
 
 	const slackProfile = await getSlackUserProfile(locals.user.slackId);
-	const profilePicture = slackProfile?.profilePicture ?? locals.user.profilePicture;
-	const name = slackProfile?.username ?? locals.user.name;
+
+	const profilePicture =
+		slackProfile?.profilePicture ?? locals.user.profilePicture;
+
+	const name =
+		slackProfile?.username ?? locals.user.name;
 
 	return {
 		user: {
@@ -17,17 +21,22 @@ export async function load({ locals }) {
 			slackId: locals.user.slackId,
 			name,
 			profilePicture,
-			clay: locals.user.clay,
-			brick: locals.user.brick,
-			shopScore: locals.user.shopScore,
-			isPrinter: locals.user.isPrinter,
-			hasT1Review: locals.user.hasT1Review,
-			hasT2Review: locals.user.hasT2Review,
-			hasAdmin: locals.user.hasAdmin,
-			hasBasePrinter: locals.user.hasBasePrinter,
-			printer: locals.user.printer,
-			printerFulfilment: locals.user.printerFulfilment
+
+			clay: locals.user.clay ?? 0,
+			brick: locals.user.brick ?? 0,
+
+			shopScore: locals.user.shopScore ?? 0,
+
+			isPrinter: locals.user.isPrinter ?? false,
+			hasT1Review: locals.user.hasT1Review ?? false,
+			hasT2Review: locals.user.hasT2Review ?? false,
+			hasAdmin: locals.user.hasAdmin ?? false,
+			hasBasePrinter: locals.user.hasBasePrinter ?? false,
+
+			printer: locals.user.printer ?? null,
+			printerFulfilment: locals.user.printerFulfilment ?? null
 		},
+
 		s3PublicUrl: env.S3_PUBLIC_URL
 	};
 }
