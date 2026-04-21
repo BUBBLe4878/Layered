@@ -4,7 +4,7 @@
 	let { data } = $props();
 
 	console.log('[Benchy] raw data:', data);
-	console.log('[Benchy] requestedUser:', data?.requestedUser);
+	console.log('[Benchy] user:', data?.user);
 
 	// ─────────────────────────────────────────
 	// Config
@@ -17,7 +17,7 @@
 	// ─────────────────────────────────────────
 	// DEBUG: clay extraction
 	// ─────────────────────────────────────────
-	let clay = $derived(data.user.clay ?? 0);
+	let clay = $derived(data?.user?.clay ?? 0);
 
 	// ─────────────────────────────────────────
 	// Derived UI values (debug wrapped)
