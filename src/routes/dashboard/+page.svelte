@@ -1,148 +1,341 @@
 <script lang="ts">
-	import Head from '$lib/components/Head.svelte';
-	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
-	import { BarChart3, BookOpen, Compass, PencilRuler, Store } from '@lucide/svelte';
-	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 
-	let { data } = $props();
+	let layers = $state(0);
+	let benchyImageUrl = 'https://via.placeholder.com/800x600/667eea/ffffff?text=Benchy+3D+Print';
+	
+	const MAX_LAYERS = 100;
+	const PRINT_TIME_HOURS = 3.5;
 
-	let performanceModeEnabled = $state(false);
-	let performanceModeReady = $state(false);
+	$derived percent = Math.round((layers / MAX_LAYERS) * 100);
+	$derived printTime = ((layers / MAX_LAYERS) * PRINT_TIME_HOURS).toFixed(1);
+	$derived revealPercent = (layers / MAX_LAYERS) * 100;
 
-	function persistPerformanceMode() {
-		window.localStorage.setItem('enableModelRendering', (!performanceModeEnabled).toString());
-		window.dispatchEvent(
-			new CustomEvent('enableModelRenderingChanged', {
-				detail: { performanceModeEnabled }
-			})
-		);
+	function reset() {
+		layers = 0;
+	}
+
+	function complete() {
+		layers = MAX_LAYERS;
 	}
 
 	onMount(() => {
-		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
-		performanceModeReady = true;
-		persistPerformanceMode();
+		// Load the Benchy image
+		const img = new Image();
+		img.onload = function() {
+			const canvas = document.createElement('canvas');
+			canvas.width = img.width;
+			canvas.height = img.height;
+			const ctx = canvas.getContext('2d');
+			ctx?.drawImage(img, 0, 0);
+			
+			const imageData = canvas.toDataURL();
+			const revealElement = document.getElementById('benchyReveal');
+			if (revealElement) {
+				revealElement.style.backgroundImage = `url('${imageData}')`;
+			}
+		};
+		img.onerror = function() {
+			const revealElement = document.getElementById('benchyReveal');
+			if (revealElement) {
+				revealElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+				revealElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:white;font-weight:bold;">🚢 Benchy Print</div>';
+			}
+		};
+		img.crossOrigin = 'anonymous';
+		img.src = benchyImageUrl;
 	});
 </script>
 
-<Head title="Dashboard" />
-
-<div class="mb-5 flex flex-col gap-4">
-	<div class="themed-box-solid-prominent p-4 sm:p-5">
-		<h1 class="font-hero text-3xl font-medium">Dashboard</h1>
-		<p class="mt-1 text-sm text-gray-700">
-			Track your progress and jump back into your next build.
-		</p>
+<div class="benchy-container-wrapper">
+	<div class="benchy-header">
+		<h2 class="benchy-title">🚢 Benchy Layer Revealer</h2>
+		<p class="benchy-subtitle">Drag the slider to reveal your 3D print layer by layer</p>
 	</div>
 
-	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-		<div class="themed-box-solid p-4">
-			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Projects</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{data.projectCount}</p>
-		</div>
-		<div class="themed-box-solid p-4">
-			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal Entries</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{data.devlogCount}</p>
-		</div>
-		<div class="themed-box-solid p-4">
-			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Shipped</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{data.shipCount}</p>
-		</div>
-	</div>
-</div>
-
-<div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
-	<div
-		class="flex flex-col gap-0.5 p-4 outline-primary-500 lg:col-span-2"
-		class:animate-outline-ping={data.shipCount == 0}
-		class:outline={data.shipCount == 0}
-		class:themed-box-solid-prominent={data.shipCount == 0}
-		class:themed-box-solid={data.shipCount > 0}
-	>
-		<div class="mb-2 flex items-center gap-2">
-			<BarChart3 size={20} class="text-primary-800" />
-			<h2 class="text-xl font-bold">Progress checklist</h2>
-		</div>
-		<div class="flex flex-col gap-0.5">
-			<ChecklistItem completed={data.projectCount > 0}
-				><a href={resolve('/dashboard/projects/create')} class="underline">Create</a> your first project</ChecklistItem
-			>
-			<ChecklistItem completed={data.devlogCount > 0}>Make your first journal entry</ChecklistItem>
-			<ChecklistItem completed={data.shipCount > 0}>Ship your project</ChecklistItem>
-		</div>
+	<div class="benchy-container">
+		<div class="layer-lines"></div>
+		<div class="benchy-reveal" id="benchyReveal"></div>
+		<div class="benchy-overlay" style="clip-path: inset(0 0 {100 - revealPercent}% 0)"></div>
 	</div>
 
-	<div class="themed-box-solid p-4">
-		<h2 class="text-lg font-bold">Performance mode</h2>
-		<p class="mt-1 text-sm text-gray-700">
-			When enabled, 3D previews are disabled across the site for better performance.
-		</p>
-		<label class="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-primary-200 bg-primary-50/70 px-3 py-2 transition-colors hover:bg-primary-100/80">
-			<input
-				type="checkbox"
-				class="peer sr-only"
-				bind:checked={performanceModeEnabled}
-				onchange={() => {
-					if (!performanceModeReady) return;
-					persistPerformanceMode();
-				}}
+	<div class="controls">
+		<div class="slider-group">
+			<span class="slider-label">Layers</span>
+			<input 
+				type="range" 
+				min="0" 
+				max={MAX_LAYERS} 
+				bind:value={layers} 
+				step="1"
+				class="benchy-slider"
 			/>
-			<span
-				class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-primary-300 bg-white text-primary-600 transition-all peer-checked:border-primary-700 peer-checked:bg-primary-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400 peer-focus-visible:ring-offset-2"
-				aria-hidden="true"
-			>
-				{#if performanceModeEnabled}
-					<span class="text-sm font-bold leading-none">✓</span>
-				{/if}
-			</span>
-			<span class="text-sm font-medium">Enable performance mode (disable 3D previews)</span>
-		</label>
-		<p class="mt-2 text-xs text-gray-600">
-			Current status: {performanceModeEnabled ? 'On (3D previews disabled)' : 'Off (3D previews enabled)'}
-		</p>
+			<span class="layer-value">{layers}</span>
+		</div>
+	</div>
+
+	<div class="stats">
+		<div class="stat-card">
+			<div class="stat-label">Progress</div>
+			<div class="stat-value">{percent}%</div>
+			<div class="progress-bar">
+				<div class="progress-fill" style="width: {percent}%"></div>
+			</div>
+		</div>
+		<div class="stat-card">
+			<div class="stat-label">Print Time</div>
+			<div class="stat-value">{printTime}h</div>
+		</div>
+	</div>
+
+	<div class="button-group">
+		<button class="reset-btn" onclick={reset}>Reset</button>
+		<button class="complete-btn" onclick={complete}>Complete Print</button>
 	</div>
 </div>
 
-<div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-	<a
-		href={resolve('/dashboard/projects')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
-	>
-		<PencilRuler size={22} class="text-primary-800" />
-		<div>
-			<p class="font-semibold">Projects</p>
-			<p class="text-xs text-gray-700">Build and manage your work</p>
-		</div>
-	</a>
-	<a
-		href={resolve('/dashboard/explore')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
-	>
-		<Compass size={22} class="text-primary-800" />
-		<div>
-			<p class="font-semibold">Explore</p>
-			<p class="text-xs text-gray-700">See what others are making</p>
-		</div>
-	</a>
-	<a
-		href={resolve('/dashboard/market')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
-	>
-		<Store size={22} class="text-primary-800" />
-		<div>
-			<p class="font-semibold">Shop</p>
-			<p class="text-xs text-gray-700">Spend bricks and unlock upgrades</p>
-		</div>
-	</a>
-	<a
-		href={resolve('/dashboard/tutorial')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
-	>
-		<BookOpen size={22} class="text-primary-800" />
-		<div>
-			<p class="font-semibold">Tutorials</p>
-			<p class="text-xs text-gray-700">Guides for learning CAD</p>
-		</div>
-	</a>
-</div>
+<style>
+	.benchy-container-wrapper {
+		background: white;
+		border-radius: 12px;
+		padding: 24px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.benchy-header {
+		margin-bottom: 24px;
+		text-align: center;
+	}
+
+	.benchy-title {
+		font-size: 24px;
+		font-weight: 600;
+		color: #333;
+		margin: 0;
+	}
+
+	.benchy-subtitle {
+		font-size: 14px;
+		color: #888;
+		margin: 6px 0 0 0;
+	}
+
+	.benchy-container {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 4 / 3;
+		margin: 24px 0;
+		background: #f5f5f5;
+		border-radius: 12px;
+		overflow: hidden;
+		border: 2px solid #eee;
+	}
+
+	.benchy-reveal {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+		opacity: 0.3;
+	}
+
+	.benchy-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(180deg, rgba(200, 200, 200, 0.8) 0%, rgba(200, 200, 200, 0.8) 100%);
+		z-index: 10;
+		pointer-events: none;
+		transition: clip-path 0.3s ease;
+	}
+
+	.layer-lines {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		z-index: 5;
+		pointer-events: none;
+		background: repeating-linear-gradient(
+			0deg,
+			rgba(0, 0, 0, 0.03) 0px,
+			rgba(0, 0, 0, 0.03) 1px,
+			transparent 1px,
+			transparent 4px
+		);
+	}
+
+	.controls {
+		margin: 24px 0;
+	}
+
+	.slider-group {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	.slider-label {
+		font-size: 14px;
+		color: #555;
+		font-weight: 600;
+		min-width: 60px;
+	}
+
+	.benchy-slider {
+		flex: 1;
+		height: 6px;
+		-webkit-appearance: none;
+		appearance: none;
+		background: #ddd;
+		border-radius: 5px;
+		outline: none;
+		cursor: pointer;
+	}
+
+	.benchy-slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+		transition: transform 0.2s;
+	}
+
+	.benchy-slider::-webkit-slider-thumb:active {
+		transform: scale(1.2);
+	}
+
+	.benchy-slider::-moz-range-thumb {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		cursor: pointer;
+		border: none;
+		box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+		transition: transform 0.2s;
+	}
+
+	.layer-value {
+		font-size: 18px;
+		font-weight: 700;
+		color: #667eea;
+		min-width: 50px;
+		text-align: right;
+	}
+
+	.stats {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	.stat-card {
+		background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+		border-radius: 12px;
+		padding: 16px;
+		border: 1px solid #e0e7ff;
+		text-align: center;
+	}
+
+	.stat-label {
+		font-size: 12px;
+		color: #888;
+		font-weight: 600;
+		margin-bottom: 8px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.stat-value {
+		font-size: 24px;
+		font-weight: 700;
+		color: #667eea;
+		margin-bottom: 8px;
+	}
+
+	.progress-bar {
+		width: 100%;
+		height: 4px;
+		background: #ddd;
+		border-radius: 2px;
+		overflow: hidden;
+	}
+
+	.progress-fill {
+		height: 100%;
+		background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+		border-radius: 2px;
+		transition: width 0.3s ease;
+	}
+
+	.button-group {
+		display: flex;
+		gap: 8px;
+	}
+
+	button {
+		flex: 1;
+		padding: 12px;
+		border: none;
+		border-radius: 8px;
+		font-size: 14px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+
+	.reset-btn {
+		background: #f0f0f0;
+		color: #333;
+	}
+
+	.reset-btn:hover {
+		background: #e0e0e0;
+	}
+
+	.complete-btn {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		color: white;
+	}
+
+	.complete-btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+	}
+
+	.complete-btn:active {
+		transform: translateY(0);
+	}
+
+	@media (max-width: 640px) {
+		.benchy-container-wrapper {
+			padding: 16px;
+		}
+
+		.benchy-title {
+			font-size: 20px;
+		}
+
+		.stat-card {
+			padding: 12px;
+		}
+
+		.stat-value {
+			font-size: 20px;
+		}
+	}
+</style>
