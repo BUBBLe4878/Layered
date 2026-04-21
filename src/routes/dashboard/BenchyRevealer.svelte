@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	let layers = $state(0);
-	let benchyImageUrl = 'https://via.placeholder.com/800x600/667eea/ffffff?text=Benchy+3D+Print';
+	let benchyImageUrl = 'https://forum.drucktipps3d.de/attachment/86802-20230609-114633-jpg/';
 	
 	const MAX_LAYERS = 100;
 	const PRINT_TIME_HOURS = 3.5;
