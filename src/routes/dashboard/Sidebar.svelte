@@ -211,7 +211,7 @@
 				class="flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Layers"
 			>
-				<Layers size={13} class="text-yellow-300" />
+				<Layers size={10} class="text-yellow-300" />
 				<div class="hidden text-xs sm:block">
 					<p class="truncate font-medium text-yellow-100">{Math.floor(user.clay)} Layers</p>
 				</div>
