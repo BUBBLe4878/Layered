@@ -12,31 +12,35 @@
 	const PRINT_TIME_HOURS = 3.5;
 
 	// ─────────────────────────────────────────
-	// Core state (single source of truth)
+	// SAFE DATA ACCESS (prevents SSR crashes)
 	// ─────────────────────────────────────────
-	let clay = $derived(data.requestedUser.clay ?? 0);
-
-	// ─────────────────────────────────────────
-	// Derived UI values
-	// ─────────────────────────────────────────
-	let percent = $derived.by(() =>
-		Math.round((clay / MAX_CLAY) * 100)
-	);
-
-	let revealPercent = $derived.by(() =>
-		(clay / MAX_CLAY) * 100
-	);
-
-	let printTime = $derived.by(() =>
-		((clay / MAX_CLAY) * PRINT_TIME_HOURS).toFixed(1)
+	let clay = $derived(() =>
+		Number(data?.requestedUser?.clay ?? 0)
 	);
 
 	// ─────────────────────────────────────────
-	// Image loading
+	// Derived UI values (NaN-proof)
+	// ─────────────────────────────────────────
+	let percent = $derived.by(() => {
+		const safe = Math.max(0, clay);
+		return Math.min(100, Math.round((safe / MAX_CLAY) * 100));
+	});
+
+	let revealPercent = $derived.by(() => {
+		const safe = Math.max(0, clay);
+		return Math.min(100, (safe / MAX_CLAY) * 100);
+	});
+
+	let printTime = $derived.by(() => {
+		const safe = Math.max(0, clay);
+		return ((safe / MAX_CLAY) * PRINT_TIME_HOURS).toFixed(1);
+	});
+
+	// ─────────────────────────────────────────
+	// Image loading (safe DOM access)
 	// ─────────────────────────────────────────
 	onMount(() => {
 		const el = document.getElementById('benchyReveal');
-
 		if (!el) return;
 
 		const img = new Image();
