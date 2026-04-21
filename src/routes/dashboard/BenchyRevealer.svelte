@@ -47,7 +47,7 @@
 	<div class="benchy-container">
 		<div class="layer-lines"></div>
 		<div class="benchy-reveal" id="benchyReveal"></div>
-		<div class="benchy-overlay" style="clip-path: inset(0 0 {1 - revealPercent}% 0)"></div>
+		<div class="benchy-overlay" style="clip-path: inset(0 0 {1 + revealPercent}% 0)"></div>
 	</div>
 
 	<div class="controls">
