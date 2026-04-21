@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 
 	let layers = $state(0);
-	let benchyImageUrl = '/img/catfoot.png';
+	let benchyImageUrl = '/img/benchy.png';
 	
 	const MAX_LAYERS = 100;
 	const PRINT_TIME_HOURS = 3.5;
