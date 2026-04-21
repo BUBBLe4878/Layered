@@ -517,15 +517,15 @@
           "notNull": true,
           "default": "'blue'"
         },
-        "benchies": {
-          "name": "benchies",
+        "clay": {
+          "name": "clay",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
           "default": 0
         },
-        "layer": {
-          "name": "layer",
+        "brick": {
+          "name": "brick",
           "type": "real",
           "primaryKey": false,
           "notNull": true,

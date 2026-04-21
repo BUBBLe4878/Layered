@@ -153,8 +153,8 @@ export const actions = {
 					hackatimeTrust: user.hackatimeTrust,
 					hasBasePrinter: user.hasBasePrinter,
 
-					benchies: user.benchies,
-					layer: user.layer,
+					clay: user.clay,
+					brick: user.brick,
 					shopScore: user.shopScore
 				},
 				timeSpent: sql<number>`COALESCE(SUM(${devlog.timeSpent}), 0)`,
@@ -182,8 +182,8 @@ export const actions = {
 				user.trust,
 				user.hackatimeTrust,
 				user.hasBasePrinter,
-				user.benchies,
-				user.layer,
+				user.clay,
+				user.brick,
 				user.shopScore
 			)
 			.limit(1);
@@ -363,11 +363,11 @@ export const actions = {
 			.where(eq(project.id, id));
 
 		if (queriedProject.project.status === 'printed') {
-			// Benchies payout for reviewer
+			// Clay payout for reviewer
 			await db
 				.update(user)
 				.set({
-					benchies: locals.user.benchies + T2_PAYOUT_CLAY
+					clay: locals.user.clay + T2_PAYOUT_CLAY
 				})
 				.where(eq(user.id, locals.user.id));
 		}
@@ -385,8 +385,8 @@ export const actions = {
 				await db
 					.update(user)
 					.set({
-						benchies: sql`${user.benchies} + ${payouts.benchies ?? 0}`,
-						layer: sql`${user.layer} + ${payouts.layers ?? 0}`,
+						clay: sql`${user.clay} + ${payouts.clay ?? 0}`,
+						brick: sql`${user.brick} + ${payouts.bricks ?? 0}`,
 						shopScore: sql`${user.shopScore} + ${payouts.shopScore}`
 					})
 					.where(eq(user.id, queriedProject.user.id));

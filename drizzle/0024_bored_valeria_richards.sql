@@ -1,8 +1,8 @@
 CREATE TABLE "ovenpheus_log" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"userId" integer,
-	"benchies" real NOT NULL,
-	"layersReceived" real NOT NULL,
+	"clay" real NOT NULL,
+	"bricksReceived" real NOT NULL,
 	"timestamp" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

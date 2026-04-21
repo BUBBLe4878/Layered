@@ -41,8 +41,8 @@ async function getOrders(userFilter: number[]) {
 				id: printerOrder.id,
 				userId: printerOrder.userId,
 				printer: printerOrder.printer,
-				benchiesPaid: printerOrder.benchiesPaid,
-				layersPaid: printerOrder.layersPaid,
+				clayPaid: printerOrder.clayPaid,
+				bricksPaid: printerOrder.bricksPaid,
 				timestamp: printerOrder.timestamp
 			},
 			user: {

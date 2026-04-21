@@ -3,8 +3,8 @@
 	import Head from '$lib/components/Head.svelte';
 	import {
 		BASE_PRINTER_CLAY,
-		LAYERS_PER_HOUR,
-		LAYERS_PER_HOUR_CONVERTED,
+		BRICKS_PER_HOUR,
+		BRICKS_PER_HOUR_CONVERTED,
 		CLAY_PER_HOUR
 	} from '$lib/defs';
 	import printpheus from '$lib/assets/ovenpheus.png';
@@ -16,7 +16,7 @@
 	let layers = $derived(
 		Math.floor(
 			(benchies / CLAY_PER_HOUR) *
-				(data.user.hasBasePrinter ? LAYERS_PER_HOUR : LAYERS_PER_HOUR_CONVERTED)
+				(data.user.hasBasePrinter ? BRICKS_PER_HOUR : BRICKS_PER_HOUR_CONVERTED)
 		)
 	);
 </script>
@@ -54,27 +54,27 @@
 				<div class="flex gap-5">
 					<div>
 						<input
-							name="benchies"
+							name="clay"
 							type="number"
 							bind:value={benchies}
 							step="1"
 							min="0"
-							max={Math.floor(data.user.benchies)}
+							max={Math.floor(data.user.clay)}
 							class="themed-input-on-box"
 						/>
 					</div>
 					<input
-						name="benchies"
+						name="clay"
 						type="range"
 						class="grow accent-primary-500"
 						bind:value={benchies}
 						step="1"
 						min="0"
-						max={Math.floor(data.user.benchies)}
+						max={Math.floor(data.user.clay)}
 					/>
 				</div>
 				<p class="mt-1 text-sm opacity-50">
-					You'll get {layers} layers and have {Math.floor(data.user.benchies - benchies)} benchies left
+					You'll get {layers} layers and have {Math.floor(data.user.clay - benchies)} benchies left
 				</p>
 			</label>
 

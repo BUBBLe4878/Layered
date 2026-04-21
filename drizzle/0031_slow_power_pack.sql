@@ -3,11 +3,11 @@ CREATE TABLE "currency_audit_log" (
 	"adminUserId" integer NOT NULL,
 	"targetUserId" integer NOT NULL,
 	"reason" text NOT NULL,
-	"oldBenchies" real NOT NULL,
-	"oldLayer" real NOT NULL,
+	"oldClay" real NOT NULL,
+	"oldBrick" real NOT NULL,
 	"oldShopScore" real NOT NULL,
-	"newBenchies" real NOT NULL,
-	"newLayer" real NOT NULL,
+	"newClay" real NOT NULL,
+	"newBrick" real NOT NULL,
 	"newShopScore" real NOT NULL,
 	"timestamp" timestamp DEFAULT now() NOT NULL
 );

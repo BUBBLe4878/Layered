@@ -4,7 +4,7 @@
 	import MarketItem from './MarketItem.svelte';
 	import MarketTimer from './MarketTimer.svelte';
 	import printpheus from '$lib/assets/ovenpheus.png';
-	import { LAYERS_PER_HOUR, LAYERS_PER_HOUR_CONVERTED, CLAY_PER_HOUR } from '$lib/defs';
+	import { BRICKS_PER_HOUR, BRICKS_PER_HOUR_CONVERTED, CLAY_PER_HOUR } from '$lib/defs';
 
 	let { data } = $props();
 </script>
@@ -35,7 +35,7 @@
 				<p class="text-base text-primary-200 sm:text-lg">Get your yummy yummy layers here!</p>
 			</div>
 			<p>
-				You'll get {(data.user.hasBasePrinter ? LAYERS_PER_HOUR : LAYERS_PER_HOUR_CONVERTED) /
+				You'll get {(data.user.hasBasePrinter ? BRICKS_PER_HOUR : BRICKS_PER_HOUR_CONVERTED) /
 					CLAY_PER_HOUR} layers per benchie
 			</p>
 			<div class="grow"></div>
@@ -51,7 +51,7 @@
 
 	<div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 		{#each data.printshopItems as item (item.id)}
-			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.layer} />
+			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.brick} />
 		{/each}
 	</div>
 	<!-- <div class="themed-box p-3">

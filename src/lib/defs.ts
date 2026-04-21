@@ -7,8 +7,8 @@ export const DEVLOG_DESCRIPTION_MAX_WORDS = 2000;
 export const BASE_PRINTER_CLAY = 40;
 
 export const CLAY_PER_HOUR = 1.0;
-export const LAYERS_PER_HOUR = 12.0;
-export const LAYERS_PER_HOUR_CONVERTED = 10.0;
+export const BRICKS_PER_HOUR = 12.0;
+export const BRICKS_PER_HOUR_CONVERTED = 10.0;
 export const BASE_SHOP_SCORE_PER_HOUR = 25.0;
 
 export const PRINT_PAYOUT_CENTS_PER_GRAM = 2.0;

@@ -8,7 +8,7 @@
 	let formPending = $state(false);
 	let disableBuy = $derived(
 		data.printshopItem.minRequiredShopScore > data.user.shopScore ||
-			data.printshopItem.computedPrice > data.user.layer ||
+			data.printshopItem.computedPrice > data.user.brick ||
 			data.userDataError ||
 			!data.addresses ||
 			!data.addresses?.length ||
@@ -25,7 +25,7 @@
 		<MarketItem
 			item={data.printshopItem}
 			userShopScore={data.user.shopScore}
-			userLayers={data.user.layer}
+			userLayers={data.user.brick}
 			showBuy={false}
 		/>
 	</div>
@@ -93,8 +93,8 @@
 			<button type="submit" class="button md primary" disabled={disableBuy || formPending}>
 				{#if data.printshopItem.minRequiredShopScore > data.user.shopScore}
 					{data.printshopItem.minRequiredShopScore - data.user.shopScore} more experience needed
-				{:else if data.printshopItem.computedPrice > data.user.layer}
-						{data.printshopItem.computedPrice - data.user.layer} more layers needed
+				{:else if data.printshopItem.computedPrice > data.user.brick}
+						{data.printshopItem.computedPrice - data.user.brick} more layers needed
 				{:else}
 						Buy for {data.printshopItem.computedPrice} layers
 				{/if}

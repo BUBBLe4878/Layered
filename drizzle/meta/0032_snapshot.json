@@ -158,14 +158,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "oldBenchies": {
-          "name": "oldBenchies",
+        "oldClay": {
+          "name": "oldClay",
           "type": "real",
           "primaryKey": false,
           "notNull": true
         },
-        "oldLayer": {
-          "name": "oldLayer",
+        "oldBrick": {
+          "name": "oldBrick",
           "type": "real",
           "primaryKey": false,
           "notNull": true
@@ -176,14 +176,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "newBenchies": {
-          "name": "newBenchies",
+        "newClay": {
+          "name": "newClay",
           "type": "real",
           "primaryKey": false,
           "notNull": true
         },
-        "newLayer": {
-          "name": "newLayer",
+        "newBrick": {
+          "name": "newBrick",
           "type": "real",
           "primaryKey": false,
           "notNull": true
@@ -639,8 +639,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "layersPaid": {
-          "name": "layersPaid",
+        "bricksPaid": {
+          "name": "bricksPaid",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -731,14 +731,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "benchies": {
-          "name": "benchies",
+        "clay": {
+          "name": "clay",
           "type": "real",
           "primaryKey": false,
           "notNull": true
         },
-        "layersReceived": {
-          "name": "layersReceived",
+        "bricksReceived": {
+          "name": "bricksReceived",
           "type": "real",
           "primaryKey": false,
           "notNull": true
@@ -795,14 +795,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "benchiesPaid": {
-          "name": "benchiesPaid",
+        "clayPaid": {
+          "name": "clayPaid",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "layersPaid": {
-          "name": "layersPaid",
+        "bricksPaid": {
+          "name": "bricksPaid",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -1375,15 +1375,15 @@
           "notNull": true,
           "default": "'blue'"
         },
-        "benchies": {
-          "name": "benchies",
+        "clay": {
+          "name": "clay",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
           "default": 0
         },
-        "layer": {
-          "name": "layer",
+        "brick": {
+          "name": "brick",
           "type": "real",
           "primaryKey": false,
           "notNull": true,

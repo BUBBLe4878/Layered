@@ -22,8 +22,8 @@ export async function load({ locals }) {
 			name,
 			profilePicture,
 
-			benchies: locals.user.benchies ?? 0,
-			layer: locals.user.layer ?? 0,
+			clay: locals.user.clay ?? 0,
+			brick: locals.user.brick ?? 0,
 
 			shopScore: locals.user.shopScore ?? 0,
 

@@ -97,10 +97,10 @@
 					{user.referralId ?? 'None'}
 				</DataCard>
 				<DataCard title="Benchies">
-					<code>{user.benchies}</code>
+					<code>{user.clay}</code>
 				</DataCard>
 				<DataCard title="Layers">
-					<code>{user.layer}</code>
+					<code>{user.brick}</code>
 				</DataCard>
 				<DataCard title="Experience">
 					<code>{user.shopScore}</code>

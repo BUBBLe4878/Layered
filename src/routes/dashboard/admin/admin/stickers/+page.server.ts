@@ -17,8 +17,8 @@ export async function load({ locals }) {
 			id: user.id,
 			name: user.name,
 			slackId: user.slackId,
-			benchies: user.benchies,
-			layer: user.layer,
+			clay: user.clay,
+			brick: user.brick,
 			shopScore: user.shopScore,
 			projectCreatedAt:
 				sql<string>`(array_agg(${project.createdAt} ORDER BY ${project.createdAt} ASC))[1]`

@@ -5,8 +5,8 @@
         description: 'interesting description',
 		isBasePrinter: false,
 		singlePurchase: true,
-		maxLayer: 500,
-		minLayer: 50,
+		maxBrick: 500,
+		minBrick: 50,
 		minShopScore: 0,
 		maxShopScore: 5000,
         x: 50,
@@ -31,8 +31,8 @@ export const printers: Printer[] = [
 				description: 'Multicolour printing!',
 				isBasePrinter: false,
 				singlePurchase: true,
-				maxLayer: 500,
-				minLayer: 450,
+				maxBrick: 500,
+				minBrick: 450,
 				minShopScore: 0,
 				maxShopScore: 5000,
 
@@ -46,8 +46,8 @@ export const printers: Printer[] = [
 				description: 'A beginner\'s "better" best friend.',
 				isBasePrinter: false,
 				singlePurchase: true,
-				maxLayer: 300,
-				minLayer: 270,
+				maxBrick: 300,
+				minBrick: 270,
 				minShopScore: 0,
 				maxShopScore: 5000,
 
@@ -60,8 +60,8 @@ export const printers: Printer[] = [
 						description: 'Multicolour printing!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 500,
-						minLayer: 450,
+						maxBrick: 500,
+						minBrick: 450,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -75,8 +75,8 @@ export const printers: Printer[] = [
 						description: 'P1, s-type!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 600,
-						minLayer: 540,
+						maxBrick: 600,
+						minBrick: 540,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -89,8 +89,8 @@ export const printers: Printer[] = [
 								description: 'Multicolour printing!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 600,
-								minLayer: 540,
+								maxBrick: 600,
+								minBrick: 540,
 								minShopScore: 0,
 								maxShopScore: 5000,
 
@@ -103,8 +103,8 @@ export const printers: Printer[] = [
 										description: 'Multicolour printing, pro edition!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 450,
-										minLayer: 420,
+										maxBrick: 450,
+										minBrick: 420,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -121,8 +121,8 @@ export const printers: Printer[] = [
 									'A refreshed version of the P1S. It contains all the features of the P1S and more!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 630,
-								minLayer: 570,
+								maxBrick: 630,
+								minBrick: 570,
 								minShopScore: 0,
 								maxShopScore: 5000,
 
@@ -135,8 +135,8 @@ export const printers: Printer[] = [
 										description: 'Multicolour printing, pro edition!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 1000,
-										minLayer: 900,
+										maxBrick: 1000,
+										minBrick: 900,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -151,8 +151,8 @@ export const printers: Printer[] = [
 											'A professional printer designed to be able to print whatever your heart desires!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 3200,
-										minLayer: 3000,
+										maxBrick: 3200,
+										minBrick: 3000,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -183,8 +183,8 @@ export const printers: Printer[] = [
 				description: 'Cook an egg on this!',
 				isBasePrinter: false,
 				singlePurchase: true,
-				maxLayer: 350,
-				minLayer: 300,
+				maxBrick: 350,
+				minBrick: 300,
 				minShopScore: 0,
 				maxShopScore: 5000,
 
@@ -197,8 +197,8 @@ export const printers: Printer[] = [
 						description: 'The 3rd version of the ender 3!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 250,
-						minLayer: 210,
+						maxBrick: 250,
+						minBrick: 210,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -211,8 +211,8 @@ export const printers: Printer[] = [
 								description: 'The K stands for killer printer',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 450,
-								minLayer: 350,
+								maxBrick: 450,
+								minBrick: 350,
 								minShopScore: 0,
 								maxShopScore: 5000,
 
@@ -225,8 +225,8 @@ export const printers: Printer[] = [
 										description: 'Get multicolor printing with this!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 650,
-										minLayer: 600,
+										maxBrick: 650,
+										minBrick: 600,
 										minShopScore: 0,
 										maxShopScore: 5000,
 
@@ -240,8 +240,8 @@ export const printers: Printer[] = [
 										description: 'A professional 3d printer designed to be a fit of all needs!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 2000,
-										minLayer: 1800,
+										maxBrick: 2000,
+										minBrick: 1800,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -254,8 +254,8 @@ export const printers: Printer[] = [
 												description: 'Get multicolor printing with this!',
 												isBasePrinter: false,
 												singlePurchase: true,
-												maxLayer: 800,
-												minLayer: 750,
+												maxBrick: 800,
+												minBrick: 750,
 												minShopScore: 3000,
 												maxShopScore: 10000,
 
@@ -270,8 +270,8 @@ export const printers: Printer[] = [
 													'A flagship 3D printer. It has pretty much everything you would most likely need!',
 												isBasePrinter: false,
 												singlePurchase: true,
-												maxLayer: 700,
-												minLayer: 650,
+												maxBrick: 700,
+												minBrick: 650,
 												minShopScore: 3000,
 												maxShopScore: 10000,
 
@@ -284,8 +284,8 @@ export const printers: Printer[] = [
 														description: 'Get multicolor printing with this!',
 														isBasePrinter: false,
 														singlePurchase: true,
-														maxLayer: 1000,
-														minLayer: 900,
+														maxBrick: 1000,
+														minBrick: 900,
 														minShopScore: 3000,
 														maxShopScore: 10000,
 
@@ -320,8 +320,8 @@ export const printers: Printer[] = [
 				description: 'For when you decide that you need pro features!',
 				isBasePrinter: false,
 				singlePurchase: true,
-				maxLayer: 110,
-				minLayer: 90,
+				maxBrick: 110,
+				minBrick: 90,
 				minShopScore: 0,
 				maxShopScore: 5000,
 
@@ -334,8 +334,8 @@ export const printers: Printer[] = [
 						description: 'Print carbon fibre with this beast of a 3d printer!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 350,
-						minLayer: 300,
+						maxBrick: 350,
+						minBrick: 300,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -348,8 +348,8 @@ export const printers: Printer[] = [
 								description: 'Carbon fibre beast with multi material printing!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 420,
-								minLayer: 390,
+								maxBrick: 420,
+								minBrick: 390,
 								minShopScore: 0,
 								maxShopScore: 5000,
 
@@ -365,8 +365,8 @@ export const printers: Printer[] = [
 						description: 'For when you decide that you need plus features!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 420,
-						minLayer: 390,
+						maxBrick: 420,
+						minBrick: 390,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -379,8 +379,8 @@ export const printers: Printer[] = [
 								description: 'Get multicolour printing with this bundle!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 400,
-								minLayer: 360,
+								maxBrick: 400,
+								minBrick: 360,
 								minShopScore: 0,
 								maxShopScore: 5000,
 
@@ -394,8 +394,8 @@ export const printers: Printer[] = [
 								description: 'For when you decide that you need MAX features!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 470,
-								minLayer: 420,
+								maxBrick: 470,
+								minBrick: 420,
 								minShopScore: 3000,
 								maxShopScore: 10000,
 
@@ -408,8 +408,8 @@ export const printers: Printer[] = [
 										description: 'Get multicolour printing with this bundle!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 250,
-										minLayer: 210,
+										maxBrick: 250,
+										minBrick: 210,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -423,8 +423,8 @@ export const printers: Printer[] = [
 										description: 'Why?',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 8000,
-										minLayer: 7500,
+										maxBrick: 8000,
+										minBrick: 7500,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -455,8 +455,8 @@ export const printers: Printer[] = [
 				description: 'A sssssuper cool V2 of the original Kobra 3',
 				isBasePrinter: false,
 				singlePurchase: true,
-				maxLayer: 180,
-				minLayer: 150,
+				maxBrick: 180,
+				minBrick: 150,
 				minShopScore: 0,
 				maxShopScore: 5000,
 
@@ -469,8 +469,8 @@ export const printers: Printer[] = [
 						description: 'Get multicolour printing with this bundle!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 400,
-						minLayer: 360,
+						maxBrick: 400,
+						minBrick: 360,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -484,8 +484,8 @@ export const printers: Printer[] = [
 						description: 'Print sssnakes with this printer!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 900,
-						minLayer: 750,
+						maxBrick: 900,
+						minBrick: 750,
 						minShopScore: 3000,
 						maxShopScore: 10000,
 
@@ -498,8 +498,8 @@ export const printers: Printer[] = [
 								description: 'Get multicolour printing with this bundle!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 700,
-								minLayer: 600,
+								maxBrick: 700,
+								minBrick: 600,
 								minShopScore: 3000,
 								maxShopScore: 10000,
 
@@ -515,8 +515,8 @@ export const printers: Printer[] = [
 						description: 'A beefy cool printer that can print up to 19 colors?!!',
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 300,
-						minLayer: 270,
+						maxBrick: 300,
+						minBrick: 270,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -529,8 +529,8 @@ export const printers: Printer[] = [
 								description: 'Get multicolour printing with this bundle (Prints 7 colors)!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 500,
-								minLayer: 450,
+								maxBrick: 500,
+								minBrick: 450,
 								minShopScore: 0,
 								maxShopScore: 5000,
 
@@ -543,8 +543,8 @@ export const printers: Printer[] = [
 										description: 'Get multicolour printing with this bundle! (Prints 11 colors)!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 700,
-										minLayer: 675,
+										maxBrick: 700,
+										minBrick: 675,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -562,8 +562,8 @@ export const printers: Printer[] = [
 						description: "Get this BEAST of a 3D printer! It's enclosed too!",
 						isBasePrinter: false,
 						singlePurchase: true,
-						maxLayer: 350,
-						minLayer: 300,
+						maxBrick: 350,
+						minBrick: 300,
 						minShopScore: 0,
 						maxShopScore: 5000,
 
@@ -576,8 +576,8 @@ export const printers: Printer[] = [
 								description: 'Get multicolour printing with this bundle!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 360,
-								minLayer: 330,
+								maxBrick: 360,
+								minBrick: 330,
 								minShopScore: 0,
 								maxShopScore: 5000,
 
@@ -591,8 +591,8 @@ export const printers: Printer[] = [
 								description: 'An even beastlier enclosed 3d printer!',
 								isBasePrinter: false,
 								singlePurchase: true,
-								maxLayer: 1300,
-								minLayer: 1200,
+								maxBrick: 1300,
+								minBrick: 1200,
 								minShopScore: 3000,
 								maxShopScore: 10000,
 
@@ -605,8 +605,8 @@ export const printers: Printer[] = [
 										description: 'Get multicolour printing with this bundle!',
 										isBasePrinter: false,
 										singlePurchase: true,
-										maxLayer: 800,
-										minLayer: 750,
+										maxBrick: 800,
+										minBrick: 750,
 										minShopScore: 3000,
 										maxShopScore: 10000,
 
@@ -620,8 +620,8 @@ export const printers: Printer[] = [
 													'Get PRO multicolour printing with this bundle! (prints up to 8 colours!)',
 												isBasePrinter: false,
 												singlePurchase: true,
-												maxLayer: 800,
-												minLayer: 750,
+												maxBrick: 800,
+												minBrick: 750,
 												minShopScore: 3000,
 												maxShopScore: 10000,
 
@@ -654,8 +654,8 @@ export const printers: Printer[] = [
 				description: 'More yummy money',
 				isBasePrinter: false,
 				singlePurchase: false,
-				maxLayer: 40,
-				minLayer: 35,
+				maxBrick: 40,
+				minBrick: 35,
 				minShopScore: 0,
 				maxShopScore: 5000,
 
@@ -669,8 +669,8 @@ export const printers: Printer[] = [
 				description: 'More yummy money pro',
 				isBasePrinter: false,
 				singlePurchase: false,
-				maxLayer: 180,
-				minLayer: 170,
+				maxBrick: 180,
+				minBrick: 170,
 				minShopScore: 0,
 				maxShopScore: 5000,
 
@@ -684,8 +684,8 @@ export const printers: Printer[] = [
 				description: 'More yummy money pro max',
 				isBasePrinter: false,
 				singlePurchase: false,
-				maxLayer: 345,
-				minLayer: 330,
+				maxBrick: 345,
+				minBrick: 330,
 				minShopScore: 3000,
 				maxShopScore: 10000,
 
@@ -699,8 +699,8 @@ export const printers: Printer[] = [
 				description: 'More yummy money pro max ultra',
 				isBasePrinter: false,
 				singlePurchase: false,
-				maxLayer: 760,
-				minLayer: 755,
+				maxBrick: 760,
+				minBrick: 755,
 				minShopScore: 3000,
 				maxShopScore: 10000,
 
@@ -720,8 +720,8 @@ export type Printer = {
 	description: string;
 	isBasePrinter: boolean;
 	singlePurchase: boolean;
-	maxLayer?: number;
-	minLayer?: number;
+	maxBrick?: number;
+	minBrick?: number;
 	minShopScore?: number;
 	maxShopScore?: number;
 	x: number;

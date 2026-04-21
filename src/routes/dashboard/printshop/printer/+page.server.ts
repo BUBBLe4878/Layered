@@ -74,14 +74,14 @@ export const actions = {
 		}
 
 		if (printer.isBasePrinter) {
-			if (locals.user.benchies < BASE_PRINTER_CLAY) {
+			if (locals.user.clay < BASE_PRINTER_CLAY) {
 				throw error(400, { message: "can't afford" });
 			}
 
 			await db
 				.update(user)
 				.set({
-					benchies: locals.user.benchies - BASE_PRINTER_CLAY,
+					clay: locals.user.clay - BASE_PRINTER_CLAY,
 					printer: { path: printerPath },
 					hasBasePrinter: true
 				})
@@ -90,25 +90,25 @@ export const actions = {
 			await db.insert(printerOrder).values({
 				userId: locals.user.id,
 				printer: { path: printerPath },
-				benchiesPaid: BASE_PRINTER_CLAY
+				clayPaid: BASE_PRINTER_CLAY
 			});
 		} else {
 			const price = calculateMarketPrice(
-				printer.minLayer ?? 0,
-				printer.maxLayer ?? 0,
+				printer.minBrick ?? 0,
+				printer.maxBrick ?? 0,
 				printer.minShopScore ?? 0,
 				printer.maxShopScore ?? 0,
 				locals.user.shopScore
 			);
 
-			if (locals.user.layer < price) {
+			if (locals.user.brick < price) {
 				throw error(400, { message: "can't afford" });
 			}
 
 			await db
 				.update(user)
 				.set({
-					layer: locals.user.layer - price,
+					brick: locals.user.brick - price,
 					printer: { path: printer.singlePurchase ? printerPath : locals.user.printer.path }
 				})
 				.where(eq(user.id, locals.user.id));
@@ -116,7 +116,7 @@ export const actions = {
 			await db.insert(printerOrder).values({
 				userId: locals.user.id,
 				printer: { path: printerPath },
-				layersPaid: price
+				bricksPaid: price
 			});
 		}
 

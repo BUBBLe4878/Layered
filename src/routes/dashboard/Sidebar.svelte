@@ -213,7 +213,7 @@
 			>
 				<Layers size={10} class="text-yellow-300" />
 				<div class="hidden text-xs sm:block">
-					<p class="truncate font-medium text-yellow-100">{Math.floor(user.benchies)} Layers</p>
+					<p class="truncate font-medium text-yellow-100">{Math.floor(user.clay)} Layers</p>
 				</div>
 			</div>
 
@@ -223,7 +223,7 @@
 				title="Benchies"
 			>
 				<div class="hidden text-xs sm:block">
-					<p class="truncate font-medium text-yellow-100">{Math.floor(user.layer)} Benchies</p>
+					<p class="truncate font-medium text-yellow-100">{Math.floor(user.brick)} Benchies</p>
 				</div>
 			</div>
 
@@ -301,7 +301,7 @@
 						title="Layers"
 					>
 						<Layers size={14} class="text-yellow-300" />
-						<span class="font-medium text-yellow-100">{Math.floor(user.benchies)} Layers</span>
+						<span class="font-medium text-yellow-100">{Math.floor(user.clay)} Layers</span>
 					</div>
 
 					<!-- Benchies display -->
@@ -310,7 +310,7 @@
 						title="Benchies"
 					>
 						<span class="text-lg">🚢</span>
-						<span class="font-medium text-yellow-100">{Math.floor(user.layer)} Benchies</span>
+						<span class="font-medium text-yellow-100">{Math.floor(user.brick)} Benchies</span>
 					</div>
 				</div>
 
