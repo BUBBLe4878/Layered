@@ -24,10 +24,10 @@
 	let formPending = $derived(navigating.to !== null);
 </script>
 
-<Head title="YSWS Review" />
+<Head title="Build Review" />
 
 <div class="flex h-full flex-col">
-	<h1 class="mt-5 mb-3 font-hero text-3xl font-medium">YSWS Review</h1>
+	<h1 class="mt-5 mb-3 font-hero text-3xl font-medium">Build Review</h1>
 
 	<div class="flex flex-col-reverse gap-5 lg:flex-row">
 		<div class="themed-box grow p-3">

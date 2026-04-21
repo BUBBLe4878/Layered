@@ -411,7 +411,7 @@
 										onclick={() => (showMobileMenu = false)}
 									>
 										<Box size={16} />
-										<span>Print</span>
+										<span>Fabricate</span>
 									</a>
 								{/if}
 								{#if user.hasT1Review}
@@ -421,7 +421,7 @@
 										onclick={() => (showMobileMenu = false)}
 									>
 										<ClipboardPen size={16} />
-										<span>Review</span>
+										<span>Design Review</span>
 									</a>
 								{/if}
 								{#if user.hasT2Review}
@@ -431,7 +431,7 @@
 										onclick={() => (showMobileMenu = false)}
 									>
 										<ClipboardPenLine size={16} />
-										<span>YSWS Review</span>
+										<span>Build Review</span>
 									</a>
 								{/if}
 								{#if user.hasAdmin}
@@ -472,7 +472,7 @@
 						onclick={() => (showAdminMenu = false)}
 					>
 						<Box size={16} />
-						Print
+						Fabricate
 					</a>
 				{/if}
 				{#if user.hasT1Review}
@@ -482,7 +482,7 @@
 						onclick={() => (showAdminMenu = false)}
 					>
 						<ClipboardPen size={16} />
-						Review
+						Design Review
 					</a>
 				{/if}
 				{#if user.hasT2Review}
@@ -492,7 +492,7 @@
 						onclick={() => (showAdminMenu = false)}
 					>
 						<ClipboardPenLine size={16} />
-						YSWS Review
+						Build Review
 					</a>
 				{/if}
 				{#if user.hasAdmin}

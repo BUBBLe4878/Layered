@@ -19,7 +19,7 @@
 	let unmarkForPrintPending = $state(false);
 </script>
 
-<Head title={'Print: ' + data.project.project.name} />
+<Head title={'Fabricate: ' + data.project.project.name} />
 
 <div
 	class="-mt-5 -mr-5 flex h-full flex-row [&>*]:-mb-5 [&>*]:overflow-x-clip [&>*]:pt-5 [&>*]:pr-5"
@@ -117,7 +117,7 @@
 				</div>
 			{/if}
 
-			<h2 class="mt-2 text-2xl font-bold">Printering area</h2>
+			<h2 class="mt-2 text-2xl font-bold">Fabrication area</h2>
 
 			{#if (data.project.project.status === 't1_approved') || (data.project.project.status === 'printing' && data.project.project.printedBy === data.user.id)}
 				<div class="themed-box flex flex-col gap-3 p-3">
@@ -135,7 +135,7 @@
 							}}
 						>
 							<button type="submit" class="button md primary w-full" disabled={markForPrintPending}>
-								I want to print this!
+								I want to fabricate this!
 							</button>
 						</form>
 					{/if}
@@ -157,7 +157,7 @@
 								class="button md primary w-full"
 								disabled={unmarkForPrintPending}
 							>
-								nevermind i'm not printing ts
+								nevermind i'm not fabricating ts
 							</button>
 						</form>
 					{/if}
@@ -165,7 +165,7 @@
 			{/if}
 
 			{#if data.project.project.status === 'printing' && data.project.project.printedBy === data.user.id}
-				<h3 class="text-xl font-bold">Print</h3>
+				<h3 class="text-xl font-bold">Fabricate</h3>
 				<div class="themed-box flex flex-col gap-3 p-3">
 					<form
 						method="POST"

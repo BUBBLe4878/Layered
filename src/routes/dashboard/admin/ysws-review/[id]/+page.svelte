@@ -29,7 +29,7 @@
 	);
 </script>
 
-<Head title={'YSWS Review: ' + data.project.project.name} />
+<Head title={'Build Review: ' + data.project.project.name} />
 
 <div
 	class="-mt-5 -mr-5 flex h-full flex-row [&>*]:-mb-5 [&>*]:overflow-x-clip [&>*]:pt-5 [&>*]:pr-5"
@@ -130,7 +130,7 @@
 				</div>
 			{/if}
 
-			<h2 class="mt-2 text-2xl font-bold">YSWS Review</h2>
+			<h2 class="mt-2 text-2xl font-bold">Build Review</h2>
 			<div class="themed-box flex flex-col gap-3 p-3">
 				<form
 					method="POST"
