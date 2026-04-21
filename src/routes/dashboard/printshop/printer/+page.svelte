@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import Printers from './Printers.svelte';
-	import themeSong from '$lib/assets/construct-printer-market.mp3';
+	import themeSong from '$lib/assets/construct-printer-printshop.mp3';
 
 	let { data } = $props();
 
@@ -42,7 +42,7 @@
 </div>
 
 <!-- <div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-		{#each data.marketItems as item (item.id)}
+		{#each data.printshopItems as item (item.id)}
 			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.brick} />
 		{/each}
 	</div> -->

@@ -134,7 +134,7 @@
 		</div>
 	</a>
 	<a
-		href={resolve('/dashboard/market')}
+		href={resolve('/dashboard/printshop')}
 		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
 	>
 		<Store size={22} class="text-primary-800" />

@@ -7,8 +7,8 @@
 
 	let formPending = $state(false);
 	let disableBuy = $derived(
-		data.marketItem.minRequiredShopScore > data.user.shopScore ||
-			data.marketItem.computedPrice > data.user.brick ||
+		data.printshopItem.minRequiredShopScore > data.user.shopScore ||
+			data.printshopItem.computedPrice > data.user.brick ||
 			data.userDataError ||
 			!data.addresses ||
 			!data.addresses?.length ||
@@ -23,7 +23,7 @@
 <div class="mb-5 flex flex-row gap-5">
 	<div class="w-100">
 		<MarketItem
-			item={data.marketItem}
+			item={data.printshopItem}
 			userShopScore={data.user.shopScore}
 			userLayers={data.user.brick}
 			showBuy={false}
@@ -32,7 +32,7 @@
 
 	<div class="themed-box flex grow flex-col p-3">
 		<h1 class="mb-1 text-2xl font-bold">Are you sure you want to buy this?</h1>
-		<p class="mb-2">It'll cost you {data.marketItem.computedPrice} layers</p>
+		<p class="mb-2">It'll cost you {data.printshopItem.computedPrice} layers</p>
 
 		<form
 			method="POST"
@@ -91,12 +91,12 @@
 			<div class="grow"></div>
 
 			<button type="submit" class="button md primary" disabled={disableBuy || formPending}>
-				{#if data.marketItem.minRequiredShopScore > data.user.shopScore}
-					{data.marketItem.minRequiredShopScore - data.user.shopScore} more experience needed
-				{:else if data.marketItem.computedPrice > data.user.brick}
-						{data.marketItem.computedPrice - data.user.brick} more layers needed
+				{#if data.printshopItem.minRequiredShopScore > data.user.shopScore}
+					{data.printshopItem.minRequiredShopScore - data.user.shopScore} more experience needed
+				{:else if data.printshopItem.computedPrice > data.user.brick}
+						{data.printshopItem.computedPrice - data.user.brick} more layers needed
 				{:else}
-						Buy for {data.marketItem.computedPrice} layers
+						Buy for {data.printshopItem.computedPrice} layers
 				{/if}
 			</button>
 		</form>

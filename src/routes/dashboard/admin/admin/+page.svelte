@@ -31,7 +31,7 @@
 		</a>
 		<a
 			class="themed-box flex flex-col items-center justify-center gap-2 p-3 shadow-xl transition-transform hover:scale-105"
-			href="admin/market"
+			href="admin/printshop"
 		>
 			<div>
 				<Store size={40} />

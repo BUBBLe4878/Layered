@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { marketItem } from '$lib/server/db/schema.js';
+import { printshopItem } from '$lib/server/db/schema.js';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { eq, and } from 'drizzle-orm';
@@ -13,15 +13,15 @@ export async function load({ locals, params }) {
 
 	const [item] = await db
 		.select()
-		.from(marketItem)
-		.where(and(eq(marketItem.deleted, false), eq(marketItem.id, id)));
+		.from(printshopItem)
+		.where(and(eq(printshopItem.deleted, false), eq(printshopItem.id, id)));
 
 	if (!item) {
 		return error(404, { message: 'item not found' });
 	}
 
 	return {
-		marketItem: item
+		printshopItem: item
 	};
 }
 
@@ -35,8 +35,8 @@ export const actions: Actions = {
 
 		const [item] = await db
 			.select()
-			.from(marketItem)
-			.where(and(eq(marketItem.deleted, false), eq(marketItem.id, id)));
+			.from(printshopItem)
+			.where(and(eq(printshopItem.deleted, false), eq(printshopItem.id, id)));
 
 		if (!item) {
 			return error(404, { message: 'item not found' });
@@ -70,7 +70,7 @@ export const actions: Actions = {
 		}
 
 		await db
-			.update(marketItem)
+			.update(printshopItem)
 			.set({
 				name,
 				description,
@@ -82,8 +82,8 @@ export const actions: Actions = {
 				maxPrice,
 				isPublic
 			})
-			.where(eq(marketItem.id, id));
+			.where(eq(printshopItem.id, id));
 
-		return redirect(302, '/dashboard/admin/admin/market');
+		return redirect(302, '/dashboard/admin/admin/printshop');
 	}
 };

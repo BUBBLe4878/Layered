@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { marketItemOrder, marketItem, user } from '$lib/server/db/schema.js';
+import { printshopItemOrder, printshopItem, user } from '$lib/server/db/schema.js';
 import { error } from '@sveltejs/kit';
 import { eq, and, ne, inArray, desc } from 'drizzle-orm';
 
@@ -13,10 +13,10 @@ export async function load({ locals, url }) {
 
 	const hasFilters = url.searchParams.size > 0;
 	const statusFilter = hasFilters
-		? (url.searchParams.getAll('status') as (typeof marketItemOrder.status._.data)[])
-		: (['awaiting_approval'] as (typeof marketItemOrder.status._.data)[]);
-	const marketItemFilter = url.searchParams
-		.getAll('marketItem')
+		? (url.searchParams.getAll('status') as (typeof printshopItemOrder.status._.data)[])
+		: (['awaiting_approval'] as (typeof printshopItemOrder.status._.data)[]);
+	const printshopItemFilter = url.searchParams
+		.getAll('printshopItem')
 		.map((id) => parseInt(id))
 		.filter((id) => !isNaN(id) && id > 0);
 	const userFilter = url.searchParams
@@ -24,15 +24,15 @@ export async function load({ locals, url }) {
 		.map((id) => parseInt(id))
 		.filter((id) => !isNaN(id) && id > 0);
 
-	const orders = await getOrders(statusFilter, marketItemFilter, userFilter);
+	const orders = await getOrders(statusFilter, printshopItemFilter, userFilter);
 
 	const allMarketItems = await db
 		.select({
-			id: marketItem.id,
-			name: marketItem.name
+			id: printshopItem.id,
+			name: printshopItem.name
 		})
-		.from(marketItem)
-		.where(eq(marketItem.deleted, false));
+		.from(printshopItem)
+		.where(eq(printshopItem.deleted, false));
 
 	const users = await db
 		.select({
@@ -48,34 +48,34 @@ export async function load({ locals, url }) {
 		users,
 		fields: {
 			status: statusFilter,
-			marketItem: marketItemFilter,
+			printshopItem: printshopItemFilter,
 			user: userFilter
 		}
 	};
 }
 
 async function getOrders(
-	statusFilter: (typeof marketItemOrder.status._.data)[],
-	marketItemFilter: number[],
+	statusFilter: (typeof printshopItemOrder.status._.data)[],
+	printshopItemFilter: number[],
 	userFilter: number[]
 ) {
 	return await db
 		.select({
 			order: {
-				id: marketItemOrder.id,
-				userId: marketItemOrder.userId,
-				marketItemId: marketItemOrder.marketItemId,
-				addressId: marketItemOrder.addressId,
-				bricksPaid: marketItemOrder.bricksPaid,
-				status: marketItemOrder.status,
-				userNotes: marketItemOrder.userNotes,
-				notes: marketItemOrder.notes,
-				createdAt: marketItemOrder.createdAt
+				id: printshopItemOrder.id,
+				userId: printshopItemOrder.userId,
+				printshopItemId: printshopItemOrder.printshopItemId,
+				addressId: printshopItemOrder.addressId,
+				bricksPaid: printshopItemOrder.bricksPaid,
+				status: printshopItemOrder.status,
+				userNotes: printshopItemOrder.userNotes,
+				notes: printshopItemOrder.notes,
+				createdAt: printshopItemOrder.createdAt
 			},
-			marketItem: {
-				id: marketItem.id,
-				name: marketItem.name,
-				image: marketItem.image
+			printshopItem: {
+				id: printshopItem.id,
+				name: printshopItem.name,
+				image: printshopItem.image
 			},
 			user: {
 				id: user.id,
@@ -83,18 +83,18 @@ async function getOrders(
 				idvToken: user.idvToken
 			}
 		})
-		.from(marketItemOrder)
-		.leftJoin(marketItem, eq(marketItem.id, marketItemOrder.marketItemId))
-		.leftJoin(user, eq(user.id, marketItemOrder.userId))
+		.from(printshopItemOrder)
+		.leftJoin(printshopItem, eq(printshopItem.id, printshopItemOrder.printshopItemId))
+		.leftJoin(user, eq(user.id, printshopItemOrder.userId))
 		.where(
 			and(
-				eq(marketItemOrder.deleted, false),
-				statusFilter.length > 0 ? inArray(marketItemOrder.status, statusFilter) : undefined,
-				marketItemFilter.length > 0
-					? inArray(marketItemOrder.marketItemId, marketItemFilter)
+				eq(printshopItemOrder.deleted, false),
+				statusFilter.length > 0 ? inArray(printshopItemOrder.status, statusFilter) : undefined,
+				printshopItemFilter.length > 0
+					? inArray(printshopItemOrder.printshopItemId, printshopItemFilter)
 					: undefined,
-				userFilter.length > 0 ? inArray(marketItemOrder.userId, userFilter) : undefined
+				userFilter.length > 0 ? inArray(printshopItemOrder.userId, userFilter) : undefined
 			)
 		)
-		.orderBy(desc(marketItemOrder.createdAt));
+		.orderBy(desc(printshopItemOrder.createdAt));
 }

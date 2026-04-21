@@ -262,8 +262,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.market_item": {
-      "name": "market_item",
+    "public.printshop_item": {
+      "name": "printshop_item",
       "schema": "",
       "columns": {
         "id": {
@@ -358,9 +358,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "market_item_createdBy_user_id_fk": {
-          "name": "market_item_createdBy_user_id_fk",
-          "tableFrom": "market_item",
+        "printshop_item_createdBy_user_id_fk": {
+          "name": "printshop_item_createdBy_user_id_fk",
+          "tableFrom": "printshop_item",
           "tableTo": "user",
           "columnsFrom": [
             "createdBy"
@@ -378,8 +378,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.market_item_order": {
-      "name": "market_item_order",
+    "public.printshop_item_order": {
+      "name": "printshop_item_order",
       "schema": "",
       "columns": {
         "id": {
@@ -394,8 +394,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "marketItemId": {
-          "name": "marketItemId",
+        "printshopItemId": {
+          "name": "printshopItemId",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -414,7 +414,7 @@
         },
         "status": {
           "name": "status",
-          "type": "market_order_status",
+          "type": "printshop_order_status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -449,9 +449,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "market_item_order_userId_user_id_fk": {
-          "name": "market_item_order_userId_user_id_fk",
-          "tableFrom": "market_item_order",
+        "printshop_item_order_userId_user_id_fk": {
+          "name": "printshop_item_order_userId_user_id_fk",
+          "tableFrom": "printshop_item_order",
           "tableTo": "user",
           "columnsFrom": [
             "userId"
@@ -462,12 +462,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "market_item_order_marketItemId_market_item_id_fk": {
-          "name": "market_item_order_marketItemId_market_item_id_fk",
-          "tableFrom": "market_item_order",
-          "tableTo": "market_item",
+        "printshop_item_order_printshopItemId_printshop_item_id_fk": {
+          "name": "printshop_item_order_printshopItemId_printshop_item_id_fk",
+          "tableFrom": "printshop_item_order",
+          "tableTo": "printshop_item",
           "columnsFrom": [
-            "marketItemId"
+            "printshopItemId"
           ],
           "columnsTo": [
             "id"
@@ -1179,8 +1179,8 @@
         "already_printed"
       ]
     },
-    "public.market_order_status": {
-      "name": "market_order_status",
+    "public.printshop_order_status": {
+      "name": "printshop_order_status",
       "schema": "public",
       "values": [
         "awaiting_approval",

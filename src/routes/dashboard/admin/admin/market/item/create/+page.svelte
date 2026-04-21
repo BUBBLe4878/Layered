@@ -11,9 +11,9 @@
 	let formPending = $state(false);
 </script>
 
-<Head title="Add market item" />
+<Head title="Add printshop item" />
 
-<h1 class="mt-5 mb-3 font-hero text-3xl">Add market item</h1>
+<h1 class="mt-5 mb-3 font-hero text-3xl">Add printshop item</h1>
 
 <form
 	method="POST"

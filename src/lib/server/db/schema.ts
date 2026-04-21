@@ -303,7 +303,7 @@ export const devlogView = pgTable('devlog_view', {
 
 // Market
 
-export const marketItem = pgTable('market_item', {
+export const printshopItem = pgTable('printshop_item', {
 	id: serial().primaryKey(),
 	createdBy: integer().references(() => user.id),
 
@@ -335,24 +335,24 @@ export const ovenpheusLog = pgTable('ovenpheus_log', {
 	timestamp: timestamp().notNull().defaultNow()
 });
 
-export const marketOrderStatus = pgEnum('market_order_status', [
+export const printshopOrderStatus = pgEnum('printshop_order_status', [
 	'awaiting_approval',
 	'fulfilled',
 	'denied',
 	'refunded'
 ]);
 
-export const marketItemOrder = pgTable('market_item_order', {
+export const printshopItemOrder = pgTable('printshop_item_order', {
 	id: serial().primaryKey(),
 	userId: integer()
 		.references(() => user.id)
 		.notNull(),
-	marketItemId: integer().references(() => marketItem.id),
+	printshopItemId: integer().references(() => printshopItem.id),
 
 	addressId: text().notNull(),
 	bricksPaid: integer().notNull(),
 
-	status: marketOrderStatus().notNull().default('awaiting_approval'),
+	status: printshopOrderStatus().notNull().default('awaiting_approval'),
 	userNotes: text().notNull(),
 	notes: text(), // stuff like tracking code, shown to user
 
@@ -360,7 +360,7 @@ export const marketItemOrder = pgTable('market_item_order', {
 	createdAt: timestamp().notNull().defaultNow()
 });
 
-export const printerOrder = pgTable('market_printer_order', {
+export const printerOrder = pgTable('printshop_printer_order', {
 	id: serial().primaryKey(),
 	userId: integer()
 		.references(() => user.id)
@@ -416,7 +416,7 @@ export type T1Review = typeof t1Review.$inferSelect;
 export type LegionReview = typeof legionReview.$inferSelect;
 export type T2Review = typeof t2Review.$inferSelect;
 
-export type MarketItem = typeof marketItem.$inferSelect;
+export type MarketItem = typeof printshopItem.$inferSelect;
 export type Club = typeof club.$inferSelect;
 export type ClubMembership = typeof clubMembership.$inferSelect;
 export type DevlogLike = typeof devlogLike.$inferSelect;

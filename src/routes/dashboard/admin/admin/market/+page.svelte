@@ -6,11 +6,11 @@
 	let { data } = $props();
 
 	let publicItems = $derived(
-		data.marketItems.filter((item) => item.isPublic).sort((a, b) => a.minPrice - b.minPrice)
+		data.printshopItems.filter((item) => item.isPublic).sort((a, b) => a.minPrice - b.minPrice)
 	);
 
 	let privateItems = $derived(
-		data.marketItems.filter((item) => !item.isPublic).sort((a, b) => a.minPrice - b.minPrice)
+		data.printshopItems.filter((item) => !item.isPublic).sort((a, b) => a.minPrice - b.minPrice)
 	);
 
 	let editingId: number | null = $state(null);
@@ -32,7 +32,7 @@
 <h1 class="mt-5 mb-3 font-hero text-3xl font-medium">Market</h1>
 
 <div class="flex flex-row">
-	<a href="market/item/create" class="button primary md mb-5">Add item</a>
+	<a href="printshop/item/create" class="button primary md mb-5">Add item</a>
 </div>
 
 <div class="mb-5 flex flex-col gap-5">

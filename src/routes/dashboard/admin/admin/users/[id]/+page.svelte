@@ -185,7 +185,7 @@
 							<span class="text-sm font-medium">Experience</span>
 							<input
 								type="number"
-								name="market_score"
+								name="printshop_score"
 								value={form?.currency?.fields.shopScore ?? user.shopScore}
 								class="themed-input-on-box"
 								placeholder="Experience"

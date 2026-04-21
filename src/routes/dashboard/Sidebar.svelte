@@ -54,7 +54,7 @@
 		user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin
 	);
 
-	type NavKey = 'home' | 'projects' | 'explore' | 'market' | 'clubs' | 'tutorial';
+	type NavKey = 'home' | 'projects' | 'explore' | 'Printshop' | 'clubs' | 'tutorial';
 
 	function navButtonClass(key: NavKey, isActive: boolean, compact = false) {
 		const base = compact
@@ -77,7 +77,7 @@
 			return `${base} border-cyan-200/95 bg-cyan-700 ring-2 ring-cyan-200/70 shadow-[0_0_0_2px_rgba(165,243,252,0.35)]`;
 		}
 
-		if (key === 'market') {
+		if (key === 'Printshop') {
 			return `${base} border-orange-200/95 bg-orange-700 ring-2 ring-orange-200/70 shadow-[0_0_0_2px_rgba(254,215,170,0.35)]`;
 		}
 
@@ -92,7 +92,7 @@
 		if (key === 'home') return 'bg-yellow-200';
 		if (key === 'projects') return 'bg-blue-200';
 		if (key === 'explore') return 'bg-cyan-200';
-		if (key === 'market') return 'bg-orange-200';
+		if (key === 'Printshop') return 'bg-orange-200';
 		if (key === 'clubs') return 'bg-purple-200';
 		return 'bg-red-200';
 	}
@@ -154,15 +154,15 @@
 				{/if}
 			</a>
 
-			<!-- Market -->
+			<!-- Printshop -->
 			<a
-				href={resolve('/dashboard/market')}
-				class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'))}
+				href={resolve('/dashboard/printshop')}
+				class={navButtonClass('printshop', page.url.pathname.startsWith('/dashboard/printshop'))}
 			>
 				<Store size={20} />
-				<span>Market</span>
-				{#if page.url.pathname.startsWith('/dashboard/market')}
-					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
+				<span>Printshop</span>
+				{#if page.url.pathname.startsWith('/dashboard/printshop')}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('printshop')}`}></span>
 				{/if}
 			</a>
 
@@ -354,14 +354,14 @@
 						{/if}
 					</a>
 					<a
-						href={resolve('/dashboard/market')}
-						class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'), true)}
+						href={resolve('/dashboard/printshop')}
+						class={navButtonClass('printshop', page.url.pathname.startsWith('/dashboard/printshop'), true)}
 						onclick={() => (showMobileMenu = false)}
 					>
 						<Store size={18} />
-						<span>Market</span>
-						{#if page.url.pathname.startsWith('/dashboard/market')}
-							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
+						<span>Printshop</span>
+						{#if page.url.pathname.startsWith('/dashboard/printshop')}
+							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('printshop')}`}></span>
 						{/if}
 					</a>
 					<a

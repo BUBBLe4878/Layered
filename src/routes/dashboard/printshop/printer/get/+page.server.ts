@@ -10,7 +10,7 @@ export async function load({ locals }) {
 	}
 
 	if (locals.user.printerFulfilment !== 'none' || !locals.user.hasBasePrinter) {
-		return redirect(303, '/dashboard/market/printer');
+		return redirect(303, '/dashboard/printshop/printer');
 	}
 }
 
@@ -21,7 +21,7 @@ export const actions = {
 		}
 
 		if (locals.user.printerFulfilment !== 'none' || !locals.user.hasBasePrinter) {
-			return redirect(303, '/dashboard/market/printer');
+			return redirect(303, '/dashboard/printshop/printer');
 		}
 
 		await db
@@ -31,6 +31,6 @@ export const actions = {
 			})
 			.where(and(eq(user.id, locals.user.id), eq(user.printerFulfilment, 'none')));
 
-		return redirect(303, '/dashboard/market/printer');
+		return redirect(303, '/dashboard/printshop/printer');
 	}
 } satisfies Actions;

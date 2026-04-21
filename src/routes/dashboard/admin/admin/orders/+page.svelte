@@ -5,12 +5,12 @@
 
 	let { data } = $props();
 
-	let marketItemSearch = $state('');
+	let printshopItemSearch = $state('');
 	let userSearch = $state('');
 
 	let orders = $derived(data.orders);
 
-	const marketOrderStatuses = {
+	const printshopOrderStatuses = {
 		awaiting_approval: 'Pending',
 		fulfilled: 'Fulfilled',
 		denied: 'Denied',
@@ -19,7 +19,7 @@
 
 	let filteredMarketItems = $derived(
 		data.allMarketItems.filter((item) =>
-			item.name?.toLowerCase().includes(marketItemSearch.toLowerCase())
+			item.name?.toLowerCase().includes(printshopItemSearch.toLowerCase())
 		)
 	);
 	let filteredUsers = $derived(
@@ -48,7 +48,7 @@
 							value={data.fields.status}
 							multiple
 						>
-							{#each Object.entries(marketOrderStatuses) as [status, longStatus] (status)}
+							{#each Object.entries(printshopOrderStatuses) as [status, longStatus] (status)}
 								<option value={status} class="truncate">{longStatus}</option>
 							{/each}
 						</select>
@@ -61,13 +61,13 @@
 							<input
 								type="text"
 								placeholder="search"
-								bind:value={marketItemSearch}
+								bind:value={printshopItemSearch}
 								class="themed-input-light border-b-0 py-1.5"
 							/>
 							<select
 								class="themed-input-light grow"
-								name="marketItem"
-								value={data.fields.marketItem}
+								name="printshopItem"
+								value={data.fields.printshopItem}
 								multiple
 							>
 								{#each filteredMarketItems as item (item.id)}
@@ -135,15 +135,15 @@
 						aria-label="order"
 					>
 					</a>
-					{#if order.marketItem?.image}
+					{#if order.printshopItem?.image}
 						<img
-							src={order.marketItem.image}
-							alt={order.marketItem?.name || 'Market item'}
+							src={order.printshopItem.image}
+							alt={order.printshopItem?.name || 'Market item'}
 							class="mb-2 aspect-[5/3] w-full overflow-hidden rounded-lg bg-primary-800/10 object-contain"
 						/>
 					{/if}
 					<h1 class="flex flex-row gap-1 text-xl font-semibold">
-						<span class="grow truncate">{order.marketItem?.name || 'Unknown item'}</span>
+						<span class="grow truncate">{order.printshopItem?.name || 'Unknown item'}</span>
 					</h1>
 					<p class="text-sm">
 						by <a class="relative z-2 underline" href={`/dashboard/users/${order.user?.id}`}
@@ -159,7 +159,7 @@
 								{relativeDate(order.order.createdAt)}
 							</abbr>
 						</p>
-						<p class="text-sm">{marketOrderStatuses[order.order.status]}</p>
+						<p class="text-sm">{printshopOrderStatuses[order.order.status]}</p>
 					</div>
 				</div>
 			{/each}

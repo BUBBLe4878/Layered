@@ -31,7 +31,7 @@
 		};
 	}}
 >
-	<a href={resolve('/dashboard/market/printer/')} class="button sm primary">Cancel</a>
+	<a href={resolve('/dashboard/printshop/printer/')} class="button sm primary">Cancel</a>
 	<button class="button sm dark-red" disabled={formPending}>
 		Get printer
 	</button>
