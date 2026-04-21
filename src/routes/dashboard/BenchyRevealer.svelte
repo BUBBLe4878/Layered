@@ -120,12 +120,6 @@
 				Print time: ~{printTime}h
 			</div>
 		</div>
-
-		{#if stats}
-			<div class="stat-card" style="margin-top: 16px;">
-				<div class="stat-label">Your Stats</div>
-			</div>
-		{/if}
 	</div>
 </div>
 
