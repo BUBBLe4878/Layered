@@ -160,13 +160,14 @@
 				class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'))}
 			>
 				<Store size={20} />
-				<span>Printshop</span>
+				<span>Market</span>
 				{#if page.url.pathname.startsWith('/dashboard/market')}
 					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
 				{/if}
 			</a>
 
 			<!-- Club -->
+			<!--
 			<a
 				href={resolve('/dashboard/clubs')}
 				class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'))}
@@ -177,7 +178,7 @@
 					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('clubs')}`}></span>
 				{/if}
 			</a>
-
+			-->
 			<!-- Tutorial -->
 			<a
 				href={resolve('/dashboard/tutorial')}
@@ -358,7 +359,7 @@
 						onclick={() => (showMobileMenu = false)}
 					>
 						<Store size={18} />
-						<span>Printshop</span>
+						<span>Market</span>
 						{#if page.url.pathname.startsWith('/dashboard/market')}
 							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
 						{/if}
