@@ -50,21 +50,6 @@
 		<div class="benchy-overlay" style="clip-path: inset(0 0 {1 + revealPercent}% 0)"></div>
 	</div>
 
-	<div class="controls">
-		<div class="slider-group">
-			<span class="slider-label">Layers</span>
-			<input 
-				type="range" 
-				min="0" 
-				max={MAX_LAYERS} 
-				bind:value={layers} 
-				step="1"
-				class="benchy-slider"
-			/>
-			<span class="layer-value">{layers}</span>
-		</div>
-	</div>
-
 	<div class="stats">
 		<div class="stat-card">
 			<div class="stat-label">Progress</div>
@@ -72,10 +57,6 @@
 			<div class="progress-bar">
 				<div class="progress-fill" style="width: {percent}%"></div>
 			</div>
-		</div>
-		<div class="stat-card">
-			<div class="stat-label">Print Time</div>
-			<div class="stat-value">{printTime}h</div>
 		</div>
 	</div>
 
@@ -161,62 +142,6 @@
 			transparent 1px,
 			transparent 4px
 		);
-	}
-
-	.controls {
-		margin: 24px 0;
-	}
-
-	.slider-group {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-bottom: 16px;
-	}
-
-	.slider-label {
-		font-size: 14px;
-		color: #555;
-		font-weight: 600;
-		min-width: 60px;
-	}
-
-	.benchy-slider {
-		flex: 1;
-		height: 6px;
-		-webkit-appearance: none;
-		appearance: none;
-		background: #ddd;
-		border-radius: 5px;
-		outline: none;
-		cursor: pointer;
-	}
-
-	.benchy-slider::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		appearance: none;
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		cursor: pointer;
-		box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-		transition: transform 0.2s;
-	}
-
-	.benchy-slider::-webkit-slider-thumb:active {
-		transform: scale(1.2);
-	}
-
-	.benchy-slider::-moz-range-thumb {
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		cursor: pointer;
-		border: none;
-		box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-		transition: transform 0.2s;
 	}
 
 	.layer-value {
