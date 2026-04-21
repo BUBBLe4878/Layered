@@ -198,40 +198,6 @@
 		gap: 8px;
 	}
 
-	button {
-		flex: 1;
-		padding: 12px;
-		border: none;
-		border-radius: 8px;
-		font-size: 14px;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-
-	.reset-btn {
-		background: #f0f0f0;
-		color: #333;
-	}
-
-	.reset-btn:hover {
-		background: #e0e0e0;
-	}
-
-	.complete-btn {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
-	}
-
-	.complete-btn:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-	}
-
-	.complete-btn:active {
-		transform: translateY(0);
-	}
-
 	@media (max-width: 640px) {
 		.benchy-container-wrapper {
 			padding: 16px;
