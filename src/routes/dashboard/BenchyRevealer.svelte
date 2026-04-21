@@ -59,11 +59,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="button-group">
-		<button class="reset-btn" onclick={reset}>Reset</button>
-		<button class="complete-btn" onclick={complete}>Complete Print</button>
-	</div>
 </div>
 
 <style>
