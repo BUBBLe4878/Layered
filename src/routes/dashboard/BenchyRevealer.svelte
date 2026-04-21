@@ -1,66 +1,109 @@
 <script lang="ts">
-	console.log("setLayers(50); will set the layers to 50 in devtools for debugging"); //i forgot the ")
-	//setLayers(50); will set the layers to 50 in devtools for debugging
 	import { onMount } from 'svelte';
 
-	let layers = $state(0);
-	let benchyImageUrl = '/img/benchy.png';
-	
-	const MAX_LAYERS = 100;
+	export let data;
+
+	// ─────────────────────────────────────────
+	// Config
+	// ─────────────────────────────────────────
+	const benchyImageUrl = '/img/benchy.png';
+
+	const MAX_CLAY = 40;
 	const PRINT_TIME_HOURS = 3.5;
 
-	let percent = $derived.by(() => Math.round((layers / MAX_LAYERS) * 100));
-	let printTime = $derived.by(() => ((layers / MAX_LAYERS) * PRINT_TIME_HOURS).toFixed(1));
-	let revealPercent = $derived.by(() => (layers / MAX_LAYERS) * 100);
+	// ─────────────────────────────────────────
+	// Core state (single source of truth)
+	// ─────────────────────────────────────────
+	let clay = $derived(() => data.requestedUser.clay ?? 0);
 
-	function reset() {
-		layers = 0;
-	}
+	// ─────────────────────────────────────────
+	// Derived UI values
+	// ─────────────────────────────────────────
+	let percent = $derived.by(() =>
+		Math.round((clay / MAX_CLAY) * 100)
+	);
 
-	function complete() {
-		layers = MAX_LAYERS;
-	}
+	let revealPercent = $derived.by(() =>
+		(clay / MAX_CLAY) * 100
+	);
 
+	let printTime = $derived.by(() =>
+		((clay / MAX_CLAY) * PRINT_TIME_HOURS).toFixed(1)
+	);
+
+	// ─────────────────────────────────────────
+	// Image loading
+	// ─────────────────────────────────────────
 	onMount(() => {
-		// Load the Benchy image
-		const revealElement = document.getElementById('benchyReveal');
-		window.setLayers = (val: number) => {
-			layers = val;
+		const el = document.getElementById('benchyReveal');
+
+		if (!el) return;
+
+		const img = new Image();
+
+		img.onload = () => {
+			el.style.backgroundImage = `url('${benchyImageUrl}')`;
 		};
-		if (revealElement) {
-			const img = new Image();
-			img.onload = function() {
-				revealElement.style.backgroundImage = `url('${benchyImageUrl}')`;
-				console.log('Image loaded:', benchyImageUrl);
-			};
-			img.onerror = function() {
-				console.error('Image failed to load:', benchyImageUrl);
-				revealElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-				revealElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:white;font-weight:bold;">🚢 Benchy Print</div>';
-			};
-			img.crossOrigin = 'anonymous';
-			img.src = benchyImageUrl;
-		}
+
+		img.onerror = () => {
+			console.error('Failed to load image:', benchyImageUrl);
+
+			el.style.background =
+				'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+			el.innerHTML = `
+				<div style="
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					width:100%;
+					height:100%;
+					color:white;
+					font-weight:bold;
+				">
+					🚢 Benchy Print
+				</div>
+			`;
+		};
+
+		img.src = benchyImageUrl;
 	});
 </script>
 
+<!-- ───────────────────────────────────────── -->
+<!-- UI -->
+<!-- ───────────────────────────────────────── -->
+
 <div class="benchy-container-wrapper">
 	<div class="benchy-header">
-		<h2 class="benchy-title">Layer Progress</h2>
+		<h2 class="benchy-title">Clay Progress</h2>
 	</div>
 
 	<div class="benchy-container">
-		<div class="layer-lines"></div>
 		<div class="benchy-reveal" id="benchyReveal"></div>
-		<div class="benchy-overlay" style="clip-path: inset(0 0 {1 + revealPercent}% 0)"></div>
+
+		<div
+			class="benchy-overlay"
+			style="clip-path: inset(0 0 {revealPercent}% 0)"
+		></div>
 	</div>
 
 	<div class="stats">
 		<div class="stat-card">
 			<div class="stat-label">Progress</div>
+
 			<div class="stat-value">{percent}%</div>
+
 			<div class="progress-bar">
 				<div class="progress-fill" style="width: {percent}%"></div>
+			</div>
+
+			<div class="stat-meta">
+				Clay: {clay} / {MAX_CLAY}
+			</div>
+
+			<div class="stat-meta">
+				Print time: ~{printTime}h
 			</div>
 		</div>
 	</div>
@@ -86,12 +129,6 @@
 		margin: 0;
 	}
 
-	.benchy-subtitle {
-		font-size: 14px;
-		color: #888;
-		margin: 6px 0 0 0;
-	}
-
 	.benchy-container {
 		position: relative;
 		width: 100%;
@@ -105,56 +142,24 @@
 
 	.benchy-reveal {
 		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
+		inset: 0;
 		background-size: contain;
 		background-repeat: no-repeat;
 		background-position: center;
-		opacity: 1;
 	}
 
 	.benchy-overlay {
 		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: #FFFFFF;
-		z-index: 10;
+		inset: 0;
+		background: white;
 		pointer-events: none;
 		transition: clip-path 0.3s ease;
-	}
-/*
-	.layer-lines {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		z-index: 5;
-		pointer-events: none;
-		background: repeating-linear-gradient(
-			0deg,
-			rgba(0, 0, 0, 0.03) 0px,
-			rgba(0, 0, 0, 0.03) 1px,
-			transparent 1px,
-			transparent 3px
-		);
-	}
-*/
-	.layer-value {
-		font-size: 18px;
-		font-weight: 700;
-		color: #667eea;
-		min-width: 50px;
-		text-align: right;
+		z-index: 10;
 	}
 
 	.stat-card {
-		width:100%;
-		background-color: #FAF6F1;
+		width: 100%;
+		background-color: #faf6f1;
 		border-radius: 12px;
 		padding: 16px;
 		border: 1px solid #e0e7ff;
@@ -167,6 +172,7 @@
 		margin-bottom: 8px;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
+		color: #666;
 	}
 
 	.stat-value {
@@ -174,6 +180,12 @@
 		font-weight: 700;
 		color: #667eea;
 		margin-bottom: 8px;
+	}
+
+	.stat-meta {
+		font-size: 12px;
+		color: #777;
+		margin-top: 6px;
 	}
 
 	.progress-bar {
@@ -187,13 +199,7 @@
 	.progress-fill {
 		height: 100%;
 		background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-		border-radius: 2px;
 		transition: width 0.3s ease;
-	}
-
-	.button-group {
-		display: flex;
-		gap: 8px;
 	}
 
 	@media (max-width: 640px) {
@@ -203,10 +209,6 @@
 
 		.benchy-title {
 			font-size: 20px;
-		}
-
-		.stat-card {
-			padding: 12px;
 		}
 
 		.stat-value {
