@@ -51,7 +51,7 @@
 
 			<div>
 				<h3 class="text-lg font-bold">Payment</h3>
-				<p>Bricks paid: {data.orderData.order.bricksPaid}</p>
+				<p>Layers paid: {data.orderData.order.bricksPaid}</p>
 			</div>
 
 			<div>

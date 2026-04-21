@@ -47,11 +47,11 @@
 				<p class="text-sm"><span class="font-bold">Image:</span> {review.image}</p>
 			{/if}
 			<p class="text-sm">
-				<span class="font-bold">Market score/h (deprecated):</span>
+				<span class="font-bold">Experience/h (deprecated):</span>
 				{review.shopScoreMultiplier}
 			</p>
 			<p class="text-sm">
-				<span class="font-bold">Market score:</span>
+				<span class="font-bold">Experience:</span>
 				{review.shopScore}
 			</p>
 			<p class="text-xs">

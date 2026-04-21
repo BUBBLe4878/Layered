@@ -15,18 +15,18 @@
 	});
 </script>
 
-<Head title="Printer Market" />
+<Head title="Printshop Printers" />
 
 <div class="flex h-full flex-col overflow-hidden">
 	<div class="mt-5 mb-2 flex flex-row gap-1">
-		<h1 class="grow font-hero text-3xl font-medium">Printer market</h1>
+		<h1 class="grow font-hero text-3xl font-medium">Printshop printers</h1>
 		{#if data.user.printerFulfilment === 'none' && data.user.hasBasePrinter}
 			<a href="printer/get" class="button md primary">Get printer</a>
 		{/if}
 	</div>
 
 	<p class="mb-2">
-		Market score: <span class="rounded-xl bg-primary-800 px-2"
+		Experience: <span class="rounded-xl bg-primary-800 px-2"
 			>{Math.floor(data.user.shopScore)}</span
 		>
 		<span class="opacity-50">(allows you to get stuff for cheaper!)</span>

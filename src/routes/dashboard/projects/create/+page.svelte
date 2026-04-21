@@ -43,7 +43,7 @@
 				</li>
 			</ul>
 		</li>
-		<li>It gets approved once more and you'll get your clay/bricks!</li>
+		<li>It gets approved once more and you'll get your benchies/layers!</li>
 	</ol>
 	<p class="mt-2 mb-1">
 		Make sure you design your project to be 3D printable! Avoid overhangs if you can and reduce the
@@ -54,13 +54,13 @@
 	</p>
 	<p class="my-1">
 		Aim to do journal every 30 mins to 1 hour, frequent and higher quality journal logs will earn
-		you a higher market score!
+		you a higher experience!
 	</p>
-	<h3 class="text-lg font-bold">Market score? what's that??</h3>
+	<h3 class="text-lg font-bold">Experience? what's that??</h3>
 	<p class="my-1">
-		Market score is our system of encouraging you to make better projects! In the second review
-		stage, we decide how much market score you'll gain from your project. Here's what your market
-		score depends on:
+		Experience is our system of encouraging you to make better projects! In the second review
+		stage, we decide how much experience you'll gain from your project. Here's what your experience
+		depends on:
 	</p>
 	<ul class="my-1 list-inside list-disc">
 		<li>How cool we think your project is!</li>
@@ -68,13 +68,13 @@
 		<li>How polished your project is</li>
 	</ul>
 	<p class="my-1">
-		A higher market score:
+		A higher experience:
 	</p>
 	<ul class="my-1 list-inside list-disc">
-		<li>Reduces the price of market items</li>
-		<li>Lets you unlock more items in the market</li>
+		<li>Reduces the price of printshop items</li>
+		<li>Lets you unlock more items in the printshop</li>
 		<li>Gives you a cool profile badge!</li>
-		<li>Maybe lets you access a secret market 👀?</li>
+		<li>Maybe lets you access a secret printshop 👀?</li>
 	</ul>
 	<a href="https://hackclub.enterprise.slack.com/docs/T0266FRGM/F09Q2DS061J" class="underline"
 		>Check the FAQ for more info!</a

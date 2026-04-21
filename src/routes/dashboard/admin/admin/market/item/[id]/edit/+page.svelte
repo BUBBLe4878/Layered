@@ -64,7 +64,7 @@
 	</label>
 
 	<label class="flex flex-col gap-1">
-		Min required market score
+		Min required experience
 		<input
 			type="number"
 			name="minRequiredShopScore"

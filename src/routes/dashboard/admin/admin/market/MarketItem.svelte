@@ -10,7 +10,7 @@
 	<p class="mb-1 text-sm">{item.description}</p>
 	<p class="text-sm text-primary-200">Price: {item.maxPrice}-{item.minPrice}</p>
 	<p class="text-sm text-primary-200">
-		Market score: {item.minRequiredShopScore}, {item.minShopScore}-{item.maxShopScore}
+		Experience: {item.minRequiredShopScore}, {item.minShopScore}-{item.maxShopScore}
 	</p>
 
 	{#if showButtons}

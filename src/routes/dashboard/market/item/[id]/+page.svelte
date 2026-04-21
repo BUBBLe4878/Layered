@@ -32,7 +32,7 @@
 
 	<div class="themed-box flex grow flex-col p-3">
 		<h1 class="mb-1 text-2xl font-bold">Are you sure you want to buy this?</h1>
-		<p class="mb-2">It'll cost you {data.marketItem.computedPrice} bricks</p>
+		<p class="mb-2">It'll cost you {data.marketItem.computedPrice} layers</p>
 
 		<form
 			method="POST"
@@ -92,11 +92,11 @@
 
 			<button type="submit" class="button md primary" disabled={disableBuy || formPending}>
 				{#if data.marketItem.minRequiredShopScore > data.user.shopScore}
-					{data.marketItem.minRequiredShopScore - data.user.shopScore} more market score needed
+					{data.marketItem.minRequiredShopScore - data.user.shopScore} more experience needed
 				{:else if data.marketItem.computedPrice > data.user.brick}
-					{data.marketItem.computedPrice - data.user.brick} more bricks needed
+						{data.marketItem.computedPrice - data.user.brick} more layers needed
 				{:else}
-					Buy for {data.marketItem.computedPrice} bricks
+						Buy for {data.marketItem.computedPrice} layers
 				{/if}
 			</button>
 		</form>

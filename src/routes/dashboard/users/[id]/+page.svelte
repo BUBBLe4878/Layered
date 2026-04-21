@@ -35,7 +35,7 @@
 			</p>
 
 			<p>
-				Market score: <span class="rounded-xl bg-primary-800 px-1"
+				Experience: <span class="rounded-xl bg-primary-800 px-1"
 					>{data.requestedUser.shopScore}</span
 				>
 			</p>

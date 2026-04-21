@@ -96,13 +96,13 @@
 				<DataCard title="Referred by ID">
 					{user.referralId ?? 'None'}
 				</DataCard>
-				<DataCard title="Clay">
+				<DataCard title="Benchies">
 					<code>{user.clay}</code>
 				</DataCard>
-				<DataCard title="Brick">
+				<DataCard title="Layers">
 					<code>{user.brick}</code>
 				</DataCard>
-				<DataCard title="Market score">
+				<DataCard title="Experience">
 					<code>{user.shopScore}</code>
 				</DataCard>
 			</div>

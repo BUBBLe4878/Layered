@@ -35,7 +35,7 @@
 </script>
 
 <div class="my-12 flex flex-col items-center justify-center">
-	<h2 class="mb-6 font-hero text-xl text-primary-300 md:text-2xl">The Market Opens In</h2>
+	<h2 class="mb-6 font-hero text-xl text-primary-300 md:text-2xl">The Printshop Opens In</h2>
 	<div class="grid grid-cols-2 gap-4 text-center font-hero text-primary-50 md:grid-cols-4">
 		<div class="themed-box flex min-w-[120px] flex-col items-center justify-center p-4">
 			<span class="mb-2 text-4xl md:text-5xl">{timeLeft.days}</span>

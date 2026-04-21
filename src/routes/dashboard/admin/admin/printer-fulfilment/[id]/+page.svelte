@@ -74,10 +74,10 @@
 								{printer?.isBasePrinter ? 'Base printer' : 'Upgrade'}
 							</p>
 							{#if order.bricksPaid != null}
-								<p class="text-sm">Bricks: {order.bricksPaid}</p>
+								<p class="text-sm">Layers: {order.bricksPaid}</p>
 							{/if}
 							{#if order.clayPaid != null}
-								<p class="text-sm">Clay: {order.clayPaid}</p>
+								<p class="text-sm">Benchies: {order.clayPaid}</p>
 							{/if}
 						</div>
 					{/each}

@@ -98,9 +98,9 @@
 						</abbr>
 					</div>
 					<p>
-						{Math.round(user.clay * 10) / 10} clay, {Math.round(user.brick * 10) / 10} brick, {Math.round(
+						{Math.round(user.clay * 10) / 10} benchies, {Math.round(user.brick * 10) / 10} layers, {Math.round(
 							user.shopScore * 10
-						) / 10} market
+						) / 10} experience
 					</p>
 				</div>
 			{/each}

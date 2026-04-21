@@ -173,13 +173,13 @@
 					</label>
 
 					<label class="flex flex-col gap-1">
-						<span class="font-medium">Market score</span>
+						<span class="font-medium">Experience</span>
 						<input
 							type="number"
 							name="shopScore"
 							bind:value={shopScore}
 							class="themed-input-on-box"
-							placeholder="Market score"
+							placeholder="Experience"
 							step="0.1"
 							min="0"
 							required
@@ -187,10 +187,10 @@
 					</label>
 
 					<p>
-						Payouts: {Math.round((payouts.clay ?? 0) * 10) / 10} clay, {Math.round(
+						Payouts: {Math.round((payouts.clay ?? 0) * 10) / 10} benchies, {Math.round(
 							(payouts.bricks ?? 0) * 10
-						) / 10} bricks,
-						{Math.round(payouts.shopScore * 10) / 10} market score
+						) / 10} layers,
+						{Math.round(payouts.shopScore * 10) / 10} experience
 					</p>
 
 					{#if form?.message}

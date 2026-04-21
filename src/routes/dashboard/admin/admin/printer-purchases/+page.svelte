@@ -77,10 +77,10 @@
 						>
 					</p>
 					{#if order.order.bricksPaid != null}
-						<p class="text-sm">Bricks paid: {order.order.bricksPaid}</p>
+						<p class="text-sm">Layers paid: {order.order.bricksPaid}</p>
 					{/if}
 					{#if order.order.clayPaid != null}
-						<p class="text-sm">Clay paid: {order.order.clayPaid}</p>
+						<p class="text-sm">Benchies paid: {order.order.clayPaid}</p>
 					{/if}
 					<p class="text-sm text-primary-400">
 						<abbr title={`${order.order.timestamp.toUTCString()}`}>

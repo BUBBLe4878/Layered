@@ -221,7 +221,7 @@ export const actions = {
 			isNaN(parseFloat(shopScore.toString())) ||
 			parseFloat(shopScore.toString()) < 0
 		) {
-			return error(400, { message: 'invalid market score' });
+			return error(400, { message: 'invalid experience' });
 		}
 
 		const parsedShopScore = parseFloat(shopScore.toString());

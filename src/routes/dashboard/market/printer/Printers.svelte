@@ -203,7 +203,7 @@
 				<div class="mt-0.5 flex flex-row justify-center gap-1.5 align-middle text-primary-500">
 					<Lock size={22} />
 					<p class="font-semibold">
-						In fulfilment queue, printer market locked
+						In fulfilment queue, printshop locked
 					</p>
 				</div>
 			</div>
@@ -228,14 +228,14 @@
 					<CircleDollarSign size={22} />
 					<p class="font-semibold">
 						{#if selectedPrinter?.isBasePrinter}
-							{BASE_PRINTER_CLAY} clay
+							{BASE_PRINTER_CLAY} benchies
 						{:else}
 							<span class="text-primary-400">
 								{#if (selectedPrinterPriceBricks ?? 0) < (selectedPrinter?.maxBrick ?? 0)}
 									<span class="text-primary-500 line-through">{selectedPrinter?.maxBrick}</span>
-									{selectedPrinterPriceBricks} bricks
+									{selectedPrinterPriceBricks} layers
 								{:else}
-									{selectedPrinterPriceBricks} bricks
+									{selectedPrinterPriceBricks} layers
 								{/if}
 							</span>
 						{/if}

@@ -21,20 +21,20 @@
 	);
 </script>
 
-<Head title="Fire clay" />
+<Head title="Fire benchies" />
 
-<h1 class="mt-5 mb-3 font-hero text-3xl font-medium">Ovenpheus</h1>
+<h1 class="mt-5 mb-3 font-hero text-3xl font-medium">Printpheus</h1>
 
 <div class="mb-5 flex flex-row gap-5">
 	<div class="w-100">
-		<img src={ovenpheus} alt="ovenpheus" class="rounded-lg border-20 border-white" />
+		<img src={ovenpheus} alt="printpheus" class="rounded-lg border-20 border-white" />
 	</div>
 
 	<div class="themed-box flex grow flex-col p-3">
-		<h1 class="text-2xl font-bold">Do you want to fire {clay} clay into {bricks} bricks?</h1>
+		<h1 class="text-2xl font-bold">Do you want to fire {clay} benchies into {bricks} layers?</h1>
 		<p class="mb-2">
 			{#if !data.user.hasBasePrinter}
-				Keep in mind that you'll need {BASE_PRINTER_CLAY} <em>clay</em> to get a base printer
+				Keep in mind that you'll need {BASE_PRINTER_CLAY} <em>benchies</em> to get a base printer
 			{/if}
 		</p>
 
@@ -50,7 +50,7 @@
 			}}
 		>
 			<label class="flex flex-col gap-1">
-				Clay to convert
+				Benchies to convert
 				<div class="flex gap-5">
 					<div>
 						<input
@@ -74,14 +74,14 @@
 					/>
 				</div>
 				<p class="mt-1 text-sm opacity-50">
-					You'll get {bricks} bricks and have {Math.floor(data.user.clay - clay)} left
+					You'll get {bricks} layers and have {Math.floor(data.user.clay - clay)} benchies left
 				</p>
 			</label>
 
 			<div class="grow"></div>
 
 			<button type="submit" class="button md primary" disabled={clay === 0}>
-				🔥 Fire {clay} clay 🔥
+				🔥 Fire {clay} benchies 🔥
 			</button>
 		</form>
 	</div>

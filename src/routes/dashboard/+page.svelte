@@ -131,8 +131,8 @@
 	>
 		<Store size={22} class="text-primary-800" />
 		<div>
-			<p class="font-semibold">Shop</p>
-			<p class="text-xs text-gray-700">Spend bricks and unlock upgrades</p>
+			<p class="font-semibold">Printshop</p>
+			<p class="text-xs text-gray-700">Spend layers and unlock upgrades</p>
 		</div>
 	</a>
 	<a

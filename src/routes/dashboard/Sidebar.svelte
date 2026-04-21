@@ -158,7 +158,7 @@
 				class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'))}
 			>
 				<Store size={20} />
-				<span>Market</span>
+				<span>Printshop</span>
 				{#if page.url.pathname.startsWith('/dashboard/market')}
 					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
 				{/if}
@@ -317,7 +317,7 @@
 							onclick={() => (showMobileMenu = false)}
 						>
 							<Store size={18} />
-							<span>Market</span>
+							<span>Printshop</span>
 							{#if page.url.pathname.startsWith('/dashboard/market')}
 								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
 							{/if}

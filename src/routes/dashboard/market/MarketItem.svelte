@@ -16,9 +16,9 @@
 			<p class="mb-1 text-center leading-snug text-primary-300">{item.description}</p>
 			{#if item.discountAmount > 0}
 				<div class="flex items-center justify-between gap-2">
-					<div class="text-lg text-primary-300 line-through">{item.maxPrice} bricks</div>
+					<div class="text-lg text-primary-300 line-through">{item.maxPrice} layers</div>
 					<div class="text-lg font-bold text-emerald-500">
-						{item.computedPrice} bricks
+						{item.computedPrice} layers
 					</div>
 				</div>
 				<div class="flex items-center justify-between text-sm text-primary-300">
@@ -27,10 +27,10 @@
 					>
 						{Math.round(item.discountAmount * 100)}% off
 					</div>
-					<div class="text-sm">You save {item.maxPrice - item.computedPrice} bricks</div>
+					<div class="text-sm">You save {item.maxPrice - item.computedPrice} layers</div>
 				</div>
 			{:else}
-				<div class="text-center text-lg font-bold">{item.computedPrice} bricks</div>
+				<div class="text-center text-lg font-bold">{item.computedPrice} layers</div>
 			{/if}
 		</div>
 		{#if showBuy}
@@ -40,11 +40,11 @@
 					class={`button md primary ${disableBuy ? 'disabled' : ''}`}
 				>
 					{#if item.minRequiredShopScore > userShopScore}
-						{Math.ceil(item.minRequiredShopScore - userShopScore)} more market score needed
+						{Math.ceil(item.minRequiredShopScore - userShopScore)} more experience needed
 					{:else if item.computedPrice > userBricks}
-						{item.computedPrice - Math.floor(userBricks)} more bricks needed
+							{item.computedPrice - Math.floor(userBricks)} more layers needed
 					{:else}
-						Buy for {item.computedPrice} bricks
+							Buy for {item.computedPrice} layers
 					{/if}
 				</a>
 			</div>

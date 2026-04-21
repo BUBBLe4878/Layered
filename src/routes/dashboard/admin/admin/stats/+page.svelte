@@ -108,13 +108,13 @@
 			<div
 				class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
 			>
-				<DataCard title="Clay">
+				<DataCard title="Benchies">
 					<code>{data.users.total.clay}</code>
 				</DataCard>
-				<DataCard title="Bricks">
+				<DataCard title="Layers">
 					<code>{data.users.total.brick}</code>
 				</DataCard>
-				<DataCard title="Market score">
+				<DataCard title="Experience">
 					<code>{data.users.total.shopScore}</code>
 				</DataCard>
 			</div>
@@ -122,13 +122,13 @@
 			<div
 				class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
 			>
-				<DataCard title="Clay">
+				<DataCard title="Benchies">
 					<code>{Math.round(data.users.average.clay * 100) / 100}</code>
 				</DataCard>
-				<DataCard title="Bricks">
+				<DataCard title="Layers">
 					<code>{Math.round(data.users.average.brick * 100) / 100}</code>
 				</DataCard>
-				<DataCard title="Market score">
+				<DataCard title="Experience">
 					<code>{Math.round(data.users.average.shopScore * 100) / 100}</code>
 				</DataCard>
 			</div>
