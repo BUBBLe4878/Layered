@@ -41,8 +41,7 @@
 
 <div class="benchy-container-wrapper">
 	<div class="benchy-header">
-		<h2 class="benchy-title">🚢 Benchy Layer Revealer</h2>
-		<p class="benchy-subtitle">Drag the slider to reveal your 3D print layer by layer</p>
+		<h2 class="benchy-title">Layer Progress</h2>
 	</div>
 
 	<div class="benchy-container">
