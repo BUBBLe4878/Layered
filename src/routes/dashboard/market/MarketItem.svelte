@@ -1,8 +1,8 @@
 <script lang="ts">
-	let { item, userShopScore, userBricks, showBuy = true } = $props();
+	let { item, userShopScore, userLayers, showBuy = true } = $props();
 
 	let disableBuy = $derived(
-		item.minRequiredShopScore > userShopScore || item.computedPrice > userBricks
+		item.minRequiredShopScore > userShopScore || item.computedPrice > userLayers
 	);
 </script>
 
@@ -41,8 +41,8 @@
 				>
 					{#if item.minRequiredShopScore > userShopScore}
 						{Math.ceil(item.minRequiredShopScore - userShopScore)} more experience needed
-					{:else if item.computedPrice > userBricks}
-							{item.computedPrice - Math.floor(userBricks)} more layers needed
+					{:else if item.computedPrice > userLayers}
+							{item.computedPrice - Math.floor(userLayers)} more layers needed
 					{:else}
 							Buy for {item.computedPrice} layers
 					{/if}

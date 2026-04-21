@@ -3,7 +3,7 @@
 	import { resolve } from '$app/paths';
 	import MarketItem from './MarketItem.svelte';
 	import MarketTimer from './MarketTimer.svelte';
-	import ovenpheus from '$lib/assets/ovenpheus.png';
+	import printpheus from '$lib/assets/ovenpheus.png';
 	import { BRICKS_PER_HOUR, BRICKS_PER_HOUR_CONVERTED, CLAY_PER_HOUR } from '$lib/defs';
 
 	let { data } = $props();
@@ -25,7 +25,7 @@
 
 	<div class="themed-box mb-5 flex flex-col gap-4 p-3 md:flex-row md:gap-5">
 		<div class="w-full md:w-80">
-			<img src={ovenpheus} alt="printpheus" class="rounded-lg border-20 border-white" />
+			<img src={printpheus} alt="printpheus" class="rounded-lg border-20 border-white" />
 		</div>
 		<div class="flex grow flex-col">
 			<div class="animate-pulse">
@@ -51,7 +51,7 @@
 
 	<div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 		{#each data.marketItems as item (item.id)}
-			<MarketItem {item} userShopScore={data.user.shopScore} userBricks={data.user.brick} />
+			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.brick} />
 		{/each}
 	</div>
 	<!-- <div class="themed-box p-3">

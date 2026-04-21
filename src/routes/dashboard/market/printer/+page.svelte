@@ -32,7 +32,7 @@
 		<span class="opacity-50">(allows you to get stuff for cheaper!)</span>
 	</p>
 
-	<!-- <h2 class="mb-2 text-2xl font-bold">Market items</h2> -->
+	<!-- <h2 class="mb-2 text-2xl font-bold">Printshop items</h2> -->
 
 	<audio loop bind:this={audio}>
 		<source src={themeSong} type="audio/mp3" />
@@ -43,6 +43,6 @@
 
 <!-- <div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 		{#each data.marketItems as item (item.id)}
-			<MarketItem {item} userShopScore={data.user.shopScore} userBricks={data.user.brick} />
+			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.brick} />
 		{/each}
 	</div> -->

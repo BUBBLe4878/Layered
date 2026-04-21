@@ -205,7 +205,7 @@
 
 		<!-- Right Side - Resources & User Profile -->
 		<div class="hidden shrink-0 items-center gap-2 md:flex">
-			<!-- Layers (Clay) Display -->
+			<!-- Layers display -->
 			<div
 				class="flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Layers"
@@ -216,7 +216,7 @@
 				</div>
 			</div>
 
-			<!-- Benchies (Brick) Display -->
+			<!-- Benchies display -->
 			<div
 				class="flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Benchies"
@@ -294,7 +294,7 @@
 				class="absolute top-full left-0 z-[60] w-full border-t border-gray-700 bg-gray-900/95 p-3 backdrop-blur-sm md:hidden"
 			>
 				<div class="mb-3 flex gap-2">
-					<!-- Layers (Clay) Display -->
+					<!-- Layers display -->
 					<div
 						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-xs"
 						title="Layers"
@@ -303,7 +303,7 @@
 						<span class="font-medium text-yellow-100">{Math.floor(user.clay)} Layers</span>
 					</div>
 
-					<!-- Benchies (Brick) Display -->
+					<!-- Benchies display -->
 					<div
 						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-xs"
 						title="Benchies"

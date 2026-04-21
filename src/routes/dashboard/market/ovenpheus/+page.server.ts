@@ -20,34 +20,34 @@ export const actions = {
 		}
 
 		const data = await request.formData();
-		const clay = data.get('clay');
+		const benchies = data.get('clay');
 
 		if (
-			!clay ||
-			!parseInt(clay.toString()) ||
-			parseInt(clay.toString()) <= 0 ||
-			parseInt(clay.toString()) > locals.user.clay
+			!benchies ||
+			!parseInt(benchies.toString()) ||
+			parseInt(benchies.toString()) <= 0 ||
+			parseInt(benchies.toString()) > locals.user.clay
 		) {
-			return error(400, { message: 'invalid clay' });
+			return error(400, { message: 'invalid benchies' });
 		}
 
-		const parsedClay = parseInt(clay.toString());
-		const bricks =
-			(parsedClay / CLAY_PER_HOUR) *
+		const parsedBenchies = parseInt(benchies.toString());
+		const layers =
+			(parsedBenchies / CLAY_PER_HOUR) *
 			(locals.user.hasBasePrinter ? BRICKS_PER_HOUR : BRICKS_PER_HOUR_CONVERTED);
 
 		await db
 			.update(user)
 			.set({
-				clay: locals.user.clay - parsedClay,
-				brick: locals.user.brick + bricks
+				clay: locals.user.clay - parsedBenchies,
+				brick: locals.user.brick + layers
 			})
 			.where(eq(user.id, locals.user.id));
 
 		await db.insert(ovenpheusLog).values({
 			userId: locals.user.id,
-			clay: parsedClay,
-			bricksReceived: bricks
+			clay: parsedBenchies,
+			bricksReceived: layers
 		});
 
 		return redirect(302, '/dashboard/market');

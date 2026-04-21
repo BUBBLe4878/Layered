@@ -109,7 +109,7 @@
 			<div class="flex flex-row gap-3">
 				<div class="flex-1">
 					<label class="flex flex-col gap-1">
-						<span class="text-sm">Max price (brick)</span>
+						<span class="text-sm">Max price (layers)</span>
 						<input
 							type="number"
 							name="maxPrice"
@@ -122,7 +122,7 @@
 				</div>
 				<div class="flex-1">
 					<label class="flex flex-col gap-1">
-						<span class="text-sm">Min price (brick)</span>
+						<span class="text-sm">Min price (layers)</span>
 						<input
 							type="number"
 							name="minPrice"

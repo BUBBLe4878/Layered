@@ -14,33 +14,33 @@
 	// ─────────────────────────────────────────
 	const benchyImageUrl = '/img/benchy.png';
 
-	const MAX_CLAY = 40;
+	const MAX_BENCHIES = 40;
 	const PRINT_TIME_HOURS = 3.5;
 
 	// ─────────────────────────────────────────
-	// DEBUG: clay extraction
+	// DEBUG: benchies extraction
 	// ─────────────────────────────────────────
-	let clay = $derived(userData?.clay ?? 0);
+	let benchies = $derived(userData?.clay ?? 0);
 
-	console.log('[Benchy] clay value:', clay);
+	console.log('[Benchy] benchies value:', benchies);
 
 	// ─────────────────────────────────────────
 	// Derived UI values (debug wrapped)
 	// ─────────────────────────────────────────
 	let percent = $derived.by(() => {
-		const value = Math.round((clay / MAX_CLAY) * 100);
+		const value = Math.round((benchies / MAX_BENCHIES) * 100);
 		console.log('[Benchy] percent:', value);
 		return value;
 	});
 
 	let revealPercent = $derived.by(() => {
-		const value = (clay / MAX_CLAY) * 100;
+		const value = (benchies / MAX_BENCHIES) * 100;
 		console.log('[Benchy] revealPercent:', value);
 		return value;
 	});
 
 	let printTime = $derived.by(() => {
-		const value = ((clay / MAX_CLAY) * PRINT_TIME_HOURS).toFixed(1);
+		const value = ((benchies / MAX_BENCHIES) * PRINT_TIME_HOURS).toFixed(1);
 		console.log('[Benchy] printTime:', value);
 		return value;
 	});
@@ -113,7 +113,7 @@
 			</div>
 
 			<div class="stat-meta">
-				Clay: {clay} / {MAX_CLAY}
+				Benchies: {benchies} / {MAX_BENCHIES}
 			</div>
 
 			<div class="stat-meta">

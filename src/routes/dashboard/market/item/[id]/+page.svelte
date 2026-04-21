@@ -25,7 +25,7 @@
 		<MarketItem
 			item={data.marketItem}
 			userShopScore={data.user.shopScore}
-			userBricks={data.user.brick}
+			userLayers={data.user.brick}
 			showBuy={false}
 		/>
 	</div>
