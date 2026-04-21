@@ -1,4 +1,5 @@
 <script lang="ts">
+	//setLayers(50); will set the layers to 50 in devtools for debugging
 	import { onMount } from 'svelte';
 
 	let layers = $state(0);
