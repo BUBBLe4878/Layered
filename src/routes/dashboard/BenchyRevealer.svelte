@@ -90,7 +90,7 @@
 
 <div class="benchy-container-wrapper">
 	<div class="benchy-header">
-		<h2 class="benchy-title">Clay Progress</h2>
+		<h2 class="benchy-title">Layer Progress</h2>
 	</div>
 
 	<div class="benchy-container">
@@ -150,19 +150,19 @@
 		padding: 24px;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	}
-
+ 
 	.benchy-header {
 		margin-bottom: 24px;
 		text-align: center;
 	}
-
+ 
 	.benchy-title {
 		font-size: 24px;
 		font-weight: 600;
-		color: #333;
+		color: #000;
 		margin: 0;
 	}
-
+ 
 	.benchy-container {
 		position: relative;
 		width: 100%;
@@ -173,7 +173,7 @@
 		overflow: hidden;
 		border: 2px solid #eee;
 	}
-
+ 
 	.benchy-reveal {
 		position: absolute;
 		inset: 0;
@@ -181,7 +181,7 @@
 		background-repeat: no-repeat;
 		background-position: center;
 	}
-
+ 
 	.benchy-overlay {
 		position: absolute;
 		inset: 0;
@@ -190,94 +190,94 @@
 		transition: clip-path 0.3s ease;
 		z-index: 10;
 	}
-
+ 
 	.stat-card {
 		width: 100%;
-		background-color: #faf6f1;
+		background-color: #faf8f5;
 		border-radius: 12px;
 		padding: 16px;
-		border: 1px solid #e0e7ff;
+		border: 1px solid #e5e5e5;
 		text-align: center;
 	}
-
+ 
 	.stat-label {
 		font-size: 12px;
 		font-weight: 600;
 		margin-bottom: 8px;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
-		color: #666;
+		color: #999;
 	}
-
+ 
 	.stat-value {
 		font-size: 24px;
 		font-weight: 700;
-		color: #667eea;
+		color: #000;
 		margin-bottom: 8px;
 	}
-
+ 
 	.stat-meta {
 		font-size: 12px;
-		color: #777;
+		color: #aaa;
 		margin-top: 6px;
 	}
-
+ 
 	.progress-bar {
 		width: 100%;
 		height: 4px;
-		background: #ddd;
+		background: #e5e5e5;
 		border-radius: 2px;
 		overflow: hidden;
 	}
-
+ 
 	.progress-fill {
 		height: 100%;
-		background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+		background: #000;
 		transition: width 0.3s ease;
 	}
-
+ 
 	.stats-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 12px;
 		margin-top: 12px;
 	}
-
+ 
 	.mini-stat {
 		background: white;
 		padding: 12px;
 		border-radius: 8px;
-		border: 1px solid #e0e7ff;
+		border: 1px solid #e5e5e5;
 	}
-
+ 
 	.mini-label {
 		font-size: 10px;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
-		color: #666;
+		color: #999;
 		margin-bottom: 6px;
 	}
-
+ 
 	.mini-value {
 		font-size: 18px;
 		font-weight: 700;
-		color: #667eea;
+		color: #000;
 	}
-
+ 
 	@media (max-width: 640px) {
 		.benchy-container-wrapper {
 			padding: 16px;
 		}
-
+ 
 		.benchy-title {
 			font-size: 20px;
 		}
-
+ 
 		.stat-value {
 			font-size: 20px;
 		}
-
+ 
 		.stats-grid {
 			grid-template-columns: 1fr;
 		}
