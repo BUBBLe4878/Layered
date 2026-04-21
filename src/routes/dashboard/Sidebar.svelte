@@ -160,13 +160,14 @@
 				class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'))}
 			>
 				<Store size={20} />
-				<span>Printshop</span>
+				<span>Market</span>
 				{#if page.url.pathname.startsWith('/dashboard/market')}
 					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
 				{/if}
 			</a>
 
 			<!-- Club -->
+			<!--
 			<a
 				href={resolve('/dashboard/clubs')}
 				class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'))}
@@ -177,7 +178,7 @@
 					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('clubs')}`}></span>
 				{/if}
 			</a>
-
+			-->
 			<!-- Tutorial -->
 			<a
 				href={resolve('/dashboard/tutorial')}
@@ -210,7 +211,7 @@
 				class="flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Layers"
 			>
-				<Layers size={13} class="text-yellow-300" />
+				<Layers size={10} class="text-yellow-300" />
 				<div class="hidden text-xs sm:block">
 					<p class="truncate font-medium text-yellow-100">{Math.floor(user.clay)} Layers</p>
 				</div>
@@ -358,7 +359,7 @@
 						onclick={() => (showMobileMenu = false)}
 					>
 						<Store size={18} />
-						<span>Printshop</span>
+						<span>Market</span>
 						{#if page.url.pathname.startsWith('/dashboard/market')}
 							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
 						{/if}
