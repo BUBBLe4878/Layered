@@ -111,7 +111,7 @@
 		background-size: contain;
 		background-repeat: no-repeat;
 		background-position: center;
-		opacity: 1;
+		opacity: 0;
 	}
 
 	.benchy-overlay {
