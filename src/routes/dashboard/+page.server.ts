@@ -1,44 +1,98 @@
 import { db } from '$lib/server/db/index.js';
-import { project, devlog } from '$lib/server/db/schema.js';
+import { user, project, devlog } from '$lib/server/db/schema.js';
 import { error } from '@sveltejs/kit';
-import { eq, ne, and, count } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
+import { withSlackProfile } from '$lib/server/slack';
 
-export async function load({ locals }) {
-	if (!locals.user) {
-		throw error(500);
+export async function load({ params, locals }) {
+	const id = Number(params.id);
+
+	if (!id) {
+		throw error(404);
 	}
 
-	const [{ projectCount }] = await db
-		.select({ projectCount: count() })
-		.from(project)
-		.where(and(eq(project.userId, locals.user.id), eq(project.deleted, false)));
+	// ─────────────────────────────────────────
+	// USER
+	// ─────────────────────────────────────────
+	const requestedUser = await db
+		.select()
+		.from(user)
+		.where(eq(user.id, id))
+		.limit(1)
+		.then(r => r[0]);
 
-	const [{ devlogCount }] = await db
-		.select({ devlogCount: count() })
+	if (!requestedUser) {
+		throw error(404);
+	}
+
+	const slackUser = await withSlackProfile(requestedUser);
+
+	// ─────────────────────────────────────────
+	// PROJECTS
+	// ─────────────────────────────────────────
+	const projects = await db
+		.select({
+			id: project.id,
+			name: project.name,
+			url: project.url
+		})
+		.from(project)
+		.where(and(eq(project.userId, id), eq(project.deleted, false)));
+
+	// ─────────────────────────────────────────
+	// DEVLOGS
+	// ─────────────────────────────────────────
+	const devlogs = await db
+		.select({
+			id: devlog.id,
+			projectId: devlog.projectId,
+			projectName: project.name,
+			description: devlog.description,
+			timeSpent: devlog.timeSpent,
+			image: devlog.image,
+			model: devlog.model,
+			createdAt: devlog.createdAt
+		})
 		.from(devlog)
-		.where(and(eq(devlog.userId, locals.user.id), eq(devlog.deleted, false)));
-
-	const [{ shipCount }] = await db
-		.select({ shipCount: count() })
-		.from(project)
+		.innerJoin(project, eq(devlog.projectId, project.id))
 		.where(
 			and(
-				eq(project.userId, locals.user.id),
-				ne(project.status, 'building'),
+				eq(devlog.userId, id),
+				eq(devlog.deleted, false),
 				eq(project.deleted, false)
 			)
-		);
+		)
+		.orderBy(desc(devlog.createdAt));
 
+	// ─────────────────────────────────────────
+	// RETURN (CLEAN CONTRACT)
+	// ─────────────────────────────────────────
 	return {
-		projectCount: projectCount ?? 0,
-		devlogCount: devlogCount ?? 0,
-		shipCount: shipCount ?? 0,
-
-		// ✅ ADD THIS (fixes Benchy)
 		requestedUser: {
-			id: locals.user.id,
-			clay: locals.user.clay ?? 0,
-			brick: locals.user.brick ?? 0
-		}
+			id: slackUser.id,
+			slackId: slackUser.slackId,
+			profilePicture: slackUser.profilePicture,
+			name: slackUser.name,
+
+			isPrinter: slackUser.isPrinter,
+			hasT1Review: slackUser.hasT1Review,
+			hasT2Review: slackUser.hasT2Review,
+			hasAdmin: slackUser.hasAdmin,
+
+			shopScore: slackUser.shopScore,
+
+			// 🔥 IMPORTANT (your Benchy fix)
+			clay: slackUser.clay ?? 0,
+			brick: slackUser.brick ?? 0,
+
+			createdAt: slackUser.createdAt,
+			lastLoginAt:
+				locals.user?.id === slackUser.id
+					? slackUser.lastLoginAt
+					: null
+		},
+
+		projects,
+		devlogs
 	};
 }
