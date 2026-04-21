@@ -1,10 +1,13 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	let { data } = $props();
+	// Access data from the page store instead of props
+	let userData = $derived($page.data?.user);
+	let stats = $derived($page.data?.stats);
 
-	console.log('[Benchy] raw data:', data);
-	console.log('[Benchy] user:', data?.user);
+	console.log('[Benchy] page.data:', $page.data);
+	console.log('[Benchy] userData:', userData);
 
 	// ─────────────────────────────────────────
 	// Config
@@ -17,7 +20,9 @@
 	// ─────────────────────────────────────────
 	// DEBUG: clay extraction
 	// ─────────────────────────────────────────
-	let clay = $derived(data?.user?.clay ?? 0);
+	let clay = $derived(userData?.clay ?? 0);
+
+	console.log('[Benchy] clay value:', clay);
 
 	// ─────────────────────────────────────────
 	// Derived UI values (debug wrapped)
@@ -115,6 +120,26 @@
 				Print time: ~{printTime}h
 			</div>
 		</div>
+
+		{#if stats}
+			<div class="stat-card" style="margin-top: 16px;">
+				<div class="stat-label">Your Stats</div>
+				<div class="stats-grid">
+					<div class="mini-stat">
+						<div class="mini-label">Projects</div>
+						<div class="mini-value">{stats.projectCount}</div>
+					</div>
+					<div class="mini-stat">
+						<div class="mini-label">Devlogs</div>
+						<div class="mini-value">{stats.devlogCount}</div>
+					</div>
+					<div class="mini-stat">
+						<div class="mini-label">Ships</div>
+						<div class="mini-value">{stats.shipCount}</div>
+					</div>
+				</div>
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -211,6 +236,35 @@
 		transition: width 0.3s ease;
 	}
 
+	.stats-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 12px;
+		margin-top: 12px;
+	}
+
+	.mini-stat {
+		background: white;
+		padding: 12px;
+		border-radius: 8px;
+		border: 1px solid #e0e7ff;
+	}
+
+	.mini-label {
+		font-size: 10px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		color: #666;
+		margin-bottom: 6px;
+	}
+
+	.mini-value {
+		font-size: 18px;
+		font-weight: 700;
+		color: #667eea;
+	}
+
 	@media (max-width: 640px) {
 		.benchy-container-wrapper {
 			padding: 16px;
@@ -222,6 +276,10 @@
 
 		.stat-value {
 			font-size: 20px;
+		}
+
+		.stats-grid {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
