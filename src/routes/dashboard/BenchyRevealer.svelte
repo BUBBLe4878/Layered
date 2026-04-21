@@ -48,11 +48,7 @@
 </script>
 
 <div class="benchy-container-wrapper">
-	<div class="benchy-header">
-		<h2 class="benchy-title">🚢 Benchy Layer Revealer</h2>
-		<p class="benchy-subtitle">Drag the slider to reveal your 3D print layer by layer</p>
-	</div>
-
+	<h1>Your Progress</h1>
 	<div class="benchy-container">
 		<div class="layer-lines"></div>
 		<div class="benchy-reveal" id="benchyReveal"></div>
