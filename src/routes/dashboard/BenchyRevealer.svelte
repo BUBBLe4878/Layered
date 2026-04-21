@@ -22,6 +22,9 @@
 	onMount(() => {
 		// Load the Benchy image
 		const revealElement = document.getElementById('benchyReveal');
+		window.setLayers = (val: number) => {
+			layers = val;
+		};
 		if (revealElement) {
 			const img = new Image();
 			img.onload = function() {
