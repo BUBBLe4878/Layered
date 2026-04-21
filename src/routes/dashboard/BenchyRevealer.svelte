@@ -97,7 +97,7 @@ console.log("setLayers(50); will set the layers to 50 in devtools for debugging"
 		width: 100%;
 		aspect-ratio: 16 / 6;
 		margin: 24px 0;
-		background: #f5f5f5;
+		background: transparent;
 		border-radius: 12px;
 		overflow: hidden;
 		border: 2px solid #eee;
