@@ -13,7 +13,9 @@
 		Users,
 		ChevronDown,
 		Menu,
-		X
+		X,
+		Layers,
+		Zap
 	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -201,8 +203,30 @@
 			{/if}
 		</nav>
 
-		<!-- Right Side - User Profile & Logout -->
+		<!-- Right Side - Resources & User Profile -->
 		<div class="hidden shrink-0 items-center gap-2 md:flex">
+			<!-- Layers (Clay) Display -->
+			<div
+				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-orange-700 bg-orange-800 px-3 py-2 text-sm"
+				title="Layers"
+			>
+				<Layers size={16} class="text-orange-300" />
+				<div class="hidden text-xs sm:block">
+					<p class="truncate font-medium text-orange-200">{Math.floor(user.clay)} Layers</p>
+				</div>
+			</div>
+
+			<!-- Benchies (Brick) Display -->
+			<div
+				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-purple-700 bg-purple-800 px-3 py-2 text-sm"
+				title="Benchies"
+			>
+				<span class="text-lg">🚢</span>
+				<div class="hidden text-xs sm:block">
+					<p class="truncate font-medium text-purple-200">{Math.floor(user.brick)} Benchies</p>
+				</div>
+			</div>
+
 			<!-- User Profile Button -->
 			{#if isOnOwnUserPage}
 				<div
@@ -211,7 +235,6 @@
 					<img src={user.profilePicture} alt="User profile pic" class="h-6 w-6 rounded" />
 					<div class="hidden text-xs sm:block">
 						<p class="truncate font-medium">{user.name.split(' ')[0]}</p>
-						<p class="text-gray-400">{Math.floor(user.brick)} brick</p>
 					</div>
 				</div>
 			{:else}
@@ -222,7 +245,6 @@
 					<img src={user.profilePicture} alt="User profile pic" class="h-6 w-6 rounded" />
 					<div class="hidden text-xs sm:block">
 						<p class="truncate font-medium">{user.name.split(' ')[0]}</p>
-						<p class="text-gray-400">{Math.floor(user.brick)} brick</p>
 					</div>
 				</a>
 			{/if}
@@ -272,6 +294,26 @@
 			<div
 				class="absolute top-full left-0 z-[60] w-full border-t border-gray-700 bg-gray-900/95 p-3 backdrop-blur-sm md:hidden"
 			>
+				<div class="mb-3 flex gap-2">
+					<!-- Layers (Clay) Display -->
+					<div
+						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-orange-700 bg-orange-800 px-3 py-2 text-xs"
+						title="Layers"
+					>
+						<Layers size={14} class="text-orange-300" />
+						<span class="font-medium text-orange-200">{Math.floor(user.clay)} Layers</span>
+					</div>
+
+					<!-- Benchies (Brick) Display -->
+					<div
+						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-purple-700 bg-purple-800 px-3 py-2 text-xs"
+						title="Benchies"
+					>
+						<span class="text-lg">🚢</span>
+						<span class="font-medium text-purple-200">{Math.floor(user.brick)} Benchies</span>
+					</div>
+				</div>
+
 				<div class="grid grid-cols-2 gap-2">
 					<a
 						href={resolve('/dashboard')}
@@ -307,47 +349,47 @@
 					>
 						<Compass size={18} />
 						<span>Explore</span>
-							{#if page.url.pathname.startsWith('/dashboard/explore')}
-								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('explore')}`}></span>
-							{/if}
-						</a>
-						<a
-							href={resolve('/dashboard/market')}
-							class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'), true)}
-							onclick={() => (showMobileMenu = false)}
-						>
-							<Store size={18} />
-							<span>Market</span>
-							{#if page.url.pathname.startsWith('/dashboard/market')}
-								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
-							{/if}
-						</a>
-						<a
-							href={resolve('/dashboard/clubs')}
-							class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'), true)}
-							onclick={() => (showMobileMenu = false)}
-						>
-							<Users size={18} />
-							<span>Club</span>
-							{#if page.url.pathname.startsWith('/dashboard/clubs')}
-								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('clubs')}`}></span>
-							{/if}
-						</a>
-						<a
-							href={resolve('/dashboard/tutorial')}
-							class={navButtonClass(
-								'tutorial',
-								page.url.pathname.startsWith('/dashboard/tutorial'),
-								true
-							)}
-							onclick={() => (showMobileMenu = false)}
-						>
-							<BookOpen size={18} />
-							<span>Tutorials</span>
-							{#if page.url.pathname.startsWith('/dashboard/tutorial')}
-								<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('tutorial')}`}></span>
-							{/if}
-						</a>
+						{#if page.url.pathname.startsWith('/dashboard/explore')}
+							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('explore')}`}></span>
+						{/if}
+					</a>
+					<a
+						href={resolve('/dashboard/market')}
+						class={navButtonClass('market', page.url.pathname.startsWith('/dashboard/market'), true)}
+						onclick={() => (showMobileMenu = false)}
+					>
+						<Store size={18} />
+						<span>Market</span>
+						{#if page.url.pathname.startsWith('/dashboard/market')}
+							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('market')}`}></span>
+						{/if}
+					</a>
+					<a
+						href={resolve('/dashboard/clubs')}
+						class={navButtonClass('clubs', page.url.pathname.startsWith('/dashboard/clubs'), true)}
+						onclick={() => (showMobileMenu = false)}
+					>
+						<Users size={18} />
+						<span>Club</span>
+						{#if page.url.pathname.startsWith('/dashboard/clubs')}
+							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('clubs')}`}></span>
+						{/if}
+					</a>
+					<a
+						href={resolve('/dashboard/tutorial')}
+						class={navButtonClass(
+							'tutorial',
+							page.url.pathname.startsWith('/dashboard/tutorial'),
+							true
+						)}
+						onclick={() => (showMobileMenu = false)}
+					>
+						<BookOpen size={18} />
+						<span>Tutorials</span>
+						{#if page.url.pathname.startsWith('/dashboard/tutorial')}
+							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('tutorial')}`}></span>
+						{/if}
+					</a>
 				</div>
 
 				{#if hasAdminAccess}
