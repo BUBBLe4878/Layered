@@ -207,23 +207,23 @@
 		<div class="hidden shrink-0 items-center gap-2 md:flex">
 			<!-- Layers (Clay) Display -->
 			<div
-				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-orange-700 bg-orange-800 px-3 py-2 text-sm"
+				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Layers"
 			>
-				<Layers size={16} class="text-orange-300" />
+				<Layers size={16} class="text-yellow-300" />
 				<div class="hidden text-xs sm:block">
-					<p class="truncate font-medium text-orange-200">{Math.floor(user.clay)} Layers</p>
+					<p class="truncate font-medium text-yellow-100">{Math.floor(user.clay)} Layers</p>
 				</div>
 			</div>
 
 			<!-- Benchies (Brick) Display -->
 			<div
-				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-purple-700 bg-purple-800 px-3 py-2 text-sm"
+				class="pei-button pei7 flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
 				title="Benchies"
 			>
 				<span class="text-lg">🚢</span>
 				<div class="hidden text-xs sm:block">
-					<p class="truncate font-medium text-purple-200">{Math.floor(user.brick)} Benchies</p>
+					<p class="truncate font-medium text-yellow-100">{Math.floor(user.brick)} Benchies</p>
 				</div>
 			</div>
 
@@ -297,20 +297,20 @@
 				<div class="mb-3 flex gap-2">
 					<!-- Layers (Clay) Display -->
 					<div
-						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-orange-700 bg-orange-800 px-3 py-2 text-xs"
+						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-xs"
 						title="Layers"
 					>
-						<Layers size={14} class="text-orange-300" />
-						<span class="font-medium text-orange-200">{Math.floor(user.clay)} Layers</span>
+						<Layers size={14} class="text-yellow-300" />
+						<span class="font-medium text-yellow-100">{Math.floor(user.clay)} Layers</span>
 					</div>
 
 					<!-- Benchies (Brick) Display -->
 					<div
-						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-purple-700 bg-purple-800 px-3 py-2 text-xs"
+						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-xs"
 						title="Benchies"
 					>
 						<span class="text-lg">🚢</span>
-						<span class="font-medium text-purple-200">{Math.floor(user.brick)} Benchies</span>
+						<span class="font-medium text-yellow-100">{Math.floor(user.brick)} Benchies</span>
 					</div>
 				</div>
 
