@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
-	import BenchyRevealer from '$lib/components/BenchyRevealer.svelte';
+	import BenchyRevealer from './BenchyRevealer.svelte';
 	import { BarChart3, BookOpen, Compass, PencilRuler, Store } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
