@@ -139,7 +139,7 @@
 			rgba(0, 0, 0, 0.03) 0px,
 			rgba(0, 0, 0, 0.03) 1px,
 			transparent 1px,
-			transparent 4px
+			transparent 2px
 		);
 	}
 
