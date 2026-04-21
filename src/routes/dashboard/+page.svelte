@@ -45,15 +45,15 @@
 	</div>
 
 	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-		<div class="themed-box-solid p-4">
+		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Projects</p>
 			<p class="mt-1 text-3xl font-bold text-primary-900">{projectCount}</p>
 		</div>
-		<div class="themed-box-solid p-4">
+		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal Entries</p>
 			<p class="mt-1 text-3xl font-bold text-primary-900">{devlogCount}</p>
 		</div>
-		<div class="themed-box-solid p-4">
+		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Shipped</p>
 			<p class="mt-1 text-3xl font-bold text-primary-900">{shipCount}</p>
 		</div>
