@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	let layers = $state(0);
-	let benchyImageUrl = '/img/catfoot.png';
+	let benchyImageUrl = 'https://forum.drucktipps3d.de/attachment/86802-20230609-114633-jpg/';
 	
 	const MAX_LAYERS = 100;
 	const PRINT_TIME_HOURS = 3.5;
@@ -48,7 +48,7 @@
 	<div class="benchy-container">
 		<div class="layer-lines"></div>
 		<div class="benchy-reveal" id="benchyReveal"></div>
-		<div class="benchy-overlay" style="clip-path: inset({100 - revealPercent}% 0 0 0)"></div>
+		<div class="benchy-overlay" style="clip-path: inset(0 0 {100 - revealPercent}% 0)"></div>
 	</div>
 
 	<div class="controls">
@@ -93,25 +93,25 @@
 		padding: 24px;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	}
- 
+
 	.benchy-header {
 		margin-bottom: 24px;
 		text-align: center;
 	}
- 
+
 	.benchy-title {
 		font-size: 24px;
 		font-weight: 600;
 		color: #333;
 		margin: 0;
 	}
- 
+
 	.benchy-subtitle {
 		font-size: 14px;
 		color: #888;
 		margin: 6px 0 0 0;
 	}
- 
+
 	.benchy-container {
 		position: relative;
 		width: 100%;
@@ -122,7 +122,7 @@
 		overflow: hidden;
 		border: 2px solid #eee;
 	}
- 
+
 	.benchy-reveal {
 		position: absolute;
 		top: 0;
@@ -134,7 +134,7 @@
 		background-position: center;
 		opacity: 1;
 	}
- 
+
 	.benchy-overlay {
 		position: absolute;
 		top: 0;
@@ -146,7 +146,7 @@
 		pointer-events: none;
 		transition: clip-path 0.3s ease;
 	}
- 
+
 	.layer-lines {
 		position: absolute;
 		width: 100%;
@@ -163,25 +163,25 @@
 			transparent 4px
 		);
 	}
- 
+
 	.controls {
 		margin: 24px 0;
 	}
- 
+
 	.slider-group {
 		display: flex;
 		align-items: center;
 		gap: 12px;
 		margin-bottom: 16px;
 	}
- 
+
 	.slider-label {
 		font-size: 14px;
 		color: #555;
 		font-weight: 600;
 		min-width: 60px;
 	}
- 
+
 	.benchy-slider {
 		flex: 1;
 		height: 6px;
@@ -192,7 +192,7 @@
 		outline: none;
 		cursor: pointer;
 	}
- 
+
 	.benchy-slider::-webkit-slider-thumb {
 		-webkit-appearance: none;
 		appearance: none;
@@ -204,11 +204,11 @@
 		box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 		transition: transform 0.2s;
 	}
- 
+
 	.benchy-slider::-webkit-slider-thumb:active {
 		transform: scale(1.2);
 	}
- 
+
 	.benchy-slider::-moz-range-thumb {
 		width: 20px;
 		height: 20px;
@@ -219,7 +219,7 @@
 		box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 		transition: transform 0.2s;
 	}
- 
+
 	.layer-value {
 		font-size: 18px;
 		font-weight: 700;
@@ -227,14 +227,14 @@
 		min-width: 50px;
 		text-align: right;
 	}
- 
+
 	.stats {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 12px;
 		margin-bottom: 16px;
 	}
- 
+
 	.stat-card {
 		background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
 		border-radius: 12px;
@@ -242,7 +242,7 @@
 		border: 1px solid #e0e7ff;
 		text-align: center;
 	}
- 
+
 	.stat-label {
 		font-size: 12px;
 		color: #888;
@@ -251,14 +251,14 @@
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
 	}
- 
+
 	.stat-value {
 		font-size: 24px;
 		font-weight: 700;
 		color: #667eea;
 		margin-bottom: 8px;
 	}
- 
+
 	.progress-bar {
 		width: 100%;
 		height: 4px;
@@ -266,19 +266,19 @@
 		border-radius: 2px;
 		overflow: hidden;
 	}
- 
+
 	.progress-fill {
 		height: 100%;
 		background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
 		border-radius: 2px;
 		transition: width 0.3s ease;
 	}
- 
+
 	.button-group {
 		display: flex;
 		gap: 8px;
 	}
- 
+
 	button {
 		flex: 1;
 		padding: 12px;
@@ -289,43 +289,43 @@
 		cursor: pointer;
 		transition: all 0.2s;
 	}
- 
+
 	.reset-btn {
 		background: #f0f0f0;
 		color: #333;
 	}
- 
+
 	.reset-btn:hover {
 		background: #e0e0e0;
 	}
- 
+
 	.complete-btn {
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 		color: white;
 	}
- 
+
 	.complete-btn:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
 	}
- 
+
 	.complete-btn:active {
 		transform: translateY(0);
 	}
- 
+
 	@media (max-width: 640px) {
 		.benchy-container-wrapper {
 			padding: 16px;
 		}
- 
+
 		.benchy-title {
 			font-size: 20px;
 		}
- 
+
 		.stat-card {
 			padding: 12px;
 		}
- 
+
 		.stat-value {
 			font-size: 20px;
 		}
