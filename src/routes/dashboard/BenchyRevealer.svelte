@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	let layers = $state(0);
-	let benchyImageUrl = 'https://forum.drucktipps3d.de/attachment/86802-20230609-114633-jpg/';
+	let benchyImageUrl = '/img/catfoot.png';
 	
 	const MAX_LAYERS = 100;
 	const PRINT_TIME_HOURS = 3.5;
