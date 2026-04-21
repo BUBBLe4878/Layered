@@ -158,7 +158,6 @@
 
 	.stat-label {
 		font-size: 12px;
-		color: #888;
 		font-weight: 600;
 		margin-bottom: 8px;
 		text-transform: uppercase;
