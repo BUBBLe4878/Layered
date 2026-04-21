@@ -137,7 +137,7 @@ export const actions = {
 
 		const benchies = data.get('clay');
 		const layers = data.get('brick');
-		const shopScore = data.get('printshop_score');
+		const shopScore = data.get('market_score');
 		const reason = data.get('reason')?.toString();
 
 		if (

@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { printshopItemOrder, printshopItem, user } from '$lib/server/db/schema.js';
+import { marketItemOrder, marketItem, user } from '$lib/server/db/schema.js';
 import { error, redirect } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
 import type { Actions } from './$types';
@@ -21,21 +21,21 @@ export async function load({ locals, params }) {
 	const [orderData] = await db
 		.select({
 			order: {
-				id: printshopItemOrder.id,
-				userId: printshopItemOrder.userId,
-				printshopItemId: printshopItemOrder.printshopItemId,
-				addressId: printshopItemOrder.addressId,
-				bricksPaid: printshopItemOrder.bricksPaid,
-				status: printshopItemOrder.status,
-				userNotes: printshopItemOrder.userNotes,
-				notes: printshopItemOrder.notes,
-				createdAt: printshopItemOrder.createdAt
+				id: marketItemOrder.id,
+				userId: marketItemOrder.userId,
+				marketItemId: marketItemOrder.marketItemId,
+				addressId: marketItemOrder.addressId,
+				bricksPaid: marketItemOrder.bricksPaid,
+				status: marketItemOrder.status,
+				userNotes: marketItemOrder.userNotes,
+				notes: marketItemOrder.notes,
+				createdAt: marketItemOrder.createdAt
 			},
-			printshopItem: {
-				id: printshopItem.id,
-				name: printshopItem.name,
-				description: printshopItem.description,
-				image: printshopItem.image
+			marketItem: {
+				id: marketItem.id,
+				name: marketItem.name,
+				description: marketItem.description,
+				image: marketItem.image
 			},
 			user: {
 				id: user.id,
@@ -45,10 +45,10 @@ export async function load({ locals, params }) {
 				brick: user.brick
 			}
 		})
-		.from(printshopItemOrder)
-		.leftJoin(printshopItem, eq(printshopItem.id, printshopItemOrder.printshopItemId))
-		.leftJoin(user, eq(user.id, printshopItemOrder.userId))
-		.where(and(eq(printshopItemOrder.id, id), eq(printshopItemOrder.deleted, false)))
+		.from(marketItemOrder)
+		.leftJoin(marketItem, eq(marketItem.id, marketItemOrder.marketItemId))
+		.leftJoin(user, eq(user.id, marketItemOrder.userId))
+		.where(and(eq(marketItemOrder.id, id), eq(marketItemOrder.deleted, false)))
 		.limit(1);
 
 	if (!orderData) {
@@ -98,25 +98,25 @@ export const actions = {
 		const [orderData] = await db
 			.select({
 				order: {
-					id: printshopItemOrder.id,
-					notes: printshopItemOrder.notes
+					id: marketItemOrder.id,
+					notes: marketItemOrder.notes
 				},
-				printshopItem: {
-					name: printshopItem.name
+				marketItem: {
+					name: marketItem.name
 				},
 				user: {
 					id: user.id,
 					slackId: user.slackId
 				}
 			})
-			.from(printshopItemOrder)
-			.leftJoin(printshopItem, eq(printshopItem.id, printshopItemOrder.printshopItemId))
-			.leftJoin(user, eq(user.id, printshopItemOrder.userId))
+			.from(marketItemOrder)
+			.leftJoin(marketItem, eq(marketItem.id, marketItemOrder.marketItemId))
+			.leftJoin(user, eq(user.id, marketItemOrder.userId))
 			.where(
 				and(
-					eq(printshopItemOrder.id, id),
-					eq(printshopItemOrder.deleted, false),
-					eq(printshopItemOrder.status, 'awaiting_approval')
+					eq(marketItemOrder.id, id),
+					eq(marketItemOrder.deleted, false),
+					eq(marketItemOrder.status, 'awaiting_approval')
 				)
 			)
 			.limit(1);
@@ -126,17 +126,17 @@ export const actions = {
 		}
 
 		await db
-			.update(printshopItemOrder)
+			.update(marketItemOrder)
 			.set({
 				status: 'fulfilled'
 			})
-			.where(eq(printshopItemOrder.id, id));
+			.where(eq(marketItemOrder.id, id));
 
 		if (orderData.user?.slackId) {
 			const notesText = orderData.order.notes ? `\n\nNotes: ${orderData.order.notes}` : '';
 			await sendSlackDM(
 				orderData.user.slackId,
-				`Your order for ${orderData.printshopItem?.name || 'a printshop item'} just got shipped! :package: :package: :package:\n\n${notesText}`
+				`Your order for ${orderData.marketItem?.name || 'a market item'} just got shipped! :package: :package: :package:\n\n${notesText}`
 			);
 		}
 
@@ -156,12 +156,12 @@ export const actions = {
 		const [orderData] = await db
 			.select({
 				order: {
-					id: printshopItemOrder.id,
-					userId: printshopItemOrder.userId,
-					bricksPaid: printshopItemOrder.bricksPaid
+					id: marketItemOrder.id,
+					userId: marketItemOrder.userId,
+					bricksPaid: marketItemOrder.bricksPaid
 				},
-				printshopItem: {
-					name: printshopItem.name
+				marketItem: {
+					name: marketItem.name
 				},
 				user: {
 					id: user.id,
@@ -169,14 +169,14 @@ export const actions = {
 					brick: user.brick
 				}
 			})
-			.from(printshopItemOrder)
-			.leftJoin(printshopItem, eq(printshopItem.id, printshopItemOrder.printshopItemId))
-			.leftJoin(user, eq(user.id, printshopItemOrder.userId))
+			.from(marketItemOrder)
+			.leftJoin(marketItem, eq(marketItem.id, marketItemOrder.marketItemId))
+			.leftJoin(user, eq(user.id, marketItemOrder.userId))
 			.where(
 				and(
-					eq(printshopItemOrder.id, id),
-					eq(printshopItemOrder.deleted, false),
-					eq(printshopItemOrder.status, 'awaiting_approval')
+					eq(marketItemOrder.id, id),
+					eq(marketItemOrder.deleted, false),
+					eq(marketItemOrder.status, 'awaiting_approval')
 				)
 			)
 			.limit(1);
@@ -195,16 +195,16 @@ export const actions = {
 
 		// Mark order as refunded
 		await db
-			.update(printshopItemOrder)
+			.update(marketItemOrder)
 			.set({
 				status: 'refunded'
 			})
-			.where(eq(printshopItemOrder.id, id));
+			.where(eq(marketItemOrder.id, id));
 
 		if (orderData.user?.slackId) {
 			await sendSlackDM(
 				orderData.user.slackId,
-				`Your order for ${orderData.printshopItem?.name || 'a printshop item'} has been refunded! :oop:\nYou got your ${orderData.order.bricksPaid} bricks back`
+				`Your order for ${orderData.marketItem?.name || 'a market item'} has been refunded! :oop:\nYou got your ${orderData.order.bricksPaid} bricks back`
 			);
 		}
 
@@ -224,23 +224,23 @@ export const actions = {
 		const [orderData] = await db
 			.select({
 				order: {
-					id: printshopItemOrder.id
+					id: marketItemOrder.id
 				},
-				printshopItem: {
-					name: printshopItem.name
+				marketItem: {
+					name: marketItem.name
 				},
 				user: {
 					slackId: user.slackId
 				}
 			})
-			.from(printshopItemOrder)
-			.leftJoin(printshopItem, eq(printshopItem.id, printshopItemOrder.printshopItemId))
-			.leftJoin(user, eq(user.id, printshopItemOrder.userId))
+			.from(marketItemOrder)
+			.leftJoin(marketItem, eq(marketItem.id, marketItemOrder.marketItemId))
+			.leftJoin(user, eq(user.id, marketItemOrder.userId))
 			.where(
 				and(
-					eq(printshopItemOrder.id, id),
-					eq(printshopItemOrder.deleted, false),
-					eq(printshopItemOrder.status, 'awaiting_approval')
+					eq(marketItemOrder.id, id),
+					eq(marketItemOrder.deleted, false),
+					eq(marketItemOrder.status, 'awaiting_approval')
 				)
 			)
 			.limit(1);
@@ -251,16 +251,16 @@ export const actions = {
 
 		// Mark order as denied
 		await db
-			.update(printshopItemOrder)
+			.update(marketItemOrder)
 			.set({
 				status: 'denied'
 			})
-			.where(eq(printshopItemOrder.id, id));
+			.where(eq(marketItemOrder.id, id));
 
 		if (orderData.user?.slackId) {
 			await sendSlackDM(
 				orderData.user.slackId,
-				`Your order for ${orderData.printshopItem?.name || 'a printshop item'} has been denied :dcolon:\nYou didn't get any of your bricks back :hmmm:`
+				`Your order for ${orderData.marketItem?.name || 'a market item'} has been denied :dcolon:\nYou didn't get any of your bricks back :hmmm:`
 			);
 		}
 
@@ -284,11 +284,11 @@ export const actions = {
 		}
 
 		await db
-			.update(printshopItemOrder)
+			.update(marketItemOrder)
 			.set({
 				notes
 			})
-			.where(eq(printshopItemOrder.id, id));
+			.where(eq(marketItemOrder.id, id));
 
 		return { success: true, message: 'Notes updated' };
 	}

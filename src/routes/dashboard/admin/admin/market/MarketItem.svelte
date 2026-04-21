@@ -15,8 +15,8 @@
 
 	{#if showButtons}
 		<div class="flex gap-3 mt-2">
-			<a href={`printshop/item/${item.id}/edit`} class="button primary md flex-1">Edit</a>
-			<a href={`printshop/item/${item.id}/delete`} class="button red md flex-1">Delete</a>
+			<a href={`market/item/${item.id}/edit`} class="button primary md flex-1">Edit</a>
+			<a href={`market/item/${item.id}/delete`} class="button red md flex-1">Delete</a>
 		</div>
 	{/if}
 </div>

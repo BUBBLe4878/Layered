@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { printshopItem, printshopItemOrder, user } from '$lib/server/db/schema.js';
+import { marketItem, marketItemOrder, user } from '$lib/server/db/schema.js';
 import { decrypt } from '$lib/server/encryption';
 import { getUserData } from '$lib/server/idvUserData';
 import { calculateMarketPrice } from '$lib/utils';
@@ -35,7 +35,7 @@ export async function load({ locals, params }) {
 	}
 
 	return {
-		printshopItem: itemWithPrice,
+		marketItem: itemWithPrice,
 		addresses,
 		userDataError
 	};
@@ -99,38 +99,38 @@ export const actions = {
 			})
 			.where(eq(user.id, locals.user.id));
 
-		await db.insert(printshopItemOrder).values({
+		await db.insert(marketItemOrder).values({
 			userId: locals.user.id,
-			printshopItemId: id,
+			marketItemId: id,
 			addressId,
 			bricksPaid: itemWithPrice.computedPrice,
 			userNotes: notes
 		});
 
 		// TODO: change this to orders page
-		return redirect(302, '/dashboard/printshop');
+		return redirect(302, '/dashboard/market');
 	}
 } satisfies Actions;
 
 async function getItemWithPrice(id: number, locals: { user: { shopScore: number } | null }) {
 	const [item] = await db
 		.select({
-			id: printshopItem.id,
-			name: printshopItem.name,
-			description: printshopItem.description,
-			image: printshopItem.image,
-			minPrice: printshopItem.minPrice,
-			maxPrice: printshopItem.maxPrice,
-			minShopScore: printshopItem.minShopScore,
-			maxShopScore: printshopItem.maxShopScore,
-			minRequiredShopScore: printshopItem.minRequiredShopScore
+			id: marketItem.id,
+			name: marketItem.name,
+			description: marketItem.description,
+			image: marketItem.image,
+			minPrice: marketItem.minPrice,
+			maxPrice: marketItem.maxPrice,
+			minShopScore: marketItem.minShopScore,
+			maxShopScore: marketItem.maxShopScore,
+			minRequiredShopScore: marketItem.minRequiredShopScore
 		})
-		.from(printshopItem)
-		.where(and(eq(printshopItem.deleted, false), eq(printshopItem.isPublic, true), eq(printshopItem.id, id)))
+		.from(marketItem)
+		.where(and(eq(marketItem.deleted, false), eq(marketItem.isPublic, true), eq(marketItem.id, id)))
 		.limit(1);
 
 	if (!item) {
-		throw error(404, { message: 'printshop item not found' });
+		throw error(404, { message: 'market item not found' });
 	}
 
 	const shopScore = locals.user!.shopScore;

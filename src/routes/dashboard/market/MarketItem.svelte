@@ -36,7 +36,7 @@
 		{#if showBuy}
 			<div>
 				<a
-					href={disableBuy ? null : `printshop/item/${item.id}`}
+					href={disableBuy ? null : `market/item/${item.id}`}
 					class={`button md primary ${disableBuy ? 'disabled' : ''}`}
 				>
 					{#if item.minRequiredShopScore > userShopScore}

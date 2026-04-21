@@ -5,13 +5,13 @@
 
 	let { data } = $props();
 
-	let formData = $state(data.printshopItem);
+	let formData = $state(data.marketItem);
 	let formPending = $state(false);
 </script>
 
-<Head title="Edit printshop item" />
+<Head title="Edit market item" />
 
-<h1 class="mt-5 mb-3 font-hero text-3xl">Edit printshop item</h1>
+<h1 class="mt-5 mb-3 font-hero text-3xl">Edit market item</h1>
 
 <div class="mb-3 grid grid-cols-3">
 	<MarketItem item={formData} showButtons={false} />

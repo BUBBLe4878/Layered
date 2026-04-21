@@ -13,7 +13,7 @@
 
 <h1 class="mt-5 mb-2 font-hero text-3xl font-medium">Printshop</h1>
 
-{#if data.printshopItems.length === 0}
+{#if data.marketItems.length === 0}
 	<MarketTimer />
 {:else}
 	<p class="mb-2">
@@ -39,18 +39,18 @@
 					CLAY_PER_HOUR} layers per benchie
 			</p>
 			<div class="grow"></div>
-			<a href={resolve('/dashboard/printshop/ovenpheus')} class="button md primary"
+			<a href={resolve('/dashboard/market/ovenpheus')} class="button md primary"
 				>Go get your layers</a
 			>
 		</div>
 	</div>
 
-	<a href={resolve('/dashboard/printshop/printer')} class="button md primary mb-5">Printshop printers</a>
+	<a href={resolve('/dashboard/market/printer')} class="button md primary mb-5">Printshop printers</a>
 
 	<h2 class="mb-2 text-2xl font-bold">Printshop items</h2>
 
 	<div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-		{#each data.printshopItems as item (item.id)}
+		{#each data.marketItems as item (item.id)}
 			<MarketItem {item} userShopScore={data.user.shopScore} userLayers={data.user.brick} />
 		{/each}
 	</div>

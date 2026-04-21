@@ -7,7 +7,7 @@
 
 	let formPending = $state(false);
 
-	const printshopOrderStatuses = {
+	const marketOrderStatuses = {
 		awaiting_approval: 'Awaiting Approval',
 		fulfilled: 'Fulfilled',
 		denied: 'Denied',
@@ -19,7 +19,7 @@
 
 <div class="flex flex-col gap-3 pb-5">
 	<h1 class="mt-5 font-hero text-2xl font-medium">
-		Order #{data.orderData.order.id}: {data.orderData.printshopItem?.name}
+		Order #{data.orderData.order.id}: {data.orderData.marketItem?.name}
 	</h1>
 
 	<h2 class="mt-2 text-2xl font-bold">Order details</h2>
@@ -27,8 +27,8 @@
 	<div class="themed-box flex flex-row gap-3 p-3 shadow-lg">
 		<div class="flex grow flex-col gap-3">
 			<div>
-				<p class="text-xl font-bold">{data.orderData.printshopItem?.name}</p>
-				<p>{data.orderData.printshopItem?.description}</p>
+				<p class="text-xl font-bold">{data.orderData.marketItem?.name}</p>
+				<p>{data.orderData.marketItem?.description}</p>
 			</div>
 
 			<div>
@@ -56,7 +56,7 @@
 
 			<div>
 				<h3 class="text-lg font-bold">Status</h3>
-				<p>{printshopOrderStatuses[data.orderData.order.status]}</p>
+				<p>{marketOrderStatuses[data.orderData.order.status]}</p>
 			</div>
 
 			<div>
@@ -102,11 +102,11 @@
 			</div>
 		</div>
 		<div>
-			{#if data.orderData.printshopItem?.image}
+			{#if data.orderData.marketItem?.image}
 				<div>
 					<img
-						src={data.orderData.printshopItem.image}
-						alt={data.orderData.printshopItem.name}
+						src={data.orderData.marketItem.image}
+						alt={data.orderData.marketItem.name}
 						class="w-80 rounded"
 					/>
 				</div>
@@ -189,7 +189,7 @@
 			</form>
 		{:else}
 			<p class="text-center text-sm opacity-70">
-				Order is {printshopOrderStatuses[data.orderData.order.status].toLowerCase()}, no actions
+				Order is {marketOrderStatuses[data.orderData.order.status].toLowerCase()}, no actions
 				available
 			</p>
 		{/if}

@@ -8,12 +8,12 @@
 	let formPending = $state(false);
 </script>
 
-<Head title="Delete printshop item" />
+<Head title="Delete market item" />
 
-<h1 class="mt-5 mb-3 font-hero text-3xl">Delete printshop item</h1>
+<h1 class="mt-5 mb-3 font-hero text-3xl">Delete market item</h1>
 
 <div class="mb-3 grid grid-cols-3">
-	<MarketItem item={data.printshopItem} showButtons={false} />
+	<MarketItem item={data.marketItem} showButtons={false} />
 </div>
 
 <form

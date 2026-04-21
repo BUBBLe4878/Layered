@@ -1,1 +1,1 @@
--- ALTER TABLE "printshop_item_order" ALTER COLUMN "printshopItemId" DROP NOT NULL;
+-- ALTER TABLE "market_item_order" ALTER COLUMN "marketItemId" DROP NOT NULL;

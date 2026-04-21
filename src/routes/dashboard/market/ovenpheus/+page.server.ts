@@ -50,6 +50,6 @@ export const actions = {
 			bricksReceived: layers
 		});
 
-		return redirect(302, '/dashboard/printshop');
+		return redirect(302, '/dashboard/market');
 	}
 } satisfies Actions;

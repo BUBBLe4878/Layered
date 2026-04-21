@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { printshopItem } from '$lib/server/db/schema.js';
+import { marketItem } from '$lib/server/db/schema.js';
 import { calculateMarketPrice } from '$lib/utils';
 import { error } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
@@ -9,25 +9,25 @@ export async function load({ locals }) {
 		throw error(500);
 	}
 
-	const printshopItems = await db
+	const marketItems = await db
 		.select({
-			id: printshopItem.id,
-			name: printshopItem.name,
-			description: printshopItem.description,
-			image: printshopItem.image,
-			minPrice: printshopItem.minPrice,
-			maxPrice: printshopItem.maxPrice,
-			minShopScore: printshopItem.minShopScore,
-			maxShopScore: printshopItem.maxShopScore,
-			minRequiredShopScore: printshopItem.minRequiredShopScore
+			id: marketItem.id,
+			name: marketItem.name,
+			description: marketItem.description,
+			image: marketItem.image,
+			minPrice: marketItem.minPrice,
+			maxPrice: marketItem.maxPrice,
+			minShopScore: marketItem.minShopScore,
+			maxShopScore: marketItem.maxShopScore,
+			minRequiredShopScore: marketItem.minRequiredShopScore
 		})
-		.from(printshopItem)
-		.where(and(eq(printshopItem.deleted, false), eq(printshopItem.isPublic, true)))
-		.orderBy(printshopItem.maxPrice);
+		.from(marketItem)
+		.where(and(eq(marketItem.deleted, false), eq(marketItem.isPublic, true)))
+		.orderBy(marketItem.maxPrice);
 
 	const shopScore = locals.user.shopScore;
 
-	const printshopItemsWithPrice = printshopItems
+	const marketItemsWithPrice = marketItems
 		.map((item) => {
 			const computedPrice = calculateMarketPrice(
 				item.minPrice,
@@ -43,6 +43,6 @@ export async function load({ locals }) {
 		.sort((a, b) => a.computedPrice - b.computedPrice);
 
 	return {
-		printshopItems: printshopItemsWithPrice
+		marketItems: marketItemsWithPrice
 	};
 }

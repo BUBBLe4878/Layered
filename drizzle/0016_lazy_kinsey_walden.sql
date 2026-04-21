@@ -1,5 +1,5 @@
-CREATE TYPE "public"."printshop_order_status" AS ENUM('awaiting_approval', 'approved', 'fulfilled');--> statement-breakpoint
-CREATE TABLE "printshop_item" (
+CREATE TYPE "public"."market_order_status" AS ENUM('awaiting_approval', 'approved', 'fulfilled');--> statement-breakpoint
+CREATE TABLE "market_item" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"createdBy" integer,
 	"name" text NOT NULL,
@@ -16,17 +16,17 @@ CREATE TABLE "printshop_item" (
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "printshop_item_order" (
+CREATE TABLE "market_item_order" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"userId" integer,
 	"addressId" text NOT NULL,
 	"bricksPaid" integer NOT NULL,
-	"status" "printshop_order_status" DEFAULT 'awaiting_approval' NOT NULL,
+	"status" "market_order_status" DEFAULT 'awaiting_approval' NOT NULL,
 	"userNotes" text NOT NULL,
 	"notes" text NOT NULL,
 	"deleted" boolean DEFAULT false NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "printshop_item" ADD CONSTRAINT "printshop_item_createdBy_user_id_fk" FOREIGN KEY ("createdBy") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "printshop_item_order" ADD CONSTRAINT "printshop_item_order_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "market_item" ADD CONSTRAINT "market_item_createdBy_user_id_fk" FOREIGN KEY ("createdBy") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "market_item_order" ADD CONSTRAINT "market_item_order_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;

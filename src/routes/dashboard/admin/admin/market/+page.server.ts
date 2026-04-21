@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { printshopItem } from '$lib/server/db/schema.js';
+import { marketItem } from '$lib/server/db/schema.js';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import type { Actions } from './$types';
@@ -9,10 +9,10 @@ export async function load({ locals }) {
 		throw error(403, { message: 'oi get out' });
 	}
 
-	const printshopItems = await db.select().from(printshopItem).where(eq(printshopItem.deleted, false));
+	const marketItems = await db.select().from(marketItem).where(eq(marketItem.deleted, false));
 
 	return {
-		printshopItems
+		marketItems
 	};
 }
 
@@ -30,9 +30,9 @@ export const actions: Actions = {
 		}
 
 		await db
-			.update(printshopItem)
+			.update(marketItem)
 			.set({ deleted: true, updatedAt: new Date() })
-			.where(eq(printshopItem.id, id));
+			.where(eq(marketItem.id, id));
 
 		return { success: true };
 	}

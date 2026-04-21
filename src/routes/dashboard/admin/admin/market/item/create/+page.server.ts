@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { printshopItem } from '$lib/server/db/schema.js';
+import { marketItem } from '$lib/server/db/schema.js';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
@@ -44,7 +44,7 @@ export const actions: Actions = {
 			});
 		}
 
-		await db.insert(printshopItem).values({
+		await db.insert(marketItem).values({
 			createdBy: locals.user.id,
 			name,
 			description,
@@ -57,6 +57,6 @@ export const actions: Actions = {
 			isPublic
 		});
 
-		return redirect(302, '/dashboard/admin/admin/printshop');
+		return redirect(302, '/dashboard/admin/admin/market');
 	}
 };
