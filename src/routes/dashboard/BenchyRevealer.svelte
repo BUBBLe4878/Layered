@@ -113,7 +113,7 @@
 			</div>
 
 			<div class="stat-meta">
-				Benchies: {benchies} / {MAX_BENCHIES}
+				Layers: {benchies} / {"300"}
 			</div>
 
 			<div class="stat-meta">
