@@ -14,7 +14,7 @@
 	// ─────────────────────────────────────────
 	const benchyImageUrl = '/img/benchy.png';
 
-	const MAX_BENCHIES = 40;
+	const MAX_BENCHIES = 400;
 	const PRINT_TIME_HOURS = 3.5;
 
 	// ─────────────────────────────────────────
