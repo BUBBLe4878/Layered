@@ -185,7 +185,7 @@
 				class={navButtonClass('tutorial', page.url.pathname.startsWith('/dashboard/tutorial'))}
 			>
 				<BookOpen size={20} />
-				<span>Tutorials</span>
+				<span>Help</span>
 				{#if page.url.pathname.startsWith('/dashboard/tutorial')}
 					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('tutorial')}`}></span>
 				{/if}
@@ -385,7 +385,7 @@
 						onclick={() => (showMobileMenu = false)}
 					>
 						<BookOpen size={18} />
-						<span>Tutorials</span>
+						<span>Help</span>
 						{#if page.url.pathname.startsWith('/dashboard/tutorial')}
 							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('tutorial')}`}></span>
 						{/if}

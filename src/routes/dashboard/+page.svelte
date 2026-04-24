@@ -148,8 +148,8 @@
 	>
 		<BookOpen size={22} class="text-primary-800" />
 		<div>
-			<p class="font-semibold">Tutorials</p>
-			<p class="text-xs text-gray-700">Guides for learning CAD</p>
+			<p class="font-semibold">Help</p>
+			<p class="text-xs text-gray-700">FAQ, tutorials, and support</p>
 		</div>
 	</a>
 </div>
