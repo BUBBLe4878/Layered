@@ -60,6 +60,8 @@ const userSelect = {
 	clay: user.clay,
 	brick: user.brick,
 	shopScore: user.shopScore,
+	journalStreak: user.journalStreak,
+	journalStreakLastJournalAt: user.journalStreakLastJournalAt,
 	hasBasePrinter: user.hasBasePrinter,
 	stickersShipped: user.stickersShipped,
 	isPrinter: user.isPrinter,

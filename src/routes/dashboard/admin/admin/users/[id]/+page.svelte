@@ -137,6 +137,16 @@
 				<DataCard title="Devlog count">
 					{data.devlogCount}
 				</DataCard>
+				<DataCard title="Journal streak">
+					{user.journalStreak ?? 0} day{(user.journalStreak ?? 0) === 1 ? '' : 's'}
+					{#if user.journalStreakLastJournalAt}
+						<div class="mt-1 text-xs opacity-70">
+							Last journal: <abbr title={`${user.journalStreakLastJournalAt.toUTCString()}`}>
+								{relativeDate(user.journalStreakLastJournalAt)}
+							</abbr>
+						</div>
+					{/if}
+				</DataCard>
 				<DataCard title="Referred by ID">
 					{user.referralId ?? 'None'}
 				</DataCard>

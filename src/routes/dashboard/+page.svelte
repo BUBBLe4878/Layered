@@ -56,6 +56,13 @@
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Shipped</p>
 			<p class="mt-1 text-3xl font-bold text-primary-900">{shipCount}</p>
 		</div>
+		<div class="themed-box-solid p-4 shadow-xl sm:col-span-2 lg:col-span-3">
+			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal streak</p>
+			<p class="mt-1 text-3xl font-bold text-primary-900">
+				{$page.data?.user?.journalStreak ?? 0} day{($page.data?.user?.journalStreak ?? 0) === 1 ? '' : 's'}
+			</p>
+			<p class="mt-1 text-sm text-gray-700">Make a journal each day to keep it going. Miss a day and it resets.</p>
+		</div>
 	</div>
 </div>
 

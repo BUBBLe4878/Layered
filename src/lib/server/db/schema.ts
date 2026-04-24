@@ -68,6 +68,8 @@ export const user = pgTable('user', {
 	brick: real().notNull().default(0),
 
 	shopScore: real().notNull().default(0),
+	journalStreak: integer().notNull().default(0),
+	journalStreakLastJournalAt: timestamp(),
 
 	hasBasePrinter: boolean().notNull().default(false),
 	printer: json().notNull().$type<{ path: number[] }>().default({ path: [] }),

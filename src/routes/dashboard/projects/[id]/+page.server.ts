@@ -239,26 +239,53 @@ export const actions = {
 				}
 			);
 
-			// Store the full URLs in the database
-			await db.insert(devlog).values({
-				userId: locals.user.id,
-				projectId: queriedProject.id,
-				description: description.toString().trim(),
-				image: imageBlob.url,
-				model: modelBlob.url,
-				timeSpent:
-					lapseUrlValid && lapse?.ok ? lapse.timelapse.durationMins : parseInt(timeSpent!.toString()),
-				lapseId: lapseUrlValid && lapse?.ok ? lapseId : null,
-				createdAt: new Date(Date.now()),
-				updatedAt: new Date(Date.now())
-			});
+			const now = new Date();
 
-			await db
-				.update(project)
-				.set({
-					updatedAt: new Date(Date.now())
-				})
-				.where(and(eq(project.id, queriedProject.id)));
+			await db.transaction(async (tx) => {
+				const [streakUser] = await tx
+					.select({
+						journalStreak: user.journalStreak,
+						journalStreakLastJournalAt: user.journalStreakLastJournalAt
+					})
+					.from(user)
+					.where(eq(user.id, locals.user.id))
+					.limit(1);
+
+				const streak = calculateNextJournalStreak(
+					streakUser?.journalStreak ?? 0,
+					streakUser?.journalStreakLastJournalAt ?? null,
+					now
+				);
+
+				await tx
+					.update(user)
+					.set({
+						journalStreak: streak,
+						journalStreakLastJournalAt: now
+					})
+					.where(eq(user.id, locals.user.id));
+
+				// Store the full URLs in the database
+				await tx.insert(devlog).values({
+					userId: locals.user.id,
+					projectId: queriedProject.id,
+					description: description.toString().trim(),
+					image: imageBlob.url,
+					model: modelBlob.url,
+					timeSpent:
+						lapseUrlValid && lapse?.ok ? lapse.timelapse.durationMins : parseInt(timeSpent!.toString()),
+					lapseId: lapseUrlValid && lapse?.ok ? lapseId : null,
+					createdAt: now,
+					updatedAt: now
+				});
+
+				await tx
+					.update(project)
+					.set({
+						updatedAt: now
+					})
+					.where(and(eq(project.id, queriedProject.id)));
+			});
 
 			return { success: true };
 		} catch (err) {
@@ -270,6 +297,30 @@ export const actions = {
 		}
 	}
 } satisfies Actions;
+
+function calculateNextJournalStreak(currentStreak: number, lastJournalAt: Date | null, now: Date) {
+	const today = getUtcDayKey(now);
+
+	if (!lastJournalAt) {
+		return 1;
+	}
+
+	const lastJournalDay = getUtcDayKey(lastJournalAt);
+
+	if (lastJournalDay === today) {
+		return currentStreak;
+	}
+
+	if (today - lastJournalDay === 1) {
+		return currentStreak + 1;
+	}
+
+	return 1;
+}
+
+function getUtcDayKey(date: Date) {
+	return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86400000;
+}
 
 async function getMaxDevlogTime(id: number) {
 	const queriedDevlogArray = await db

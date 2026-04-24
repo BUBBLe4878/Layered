@@ -59,6 +59,7 @@ export async function load({ locals, params }) {
 			shopScore: requestedUserWithSlackProfile.shopScore,
 			clay: requestedUserWithSlackProfile.clay,
 			brick: requestedUserWithSlackProfile.brick,
+			journalStreak: requestedUserWithSlackProfile.journalStreak,
 
 			createdAt: requestedUserWithSlackProfile.createdAt,
 			lastLoginAt:

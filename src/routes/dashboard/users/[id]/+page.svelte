@@ -40,6 +40,12 @@
 				>
 			</p>
 
+			<p>
+				Streak: <span class="rounded-xl bg-primary-800 px-1">{data.requestedUser.journalStreak ?? 0}</span>
+				day{(data.requestedUser.journalStreak ?? 0) === 1 ? '' : 's'}
+			</p>
+			<p class="text-xs text-gray-700">Keep journaling daily. Missing a day resets it.</p>
+
 			<Calendar />
 			<div class="items-center text-center">
 				<p>
