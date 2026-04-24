@@ -376,7 +376,7 @@
 			your choice! Every approved hour earns Layers.
 		</p>
 	</div>
-	</div>
+</div>
 
 <!-- <Shop /> -->
 
@@ -385,6 +385,248 @@
 <div class="mt-20 flex flex-col items-center justify-center px-10">
 	<h1 class="mb-3 text-center text-2xl font-bold sm:text-4xl">Frequently asked questions</h1>
 	<div class="w-full max-w-2xl">
+		<!-- What is Layered? -->
+		<Accordion text="What is Layered?">
+			<p>
+				Layered is a YSWS where you design CAD projects and earn rewards—up to receiving and upgrading
+				your own 3D printer. Start by creating a project at layered.hackclub.com.
+			</p>
+		</Accordion>
+
+		<!-- When does Layered end? -->
+		<Accordion text="When does Layered end?">
+			<p>The program ends on April 19th. Submit your project before the deadline.</p>
+		</Accordion>
+
+		<!-- How do prizes work? -->
+		<Accordion text="How do prizes work?">
+			<p>
+				You earn 1 Layer per hour of logged and approved work. Layers are the primary currency and can
+				be used to redeem a 3D printer (starting at 40 Layers).
+			</p>
+			<p class="mt-3">After redeeming a printer, you unlock:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Printer upgrades</li>
+				<li>Items in the PrintShop</li>
+				<li>Advanced rewards</li>
+			</ul>
+			<p class="mt-3">If you don't want a printer, you will continue earning Layers and can get stuff from the shop.</p>
+		</Accordion>
+
+		<!-- Printer Upgrades -->
+		<Accordion text="Can I upgrade my printer?">
+			<p>Yes! You can upgrade your printer over time using Benchies. Example path:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Base printer (e.g., A1 Mini) → 400 Layers</li>
+				<li>Add AMS Lite → 5000 Layers</li>
+				<li>Upgrade to A1 → +3400 Layers</li>
+			</ul>
+			<p class="mt-3">Multiple brands and upgrade paths are available.</p>
+		</Accordion>
+
+		<!-- How many projects can I make? -->
+		<Accordion text="How many projects can I make?">
+			<p>Unlimited, as long as:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Each project meets the 2-hour minimum</li>
+				<li>Each follows the rules</li>
+			</ul>
+			<p class="mt-3">
+				Longer projects earn more experience, which reduces prices in the PrintShop. You may also extend
+				a finished project by creating a new version based on it (v2, v3, etc.), but copying projects
+				1:1 is not allowed.
+			</p>
+		</Accordion>
+
+		<!-- How do I track my time? -->
+		<Accordion text="How do I track my time?">
+			<p>Each project includes a journal where you can:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Log your time and describe your progress</li>
+				<li>Entries are capped at 1.5 hours</li>
+				<li>You can only log time since your last entry</li>
+			</ul>
+			<p class="mt-3">
+				Alternatively, use lapse.hackclub.com which automatically tracks time, descriptions, and images.
+				This bypasses journal limits and is preferred.
+			</p>
+		</Accordion>
+
+		<!-- Streak System -->
+		<Accordion text="What's the streak system?">
+			<p>
+				Daily work builds a streak. Longer streaks may provide bonuses or multipliers. Missing a day
+				resets your streak.
+			</p>
+		</Accordion>
+
+		<!-- First Project Reward -->
+		<Accordion text="Is there a reward for my first project?">
+			<p>Yes! After you successfully ship your first project, you receive a Layered keychain + stickers.</p>
+		</Accordion>
+
+		<!-- Weekly Awards & Leaderboard -->
+		<Accordion text="Are there weekly awards?">
+			<p>
+				Each week, staff select top projects across categories and the community votes on finalists.
+				Winners receive bonus Layers/Benchies.
+			</p>
+			<p class="mt-3">A leaderboard tracks:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Total Layers earned</li>
+				<li>Experience</li>
+				<li>Project count</li>
+			</ul>
+		</Accordion>
+
+		<!-- What can I make? -->
+		<Accordion text="What can I make?">
+			<p>
+				Projects must have a clear purpose and be primarily 3D-printable. We want to see you learning
+				something new on each project.
+			</p>
+			<p class="mt-3 font-semibold">Allowed:</p>
+			<ul class="ml-5 list-disc space-y-1">
+				<li>Functional toys</li>
+				<li>Scale models (cars, planes, tanks)</li>
+				<li>Wind-powered devices</li>
+			</ul>
+			<p class="mt-3 font-semibold">Not recommended:</p>
+			<ul class="ml-5 list-disc space-y-1">
+				<li>Dummy boards (ESP32, Raspberry Pi)</li>
+				<li>Cases (phones, Raspberry Pi, etc.)</li>
+			</ul>
+			<p class="mt-3 font-semibold">Not allowed:</p>
+			<ul class="ml-5 list-disc space-y-1">
+				<li>Weapons of any kind</li>
+				<li>Dummy phones</li>
+				<li>Projects requiring non-printed components (except standard nuts/bolts up to M6)</li>
+				<li>Custom PCB cases</li>
+				<li>Drones</li>
+			</ul>
+			<p class="mt-3">If unsure, ask in #layered-help</p>
+		</Accordion>
+
+		<!-- What is experience? -->
+		<Accordion text="What is experience?">
+			<p>
+				Experience rewards higher-effort projects and reduces prices in the PrintShop. It also unlocks
+				access to special items and systems.
+			</p>
+			<p class="mt-3">Rules:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Cumulative (never resets)</li>
+				<li>Max: 60 per hour</li>
+				<li>Longer projects earn more total experience</li>
+			</ul>
+		</Accordion>
+
+		<!-- The Underground Market -->
+		<Accordion text="What is the Underground Market?">
+			<p>
+				High-experience users may gain access to a hidden shop with exclusive printer upgrades,
+				limited-edition parts or mods, discounted high-tier items, and experimental rewards.
+			</p>
+			<p class="mt-3">Possible mechanics include rotating inventory, invite-only or experience threshold access, and hidden deals that appear randomly.</p>
+		</Accordion>
+
+		<!-- Are group projects allowed? -->
+		<Accordion text="Are group projects allowed?">
+			<p>No. All projects must be individual.</p>
+		</Accordion>
+
+		<!-- Are remixes allowed? -->
+		<Accordion text="Are remixes allowed?">
+			<p>
+				No direct remixes. You may create your own version as long as it is not copied step-by-step from
+				a tutorial.
+			</p>
+		</Accordion>
+
+		<!-- Can I continue an existing project? -->
+		<Accordion text="Can I continue an existing project?">
+			<p>No. Each project must be new.</p>
+		</Accordion>
+
+		<!-- Do I have to build my project? -->
+		<Accordion text="Do I have to build my project?">
+			<p>Yes. A project must be physically produced to count. This can happen by:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Someone posting a make of your design</li>
+				<li>You printing it yourself</li>
+				<li>Us printing it for you (default)</li>
+			</ul>
+			<p class="mt-3">Printing costs are deducted from your earnings based on filament usage at 2 cents per gram, with no real money charged.</p>
+		</Accordion>
+
+		<!-- What happens if I cheat? -->
+		<Accordion text="What happens if I cheat?">
+			<p>
+				Fraud results in removal from this and future programs, plus loss of all currency and projects.
+				Appeals must be made via DM to the team.
+			</p>
+		</Accordion>
+
+		<!-- What software is supported? -->
+		<Accordion text="What software is supported?">
+			<p>The following CAD software is supported:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>Fusion 360</li>
+				<li>Onshape</li>
+				<li>Shapr3D</li>
+				<li>SolidWorks</li>
+				<li>FreeCAD</li>
+				<li>OpenSCAD</li>
+				<li>Blender</li>
+				<li>SolveSpace</li>
+			</ul>
+			<p class="mt-3">No other CAD software is supported.</p>
+		</Accordion>
+
+		<!-- I'm new to CAD -->
+		<Accordion text="I'm new to CAD—does that matter?">
+			<p>
+				Beginners are welcome! Note that only active work counts toward hours. Time spent watching
+				tutorials or researching does not count.
+			</p>
+		</Accordion>
+
+		<!-- Who runs this? -->
+		<Accordion text="Who runs this?">
+			<p class="space-y-2">
+				<span class="block"><strong>@Dr_Fishface</strong> - Founder of Layered (art and stuff)</span>
+				<span class="block"><strong>@StephenFromColorado</strong> - Co-founder (Website, Backend)</span>
+				<span class="block"><strong>@HackerMan</strong> - Logistics, website, reviews</span>
+				<span class="block"><strong>@arc</strong> - Help with various tasks</span>
+				<span class="block"><strong>@Anirudh</strong> - Support</span>
+				<span class="block"><strong>@Anay</strong> - Moral support, reviews, fraud checks</span>
+			</p>
+		</Accordion>
+
+		<!-- Rejections & Feedback -->
+		<Accordion text="What if my project is rejected?">
+			<p>If your project is rejected, you will receive:</p>
+			<ul class="ml-5 mt-2 list-disc space-y-1">
+				<li>A specific reason for rejection</li>
+				<li>The reviewer's name</li>
+				<li>The ability to DM them with questions</li>
+			</ul>
+			<p class="mt-3">
+				You can fix and resubmit your project. You can also get feedback early in #layered-help before
+				submitting.
+			</p>
+		</Accordion>
+
+		<!-- Troubleshooting -->
+		<Accordion text="File format not supported on Printables">
+			<p>Upload files under Model Files and include both .STEP and .STL formats.</p>
+		</Accordion>
+
+		<Accordion text="Project file too large">
+			<p>Upload to Google Drive (or similar) and provide a link in your submission.</p>
+		</Accordion>
+
+		<!-- Is this free? -->
 		<Accordion text="Is this free?">
 			<p>
 				Yes! This program is entirely funded by <a href="https://hackclub.com" class="underline">
@@ -393,17 +635,8 @@
 				such as <a href="https://github.com" class="underline">GitHub</a>.
 			</p>
 		</Accordion>
-		<Accordion text="What can I make?">
-			<p>
-				Any reasonable CAD project is fine, get creative! However, you must use one of the <a
-					href="/approved-editors"
-					class="underline">approved editors</a
-				>.
-			</p>
-		</Accordion>
-		<Accordion text="What are the requirements to get a 3D printer?">
-			<p>You must ship at least 40 hours' worth of projects by the end of the event.</p>
-		</Accordion>
+
+		<!-- Requirements to participate -->
 		<Accordion text="What are the requirements to participate?">
 			<p>
 				You must be between the ages 13-18 and have verified your identity on our <a
@@ -413,9 +646,6 @@
 					identity platform
 				</a>.
 			</p>
-		</Accordion>
-		<Accordion text="What currency do I earn?">
-			<p>Layers are the only currency now. Everything on the site is measured in Layers.</p>
 		</Accordion>
 	</div>
 </div>
