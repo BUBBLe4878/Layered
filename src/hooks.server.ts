@@ -17,7 +17,23 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	const { session, user } = await auth.validateSessionToken(sessionToken);
+	let session;
+	let user;
+
+	try {
+		({ session, user } = await auth.validateSessionToken(sessionToken));
+	} catch (error) {
+		console.error('[auth] session validation failed, clearing cookie', error);
+		auth.deleteSessionTokenCookie(event);
+		event.locals.user = null;
+		event.locals.session = null;
+
+		if (routeRequiresAuth(event.route.id ? event.route.id : '')) {
+			return redirect(302, '/auth/idv');
+		}
+
+		return resolve(event);
+	}
 
 	if (session) {
 		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
