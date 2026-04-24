@@ -220,6 +220,165 @@
 		};
 		animate();
 	});
+
+	
+
+	// FAQ categories
+	const faqCategories = [
+		{
+			name: 'Getting Started',
+			icon: '💀',
+			items: [
+				{
+					text: 'What is Layered?',
+					slug: 'what-is-layered'
+				},
+				{
+					text: "I'm new to CAD—does that matter?",
+					slug: 'new-to-cad'
+				},
+				{
+					text: 'What are the requirements to participate?',
+					slug: 'requirements'
+				}
+			]
+		},
+		{
+			name: 'Projects',
+			icon: '💀',
+			items: [
+				{
+					text: 'What can I make?',
+					slug: 'what-can-i-make'
+				},
+				{
+					text: 'How many projects can I make?',
+					slug: 'how-many-projects'
+				},
+				{
+					text: 'Can I continue an existing project?',
+					slug: 'continue-project'
+				},
+				{
+					text: 'Are group projects allowed?',
+					slug: 'group-projects'
+				},
+				{
+					text: 'Are remixes allowed?',
+					slug: 'remixes'
+				},
+				{
+					text: 'Do I have to build my project?',
+					slug: 'build-project'
+				},
+				{
+					text: 'What software is supported?',
+					slug: 'software'
+				}
+			]
+		},
+		{
+			name: 'Rewards',
+			icon: '💀',
+			items: [
+				{
+					text: 'How do prizes work?',
+					slug: 'prizes'
+				},
+				{
+					text: 'Can I upgrade my printer?',
+					slug: 'upgrades'
+				},
+				{
+					text: 'What is experience?',
+					slug: 'experience'
+				},
+				{
+					text: 'What is the Underground Market?',
+					slug: 'underground'
+				},
+				{
+					text: 'Is there a reward for my first project?',
+					slug: 'first-project-reward'
+				}
+			]
+		},
+		{
+			name: 'Tracking',
+			icon: '💀',
+			items: [
+				{
+					text: 'How do I track my time?',
+					slug: 'track-time'
+				},
+				{
+					text: "What's the streak system?",
+					slug: 'streak'
+				},
+				{
+					text: 'Are there weekly awards?',
+					slug: 'weekly-awards'
+				}
+			]
+		},
+		{
+			name: 'Policies',
+			icon: '💀',
+			items: [
+				{
+					text: 'What happens if I cheat?',
+					slug: 'cheat'
+				},
+				{
+					text: 'What if my project is rejected?',
+					slug: 'rejection'
+				},
+				{
+					text: 'When does Layered end?',
+					slug: 'end-date'
+				},
+				{
+					text: 'File format not supported on Printables',
+					slug: 'file-format'
+				},
+				{
+					text: 'Project file too large',
+					slug: 'file-size'
+				}
+			]
+		},
+		{
+			name: 'About',
+			icon: '💀',
+			items: [
+				{
+					text: 'Who runs this?',
+					slug: 'who-runs'
+				},
+				{
+					text: 'Is this free?',
+					slug: 'is-free'
+				}
+			]
+		}
+	];
+
+	let activeTab = $state(faqCategories[0].name);
+	let expandedQuestions = $state<Set<string>>(new Set());
+
+	function toggleQuestion(slug: string) {
+		if (expandedQuestions.has(slug)) {
+			expandedQuestions.delete(slug);
+		} else {
+			expandedQuestions.add(slug);
+		}
+		expandedQuestions = expandedQuestions;
+	}
+
+	let activeCategory = $derived(faqCategories.find((cat) => cat.name === activeTab));
+
+
+
 </script>
 
 <Head title="" />
@@ -384,164 +543,7 @@
 
 <div class="mt-20 flex flex-col items-center justify-center px-10">
 	<h1 class="mb-3 text-center text-2xl font-bold sm:text-4xl">Frequently asked questions</h1>
-	<script lang="ts">
-	import Accordion from '$lib/components/Accordion.svelte';
-
-	// FAQ categories
-	const faqCategories = [
-		{
-			name: 'Getting Started',
-			icon: '💀',
-			items: [
-				{
-					text: 'What is Layered?',
-					slug: 'what-is-layered'
-				},
-				{
-					text: "I'm new to CAD—does that matter?",
-					slug: 'new-to-cad'
-				},
-				{
-					text: 'What are the requirements to participate?',
-					slug: 'requirements'
-				}
-			]
-		},
-		{
-			name: 'Projects',
-			icon: '💀',
-			items: [
-				{
-					text: 'What can I make?',
-					slug: 'what-can-i-make'
-				},
-				{
-					text: 'How many projects can I make?',
-					slug: 'how-many-projects'
-				},
-				{
-					text: 'Can I continue an existing project?',
-					slug: 'continue-project'
-				},
-				{
-					text: 'Are group projects allowed?',
-					slug: 'group-projects'
-				},
-				{
-					text: 'Are remixes allowed?',
-					slug: 'remixes'
-				},
-				{
-					text: 'Do I have to build my project?',
-					slug: 'build-project'
-				},
-				{
-					text: 'What software is supported?',
-					slug: 'software'
-				}
-			]
-		},
-		{
-			name: 'Rewards',
-			icon: '💀',
-			items: [
-				{
-					text: 'How do prizes work?',
-					slug: 'prizes'
-				},
-				{
-					text: 'Can I upgrade my printer?',
-					slug: 'upgrades'
-				},
-				{
-					text: 'What is experience?',
-					slug: 'experience'
-				},
-				{
-					text: 'What is the Underground Market?',
-					slug: 'underground'
-				},
-				{
-					text: 'Is there a reward for my first project?',
-					slug: 'first-project-reward'
-				}
-			]
-		},
-		{
-			name: 'Tracking',
-			icon: '💀',
-			items: [
-				{
-					text: 'How do I track my time?',
-					slug: 'track-time'
-				},
-				{
-					text: "What's the streak system?",
-					slug: 'streak'
-				},
-				{
-					text: 'Are there weekly awards?',
-					slug: 'weekly-awards'
-				}
-			]
-		},
-		{
-			name: 'Policies',
-			icon: '💀',
-			items: [
-				{
-					text: 'What happens if I cheat?',
-					slug: 'cheat'
-				},
-				{
-					text: 'What if my project is rejected?',
-					slug: 'rejection'
-				},
-				{
-					text: 'When does Layered end?',
-					slug: 'end-date'
-				},
-				{
-					text: 'File format not supported on Printables',
-					slug: 'file-format'
-				},
-				{
-					text: 'Project file too large',
-					slug: 'file-size'
-				}
-			]
-		},
-		{
-			name: 'About',
-			icon: '💀',
-			items: [
-				{
-					text: 'Who runs this?',
-					slug: 'who-runs'
-				},
-				{
-					text: 'Is this free?',
-					slug: 'is-free'
-				}
-			]
-		}
-	];
-
-	let activeTab = $state(faqCategories[0].name);
-	let expandedQuestions = $state<Set<string>>(new Set());
-
-	function toggleQuestion(slug: string) {
-		if (expandedQuestions.has(slug)) {
-			expandedQuestions.delete(slug);
-		} else {
-			expandedQuestions.add(slug);
-		}
-		expandedQuestions = expandedQuestions;
-	}
-
-	let activeCategory = $derived(faqCategories.find((cat) => cat.name === activeTab));
-</script>
-
+	
 <div class="mt-24 flex flex-col items-center justify-center px-10">
 	<div class="w-full max-w-4xl">
 		<!-- Header -->
