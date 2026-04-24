@@ -15,6 +15,15 @@
 <div class="mb-6 grid grid-cols-1 gap-3 lg:grid-cols-2">
 	<div class="themed-box-solid p-4">
 		<h2 class="text-lg font-bold">FAQ</h2>
+		<p class="mt-1 text-sm text-gray-700">
+			Need everything? Read the full FAQ doc:
+			<a
+				href="https://hackclub.enterprise.slack.com/docs/T0266FRGM/F0AV24ADJUE"
+				target="_blank"
+				class="list-link"
+				>Layered FAQ</a
+			>
+		</p>
 		<div class="mt-2 space-y-2">
 			<Accordion text="What is Layered?">
 				<p>Layered is a YSWS where you design CAD projects and earn Layers, experience, and rewards.</p>
@@ -31,60 +40,15 @@
 					shop items.
 				</p>
 			</Accordion>
-			<Accordion text="What is experience?">
-				<p>
-					Experience lowers PrintShop prices and can unlock special systems like the Underground Market.
-				</p>
-			</Accordion>
 			<Accordion text="Can I continue a finished project?">
 				<p>
 					Yes. Start a new version like v2 or v3 if the next iteration builds on the same idea.
-				</p>
-			</Accordion>
-			<Accordion text="Are streaks a thing?">
-				<p>
-					Yes. Daily work can build a streak, and streaks may grant bonuses or multipliers. Missing a day
-					resets it.
-				</p>
-			</Accordion>
-			<Accordion text="How do weekly awards work?">
-				<p>
-					Staff pick top projects, the community votes on finalists, and winners can receive bonus Layers.
-				</p>
-			</Accordion>
-			<Accordion text="Is there a leaderboard?">
-				<p>
-					Yes. It tracks total Layers, experience, and project count.
 				</p>
 			</Accordion>
 			<Accordion text="What happens if my project is rejected?">
 				<p>
 					You’ll get a specific reason and the reviewer’s name, and you can fix it and resubmit.
 				</p>
-			</Accordion>
-			<Accordion text="Can I get feedback before submitting?">
-				<p>
-					Yes. Use #layered-help or ask for pre-submission feedback before you ship.
-				</p>
-			</Accordion>
-			<Accordion text="What project types are encouraged?">
-				<p>
-					We still focus on fully 3D-printable designs, but simple mechanisms, modular designs, and
-					print-assisted tools may be supported in the future.
-				</p>
-			</Accordion>
-			<Accordion text="What is the Underground Market?">
-				<p>
-					A hidden shop unlocked by experience with exclusive upgrades, rotating items, and special deals.
-				</p>
-			</Accordion>
-			<Accordion text="What can I do after my first project?">
-				<p>
-					Your first shipped project earns a Layered keychain and stickers.
-				</p>
-			</Accordion>
-			<Accordion text="What happened to benchies?">
-				<p>Benchies are retired. Everything is measured in Layers now.</p>
 			</Accordion>
 		</div>
 	</div>
