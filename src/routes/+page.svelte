@@ -153,7 +153,7 @@
 		expandedQuestions = expandedQuestions;
 	}
 
-	$: activeCategory = faqCategories.find((cat) => cat.name === activeTab);
+	let activeCategory = $derived(faqCategories.find((cat) => cat.name === activeTab));
 </script>
 
 <div class="mt-24 flex flex-col items-center justify-center px-10">
