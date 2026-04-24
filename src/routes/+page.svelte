@@ -723,7 +723,6 @@
 		{/if}
 	</div>
 </div>
-	</div>
 </div>
 
 <div class="mt-15 mb-30 flex flex-col items-center justify-center gap-5 px-10">
