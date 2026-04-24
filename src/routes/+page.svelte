@@ -16,7 +16,6 @@
 	let { data } = $props();
 
 	import * as THREE from 'three';
-	import { ThreeMFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
 	import { onMount } from 'svelte';
 	import Head from '$lib/components/Head.svelte';
 	import Spinny3DPreview from '$lib/components/Spinny3DPreview.svelte';
@@ -28,6 +27,18 @@
 	const scene = new THREE.Scene();
 
 	onMount(() => {
+		let ThreeMFLoader: typeof import('three/examples/jsm/loaders/3MFLoader.js').ThreeMFLoader;
+		let OrbitControls: typeof import('three/examples/jsm/controls/OrbitControls.js').OrbitControls;
+
+		const init = async () => {
+			const [loaderModule, controlsModule] = await Promise.all([
+				import('three/examples/jsm/loaders/3MFLoader.js'),
+				import('three/examples/jsm/controls/OrbitControls.js')
+			]);
+
+			ThreeMFLoader = loaderModule.ThreeMFLoader;
+			OrbitControls = controlsModule.OrbitControls;
+
 		const urlParams = new URLSearchParams(window.location.search);
 		const ref = urlParams.get('ref');
 
@@ -219,6 +230,9 @@
 			resizeCanvasToDisplaySize();
 		};
 		animate();
+		};
+
+		void init();
 	});
 
 	
