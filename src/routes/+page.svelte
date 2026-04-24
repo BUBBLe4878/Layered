@@ -373,10 +373,10 @@
 	<div class="w-full max-w-2xl">
 		<p class="mt-3 max-w-2xl">
 			<strong>Want a 3D printer?</strong> Spend 40 hours doing CAD projects, get a free 3D printer of
-			your choice!
+			your choice! Every approved hour earns Layers.
 		</p>
 	</div>
-			your choice! Every approved hour earns Layers.
+	</div>
 
 <!-- <Shop /> -->
 
