@@ -227,7 +227,7 @@
 	const faqCategories = [
 		{
 			name: 'Getting Started',
-			icon: '💀',
+			icon: ' ',
 			items: [
 				{
 					text: 'What is Layered?',
@@ -245,7 +245,7 @@
 		},
 		{
 			name: 'Projects',
-			icon: '💀',
+			icon: ' ',
 			items: [
 				{
 					text: 'What can I make?',
@@ -279,7 +279,7 @@
 		},
 		{
 			name: 'Rewards',
-			icon: '💀',
+			icon: ' ',
 			items: [
 				{
 					text: 'How do prizes work?',
@@ -305,7 +305,7 @@
 		},
 		{
 			name: 'Tracking',
-			icon: '💀',
+			icon: ' ',
 			items: [
 				{
 					text: 'How do I track my time?',
@@ -323,7 +323,7 @@
 		},
 		{
 			name: 'Policies',
-			icon: '💀',
+			icon: ' ',
 			items: [
 				{
 					text: 'What happens if I cheat?',
@@ -349,7 +349,7 @@
 		},
 		{
 			name: 'About',
-			icon: '💀',
+			icon: ' ',
 			items: [
 				{
 					text: 'Who runs this?',
@@ -541,10 +541,6 @@
 
 <Rules idvDomain={data.idvDomain} />
 
-<div class="mt-20 flex flex-col items-center justify-center px-10">
-	<h1 class="mb-3 text-center text-2xl font-bold sm:text-4xl">Frequently asked questions</h1>
-	
-<div class="mt-24 flex flex-col items-center justify-center px-10">
 	<div class="w-full max-w-4xl">
 		<!-- Header -->
 		<div class="mb-8 text-center">
