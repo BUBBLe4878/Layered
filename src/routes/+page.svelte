@@ -721,8 +721,6 @@
 		{/if}
 	</div>
 </div>
-</div>
-
 <div class="mt-15 mb-30 flex flex-col items-center justify-center gap-5 px-10">
 	<h1 class="text-center text-3xl font-bold sm:text-4xl">Ready?</h1>
 	<div class="w-full max-w-2xl text-center">
