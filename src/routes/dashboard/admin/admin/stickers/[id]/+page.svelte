@@ -96,7 +96,7 @@
 				<DataCard title="Referred by ID">
 					{user.referralId ?? 'None'}
 				</DataCard>
-				<DataCard title="Benchies">
+				<DataCard title="Layers">
 					<code>{user.clay}</code>
 				</DataCard>
 				<DataCard title="Layers">

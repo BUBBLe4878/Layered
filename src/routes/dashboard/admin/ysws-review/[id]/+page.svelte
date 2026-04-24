@@ -187,7 +187,7 @@
 					</label>
 
 					<p>
-						Payouts: {Math.round((payouts.clay ?? 0) * 10) / 10} benchies, {Math.round(
+						Payouts: {Math.round((payouts.clay ?? 0) * 10) / 10} layers, {Math.round(
 							(payouts.bricks ?? 0) * 10
 						) / 10} layers,
 						{Math.round(payouts.shopScore * 10) / 10} experience

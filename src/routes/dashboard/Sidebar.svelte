@@ -217,13 +217,13 @@
 				</div>
 			</div>
 
-			<!-- Benchies display -->
+			<!-- Layers display -->
 			<div
 				class="flex h-10 cursor-default items-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-sm"
-				title="Benchies"
+				title="Layers"
 			>
 				<div class="hidden text-xs sm:block">
-					<p class="truncate font-medium text-yellow-100">{Math.floor(user.brick)} Benchies</p>
+					<p class="truncate font-medium text-yellow-100">{Math.floor(user.brick)} Layers</p>
 				</div>
 			</div>
 
@@ -304,13 +304,13 @@
 						<span class="font-medium text-yellow-100">{Math.floor(user.clay)} Layers</span>
 					</div>
 
-					<!-- Benchies display -->
+					<!-- Layers display -->
 					<div
 						class="pei-button pei7 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-yellow-600 bg-yellow-700 px-3 py-2 text-xs"
-						title="Benchies"
+						title="Layers"
 					>
 						<span class="text-lg">🚢</span>
-						<span class="font-medium text-yellow-100">{Math.floor(user.brick)} Benchies</span>
+						<span class="font-medium text-yellow-100">{Math.floor(user.brick)} Layers</span>
 					</div>
 				</div>
 

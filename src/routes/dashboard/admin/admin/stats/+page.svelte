@@ -108,7 +108,7 @@
 			<div
 				class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
 			>
-				<DataCard title="Benchies">
+				<DataCard title="Layers">
 					<code>{data.users.total.clay}</code>
 				</DataCard>
 				<DataCard title="Layers">
@@ -122,7 +122,7 @@
 			<div
 				class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
 			>
-				<DataCard title="Benchies">
+				<DataCard title="Layers">
 					<code>{Math.round(data.users.average.clay * 100) / 100}</code>
 				</DataCard>
 				<DataCard title="Layers">

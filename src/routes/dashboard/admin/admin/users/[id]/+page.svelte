@@ -158,13 +158,13 @@
 				>
 					<div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
 						<label class="flex flex-col gap-1">
-							<span class="text-sm font-medium">Benchies</span>
+							<span class="text-sm font-medium">Layers</span>
 							<input
 								type="number"
 								name="clay"
 								value={form?.currency?.fields.clay ?? user.clay}
 								class="themed-input-on-box"
-								placeholder="Benchies"
+								placeholder="Layers"
 								step="0.01"
 								required
 							/>

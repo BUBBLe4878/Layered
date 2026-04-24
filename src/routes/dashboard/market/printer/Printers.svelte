@@ -228,7 +228,7 @@
 					<CircleDollarSign size={22} />
 					<p class="font-semibold">
 						{#if selectedPrinter?.isBasePrinter}
-							{BASE_PRINTER_CLAY} benchies
+							{BASE_PRINTER_CLAY} Layers
 						{:else}
 							<span class="text-primary-400">
 								{#if (selectedPrinterPriceLayers ?? 0) < (selectedPrinter?.maxBrick ?? 0)}

@@ -43,7 +43,7 @@
 				</li>
 			</ul>
 		</li>
-		<li>It gets approved once more and you'll get your benchies/layers!</li>
+		<li>It gets approved once more and you'll get your layers!</li>
 	</ol>
 	<p class="mt-2 mb-1">
 		Make sure you design your project to be 3D printable! Avoid overhangs if you can and reduce the

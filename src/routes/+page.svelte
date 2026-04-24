@@ -266,7 +266,7 @@
 				<div class="mb-8 text-center">
 					<h2 class="mb-2 text-2xl font-bold sm:text-3xl">Free swag with your first submission</h2>
 					<p class="text-lg font-medium text-primary-300">
-						Ship a project, get exclusive Construct goodies
+						Ship a project, get exclusive Layered goodies
 					</p>
 				</div>
 
@@ -277,13 +277,13 @@
 						>
 							<img
 								src={sticker1Image}
-								alt="Construct sticker 1"
+								alt="Layered sticker 1"
 								class="h-40 w-40 animate-[spin_20s_linear_infinite] object-contain"
 								style="animation-direction: normal;"
 							/>
 							<img
 								src={sticker2Image}
-								alt="Construct sticker 2"
+								alt="Layered sticker 2"
 								class="h-40 w-40 animate-[spin_20s_linear_infinite] object-contain"
 								style="animation-direction: reverse;"
 							/>
@@ -306,7 +306,7 @@
 							/>
 						</div>
 						<div class="text-center">
-							<h3 class="mb-2 text-xl font-bold">Construct Keyring</h3>
+							<h3 class="mb-2 text-xl font-bold">Layered Keychain</h3>
 							<p class="text-sm text-primary-300">
 								even more yay keyring
 								<img
@@ -355,7 +355,7 @@
 			</div>
 			<p class="relative z-1 mt-2 w-full animate-pulse text-center text-sm">interact with me!</p>
 		</div>
-		<img src={modelImage} alt="construct model logo" class="mt-3 mb-6 sm:hidden" />
+		<img src={modelImage} alt="Layered model logo" class="mt-3 mb-6 sm:hidden" />
 		<div class="relative z-1 w-full text-center">
 			<p class="my-3 text-xl font-medium">Spend 40 hours doing CAD projects, get a 3D printer!</p>
 			{#if data.loggedIn}
@@ -376,7 +376,7 @@
 			your choice!
 		</p>
 	</div>
-</div>
+			your choice! Every approved hour earns Layers.
 
 <!-- <Shop /> -->
 
@@ -413,6 +413,9 @@
 					identity platform
 				</a>.
 			</p>
+		</Accordion>
+		<Accordion text="What currency do I earn?">
+			<p>Layers are the only currency now. Everything on the site is measured in Layers.</p>
 		</Accordion>
 	</div>
 </div>

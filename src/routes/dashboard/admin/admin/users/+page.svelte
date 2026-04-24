@@ -90,7 +90,7 @@
 					<p>Hackatime: {user.hackatimeTrust}</p>
 					<p>Trust: {user.trust}</p>
 					<p>
-						{Math.round(user.clay * 10) / 10} benchies, {Math.round(user.brick * 10) / 10} layers, {Math.round(
+						{Math.round(user.clay * 10) / 10} layers, {Math.round(user.brick * 10) / 10} layers, {Math.round(
 							user.shopScore * 10
 						) / 10} experience
 					</p>

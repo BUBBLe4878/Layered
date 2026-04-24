@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
-	import BenchyRevealer from './BenchyRevealer.svelte';
 	import { BarChart3, BookOpen, Compass, PencilRuler, Store } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
@@ -153,8 +152,4 @@
 			<p class="text-xs text-gray-700">Guides for learning CAD</p>
 		</div>
 	</a>
-</div>
-
-<div class="mt-4">
-	<BenchyRevealer />
 </div>

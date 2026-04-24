@@ -77,7 +77,7 @@
 								<p class="text-sm">Layers: {order.bricksPaid}</p>
 							{/if}
 							{#if order.clayPaid != null}
-								<p class="text-sm">Benchies: {order.clayPaid}</p>
+								<p class="text-sm">Layers: {order.clayPaid}</p>
 							{/if}
 						</div>
 					{/each}

@@ -135,14 +135,14 @@ export const actions = {
 		const id = parseUserId(params.id);
 		const data = await request.formData();
 
-		const benchies = data.get('clay');
+		const layers = data.get('clay');
 		const layers = data.get('brick');
 		const shopScore = data.get('market_score');
 		const reason = data.get('reason')?.toString();
 
 		if (
-			!benchies ||
-			isNaN(parseFloat(benchies.toString())) ||
+			!layers ||
+			isNaN(parseFloat(layers.toString())) ||
 			!layers ||
 			isNaN(parseFloat(layers.toString())) ||
 			!shopScore ||
@@ -161,7 +161,7 @@ export const actions = {
 		await db
 			.update(user)
 			.set({
-				clay: parseFloat(benchies.toString()),
+				clay: parseFloat(layers.toString()),
 				brick: parseFloat(layers.toString()),
 				shopScore: parseFloat(shopScore.toString())
 			})
@@ -173,7 +173,7 @@ export const actions = {
 			oldClay: oldUser.clay,
 			oldBrick: oldUser.brick,
 			oldShopScore: oldUser.shopScore,
-			newClay: parseFloat(benchies.toString()),
+			newClay: parseFloat(layers.toString()),
 			newBrick: parseFloat(layers.toString()),
 			newShopScore: parseFloat(shopScore.toString()),
 			reason
