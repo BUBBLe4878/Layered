@@ -391,7 +391,7 @@
 	const faqCategories = [
 		{
 			name: 'Getting Started',
-			icon: '',
+			icon: '💀',
 			items: [
 				{
 					text: 'What is Layered?',
@@ -409,7 +409,7 @@
 		},
 		{
 			name: 'Projects',
-			icon: '',
+			icon: '💀',
 			items: [
 				{
 					text: 'What can I make?',
@@ -443,7 +443,7 @@
 		},
 		{
 			name: 'Rewards',
-			icon: '',
+			icon: '💀',
 			items: [
 				{
 					text: 'How do prizes work?',
@@ -469,7 +469,7 @@
 		},
 		{
 			name: 'Tracking',
-			icon: '',
+			icon: '💀',
 			items: [
 				{
 					text: 'How do I track my time?',
@@ -487,7 +487,7 @@
 		},
 		{
 			name: 'Policies',
-			icon: '',
+			icon: '💀',
 			items: [
 				{
 					text: 'What happens if I cheat?',
@@ -513,7 +513,7 @@
 		},
 		{
 			name: 'About',
-			icon: 'ℹ️',
+			icon: '💀',
 			items: [
 				{
 					text: 'Who runs this?',
