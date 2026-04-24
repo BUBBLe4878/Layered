@@ -136,15 +136,15 @@ export const actions = {
 		const data = await request.formData();
 
 		const layers = data.get('clay');
-		const layers = data.get('brick');
+		const bricks = data.get('brick');
 		const shopScore = data.get('market_score');
 		const reason = data.get('reason')?.toString();
 
 		if (
 			!layers ||
 			isNaN(parseFloat(layers.toString())) ||
-			!layers ||
-			isNaN(parseFloat(layers.toString())) ||
+			!bricks ||
+			isNaN(parseFloat(bricks.toString())) ||
 			!shopScore ||
 			isNaN(parseFloat(shopScore.toString()))
 		) {
@@ -162,7 +162,7 @@ export const actions = {
 			.update(user)
 			.set({
 				clay: parseFloat(layers.toString()),
-				brick: parseFloat(layers.toString()),
+				brick: parseFloat(bricks.toString()),
 				shopScore: parseFloat(shopScore.toString())
 			})
 			.where(eq(user.id, id));
@@ -174,7 +174,7 @@ export const actions = {
 			oldBrick: oldUser.brick,
 			oldShopScore: oldUser.shopScore,
 			newClay: parseFloat(layers.toString()),
-			newBrick: parseFloat(layers.toString()),
+			newBrick: parseFloat(bricks.toString()),
 			newShopScore: parseFloat(shopScore.toString()),
 			reason
 		});
