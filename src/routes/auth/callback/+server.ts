@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect, error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db/index.js';
 import { user } from '$lib/server/db/schema.js';
@@ -20,7 +20,7 @@ export async function GET(event) {
 
         // !urlState || !code
         if (!code) {
-                        return redirect(302, '/auth/failed');
+                return error(400, { message: 'no oauth code, hmm what happened here' });
         }
 
         // Get token
@@ -211,7 +211,7 @@ export async function GET(event) {
 
                 if (!databaseUser) {
                         // Something went _really_ wrong
-                                        return redirect(302, '/auth/failed');
+                        return error(500);
                 }
 
                 if (ref && airtableBase) {
