@@ -12,23 +12,13 @@ import { encrypt } from '$lib/server/encryption.js';
 import { getUserData } from '$lib/server/idvUserData';
 import { airtableBase } from '$lib/server/airtable';
 import { eq } from 'drizzle-orm';
-import type { RequestEvent } from '@sveltejs/kit';
 
-export async function GET(event: RequestEvent) {
+export async function GET(event: any) {
 	const url = event.url;
 	const code = url.searchParams.get('code');
-	const oauthError = url.searchParams.get('error');
-	const oauthErrorDescription = url.searchParams.get('error_description');
 
 	if (!code) {
-		if (oauthError || oauthErrorDescription) {
-			const failedUrl = new URL('/auth/failed', url);
-			if (oauthError) failedUrl.searchParams.set('reason', oauthError);
-			if (oauthErrorDescription) failedUrl.searchParams.set('detail', oauthErrorDescription);
-			return Response.redirect(failedUrl, 302);
-		}
-
-		return Response.redirect(new URL('/auth/idv', url), 302);
+		return new Response('no oauth code, hmm what happened here', { status: 400 });
 	}
 
 	const failed = () => Response.redirect(new URL('/auth/failed', url), 302);
@@ -56,9 +46,7 @@ export async function GET(event: RequestEvent) {
 		}
 
 		const token = (await tokenRes.json()).access_token;
-		if (!token) {
-			return failed();
-		}
+		if (!token) return failed();
 
 		let userData;
 		try {
