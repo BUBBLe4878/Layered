@@ -70,61 +70,74 @@ export async function GET(event) {
                         return ineligible();
                 }
 
-                const slackProfileURL = new URL('https://slack.com/api/users.info');
-                slackProfileURL.searchParams.set('user', slack_id);
+                // Start with IDV-derived values so auth can proceed even if Slack APIs fail.
+                let profilePic = null;
+                let username = [first_name, last_name].filter(Boolean).join(' ').trim();
 
-                const slackProfileBody = new URLSearchParams();
-                slackProfileBody.append('token', env.SLACK_BOT_TOKEN ?? '');
+                if (env.SLACK_BOT_TOKEN) {
+                        try {
+                                const slackProfileURL = new URL('https://slack.com/api/users.info');
+                                slackProfileURL.searchParams.set('user', slack_id);
 
-                const slackProfileRes = await fetch(slackProfileURL, {
-                        method: 'POST',
-                        body: slackProfileBody
-                });
+                                const slackProfileRes = await fetch(slackProfileURL, {
+                                        method: 'GET',
+                                        headers: {
+                                                Authorization: `Bearer ${env.SLACK_BOT_TOKEN}`
+                                        }
+                                });
 
-                const slackProfileResJSON = await slackProfileRes.json();
+                                const slackProfileResJSON = await slackProfileRes.json();
 
-                if (!slackProfileResJSON.ok) {
-                        console.error('Failed to fetch user profile');
-                        return failed();
+                                if (slackProfileResJSON.ok) {
+                                        const slackProfile = slackProfileResJSON['user'];
+                                        profilePic =
+                                                slackProfile['profile']['image_1024'] ??
+                                                slackProfile['profile']['image_512'] ??
+                                                slackProfile['profile']['image_192'] ??
+                                                slackProfile['profile']['image_72'] ??
+                                                slackProfile['profile']['image_48'] ??
+                                                slackProfile['profile']['image_32'] ??
+                                                slackProfile['profile']['image_24'];
+
+                                        username =
+                                                slackProfile['profile']['display_name'] !== ''
+                                                        ? slackProfile['profile']['display_name']
+                                                        : slackProfile['profile']['real_name'];
+                                } else {
+                                        console.error('Failed to fetch user profile from Slack', slackProfileResJSON?.error);
+                                }
+                        } catch (err) {
+                                console.error('Slack profile request failed, using IDV fallback', err);
+                        }
                 }
 
-                const slackProfile = slackProfileResJSON['user'];
+                if (!username || username.length === 0) {
+                        username = `User ${slack_id}`;
+                }
 
-                const profilePic =
-                        slackProfile['profile']['image_1024'] ??
-                        slackProfile['profile']['image_512'] ??
-                        slackProfile['profile']['image_192'] ??
-                        slackProfile['profile']['image_72'] ??
-                        slackProfile['profile']['image_48'] ??
-                        slackProfile['profile']['image_32'] ??
-                        slackProfile['profile']['image_24'];
+                if (env.BETA_CHANNEL_ID && env.BETA_CHANNEL_ID.length > 0 && env.SLACK_BOT_TOKEN) {
+                        try {
+                                const channelMembersURL = new URL('https://slack.com/api/conversations.members');
+                                channelMembersURL.searchParams.set('channel', env.BETA_CHANNEL_ID);
 
-                const username =
-                        slackProfile['profile']['display_name'] !== ''
-                                ? slackProfile['profile']['display_name']
-                                : slackProfile['profile']['real_name'];
+                                const channelMembersRes = await fetch(channelMembersURL, {
+                                        method: 'GET',
+                                        headers: {
+                                                Authorization: `Bearer ${env.SLACK_BOT_TOKEN}`
+                                        }
+                                });
 
-                if (env.BETA_CHANNEL_ID && env.BETA_CHANNEL_ID.length > 0) {
-                        const channelMembersURL = new URL('https://slack.com/api/conversations.members');
-                        channelMembersURL.searchParams.set('channel', env.BETA_CHANNEL_ID);
+                                const channelMembersResJSON = await channelMembersRes.json();
 
-                        const channelMembersBody = new URLSearchParams();
-                        channelMembersBody.append('token', env.SLACK_BOT_TOKEN ?? '');
-
-                        const channelMembersRes = await fetch(channelMembersURL, {
-                                method: 'POST',
-                                body: channelMembersBody
-                        });
-
-                        const channelMembersResJSON = await channelMembersRes.json();
-
-                        if (!channelMembersResJSON.ok) {
-                                console.error('Failed to fetch channel members');
-                                return failed();
-                        }
-
-                        if (!channelMembersResJSON['members'].includes(slack_id)) {
-                                return countdown();
+                                if (channelMembersResJSON.ok) {
+                                        if (!channelMembersResJSON['members'].includes(slack_id)) {
+                                                return countdown();
+                                        }
+                                } else {
+                                        console.error('Failed to fetch channel members', channelMembersResJSON?.error);
+                                }
+                        } catch (err) {
+                                console.error('Slack channel check failed, skipping beta gate fallback', err);
                         }
                 }
 
@@ -202,14 +215,18 @@ export async function GET(event) {
                         }
 
                         if (ref && airtableBase) {
-                                await airtableBase('tblwUPbRqbRBnQl7G').create({
-                                        fldMYF9BuxKbRuSJt: first_name + ' ' + last_name,
-                                        fldXbtQyDOFpWwGBQ: databaseUser.id,
-                                        fldkTgzCj0sz01QQM: primary_email,
-                                        fldeNiHX4OhZEDWM5: 0,
-                                        fld1Sssrs7K69cN0i: 0,
-                                        fldaPDWM3wrIYOAEf: ref
-                                });
+                                try {
+                                        await airtableBase('tblwUPbRqbRBnQl7G').create({
+                                                fldMYF9BuxKbRuSJt: first_name + ' ' + last_name,
+                                                fldXbtQyDOFpWwGBQ: databaseUser.id,
+                                                fldkTgzCj0sz01QQM: primary_email,
+                                                fldeNiHX4OhZEDWM5: 0,
+                                                fld1Sssrs7K69cN0i: 0,
+                                                fldaPDWM3wrIYOAEf: ref
+                                        });
+                                } catch (err) {
+                                        console.error('Airtable referral write failed, continuing login', err);
+                                }
                         }
                 }
 
