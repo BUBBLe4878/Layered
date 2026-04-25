@@ -163,7 +163,14 @@ export async function GET(event) {
                         return Response.redirect('https://fraud.land', 302);
                 }
 
-                let [databaseUser] = await db.select().from(user).where(eq(user.idvId, id)).limit(1);
+                let [databaseUser] = await db
+                        .select({
+                                id: user.id,
+                                trust: user.trust
+                        })
+                        .from(user)
+                        .where(eq(user.idvId, id))
+                        .limit(1);
 
                 if (databaseUser?.trust === 'red') {
                         return Response.redirect('https://fraud.land', 302);
@@ -208,7 +215,14 @@ export async function GET(event) {
                                 hasAdmin: isSuperAdmin
                         });
 
-                        [databaseUser] = await db.select().from(user).where(eq(user.idvId, id)).limit(1);
+                        [databaseUser] = await db
+                                .select({
+                                        id: user.id,
+                                        trust: user.trust
+                                })
+                                .from(user)
+                                .where(eq(user.idvId, id))
+                                .limit(1);
 
                         if (!databaseUser) {
                                 return failed();

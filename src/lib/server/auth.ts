@@ -1,5 +1,5 @@
 import type { RequestEvent } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { eq, getTableColumns } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import { db } from '$lib/server/db';
@@ -28,10 +28,14 @@ export async function createSession(token: string, userId: number) {
 
 export async function validateSessionToken(token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const {
+		journalStreak: _journalStreak,
+		journalStreakLastJournalAt: _journalStreakLastJournalAt,
+		...legacyUserColumns
+	} = getTableColumns(table.user);
 	const [result] = await db
 		.select({
-			// Adjust user table here to tweak returned data
-			user: table.user,
+			user: legacyUserColumns,
 			session: table.session
 		})
 		.from(table.session)
@@ -41,7 +45,12 @@ export async function validateSessionToken(token: string) {
 	if (!result) {
 		return { session: null, user: null };
 	}
-	const { session, user } = result;
+	const { session } = result;
+	const user = {
+		...result.user,
+		journalStreak: 0,
+		journalStreakLastJournalAt: null
+	};
 
 	const sessionExpired = Date.now() >= session.expiresAt.getTime();
 	if (sessionExpired) {
