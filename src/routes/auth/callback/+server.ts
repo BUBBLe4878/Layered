@@ -246,13 +246,21 @@ export async function GET(event) {
 
                 const sessionToken = generateSessionToken();
                 await createSession(sessionToken, databaseUser.id);
+                
+                // Set the cookie on the event object BEFORE returning the response
                 setSessionTokenCookie(
                         event,
                         sessionToken,
                         new Date(Date.now() + DAY_IN_MS * SESSION_EXPIRY_DAYS)
                 );
 
-                return dashboard();
+                // Return a redirect response. SvelteKit will add the cookies set above.
+                return new Response(null, {
+                        status: 302,
+                        headers: {
+                                location: '/dashboard'
+                        }
+                });
         } catch (err) {
                 console.error('[auth/callback] unhandled failure', err);
                 return failed();
