@@ -98,7 +98,7 @@
 
 		<div
 			class="benchy-overlay"
-			style="clip-path: inset(0 0 {revealPercent}% 0)"
+			style="clip-path: inset(0 0 {100 - revealPercent}% 0)"
 		></div>
 	</div>
 
@@ -115,6 +115,7 @@
 			<div class="stat-meta">
 				Clay: {clay} / {MAX_CLAY}
 			</div>
+		</div>
 	</div>
 </div>
 
