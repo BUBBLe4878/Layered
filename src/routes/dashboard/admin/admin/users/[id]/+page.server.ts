@@ -138,15 +138,13 @@ export const actions = {
 		const data = await request.formData();
 
 		const layers = data.get('clay');
-		const bricks = data.get('brick');
 		const shopScore = data.get('market_score');
 		const reason = data.get('reason')?.toString();
 
+		// ✅ FIXED: Only validate clay and market_score (removed brick validation)
 		if (
 			!layers ||
 			isNaN(parseFloat(layers.toString())) ||
-			!bricks ||
-			isNaN(parseFloat(bricks.toString())) ||
 			!shopScore ||
 			isNaN(parseFloat(shopScore.toString()))
 		) {
@@ -160,15 +158,16 @@ export const actions = {
 		const [oldUser] = await db.select(userSelect).from(user).where(eq(user.id, id));
 		if (!oldUser) throw error(404, { message: 'user not found' });
 
+		// ✅ FIXED: Only update clay and shopScore (brick stays the same)
 		await db
 			.update(user)
 			.set({
 				clay: parseFloat(layers.toString()),
-				brick: parseFloat(bricks.toString()),
 				shopScore: parseFloat(shopScore.toString())
 			})
 			.where(eq(user.id, id));
 
+		// ✅ FIXED: Only log clay and shopScore changes
 		await db.insert(currencyAuditLog).values({
 			adminUserId: locals.user.id,
 			targetUserId: id,
@@ -176,7 +175,7 @@ export const actions = {
 			oldBrick: oldUser.brick,
 			oldShopScore: oldUser.shopScore,
 			newClay: parseFloat(layers.toString()),
-			newBrick: parseFloat(bricks.toString()),
+			newBrick: oldUser.brick, // Keep the old brick value (no change)
 			newShopScore: parseFloat(shopScore.toString()),
 			reason
 		});
