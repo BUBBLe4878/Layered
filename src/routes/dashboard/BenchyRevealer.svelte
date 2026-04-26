@@ -7,9 +7,9 @@
 	const MAX_LAYERS = 100;
 	const PRINT_TIME_HOURS = 3.5;
 
-	$derived percent = Math.round((layers / MAX_LAYERS) * 100);
-	$derived printTime = ((layers / MAX_LAYERS) * PRINT_TIME_HOURS).toFixed(1);
-	$derived revealPercent = (layers / MAX_LAYERS) * 100;
+	let percent = $derived(Math.round((layers / MAX_LAYERS) * 100));
+	let printTime = $derived(((layers / MAX_LAYERS) * PRINT_TIME_HOURS).toFixed(1));
+	let revealPercent = $derived((layers / MAX_LAYERS) * 100);
 
 	function reset() {
 		layers = 0;
