@@ -115,6 +115,7 @@
 			<div class="stat-meta">
 				Clay: {clay} / {MAX_CLAY}
 			</div>
+	</div>
 </div>
 
 <style>
