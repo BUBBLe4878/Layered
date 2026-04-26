@@ -5,7 +5,7 @@
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-
+	import BenchyRevealer from './BenchyRevealer.svelte';
 	let performanceModeEnabled = $state(false);
 	let performanceModeReady = $state(false);
 
