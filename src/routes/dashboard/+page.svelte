@@ -10,6 +10,15 @@
 	let performanceModeReady = $state(false);
 	let darkModeEnabled = $state(false);
 	let darkModeReady = $state(false);
+	let currentTheme = $state('1');
+	let themeReady = $state(false);
+
+	const themes = [
+		{ id: '1', name: 'Warm Gold', color: '#c9a25b' },
+		{ id: '2', name: 'Pastel Blue', color: '#60719e' },
+		{ id: '3', name: 'Rose Pink', color: '#d088c3' },
+		{ id: '4', name: 'Teal Green', color: '#4dac9e' }
+	];
 
 	// ✅ Use $page.data instead of props
 	let projectCount = $derived($page.data?.stats?.projectCount ?? 0);
@@ -42,6 +51,16 @@
 		);
 	}
 
+	function persistTheme() {
+		window.localStorage.setItem('colorTheme', currentTheme);
+		document.documentElement.setAttribute('data-theme', currentTheme);
+		window.dispatchEvent(
+			new CustomEvent('themeChanged', {
+				detail: { currentTheme }
+			})
+		);
+	}
+
 	onMount(() => {
 		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
 		performanceModeReady = true;
@@ -50,6 +69,11 @@
 		darkModeEnabled = window.localStorage.getItem('darkModeEnabled') === 'true';
 		darkModeReady = true;
 		persistDarkMode();
+
+		const savedTheme = window.localStorage.getItem('colorTheme') || '1';
+		currentTheme = savedTheme;
+		themeReady = true;
+		persistTheme();
 	});
 </script>
 
@@ -109,6 +133,26 @@
 
 	<div class="themed-box-solid p-4">
 		<h2 class="text-lg font-bold">Settings</h2>
+		
+		<!-- Theme Selector -->
+		<div class="mt-4">
+			<p class="text-sm font-medium mb-3">Color Theme</p>
+			<div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+				{#each themes as theme (theme.id)}
+					<button
+						onclick={() => {
+							if (!themeReady) return;
+							currentTheme = theme.id;
+							persistTheme();
+						}}
+						class="relative rounded-lg border-2 p-3 transition-all {currentTheme === theme.id ? 'border-primary-600 bg-primary-50 shadow-lg dark-mode:border-blue-500 dark-mode:bg-slate-700 dark-mode:shadow-blue-900' : 'border-primary-200 hover:border-primary-400 dark-mode:border-blue-700 dark-mode:hover:border-blue-600'}"
+					>
+						<div class="mb-2 h-6 w-full rounded" style="background-color: {theme.color}"></div>
+						<p class="text-xs font-medium text-center">{theme.name}</p>
+					</button>
+				{/each}
+			</div>
+		</div>
 		
 		<!-- Dark Mode Toggle -->
 		<div class="mt-4">
