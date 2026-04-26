@@ -47,9 +47,8 @@
 	--font-sans: 'Fredoka', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/* Theme 1: Warm Gold (Default) */
-:root[data-theme="1"],
-:root {
+/* Theme 1: Warm Gold (DEFAULT) */
+body {
 	--background-color: #faf6f1;
 	--background-color-secondary: #f5f0e870;
 	--background-color-tertiary: #ede6dead;
@@ -70,7 +69,7 @@
 }
 
 /* Theme 2: Pastel Blue */
-:root[data-theme="2"] {
+body.theme-2 {
 	--background-color: #f5f8fb;
 	--background-color-secondary: #eef3fa;
 	--background-color-tertiary: #e8f0f8;
@@ -90,8 +89,8 @@
 	--color-primary-950: #29366c;
 }
 
-/* Theme 3: Rose/Pink */
-:root[data-theme="3"] {
+/* Theme 3: Rose Pink */
+body.theme-3 {
 	--background-color: #faf6f8;
 	--background-color-secondary: #f5f0f4;
 	--background-color-tertiary: #ede6ed;
@@ -111,8 +110,8 @@
 	--color-primary-950: #802e82;
 }
 
-/* Theme 4: Teal/Green */
-:root[data-theme="4"] {
+/* Theme 4: Teal Green */
+body.theme-4 {
 	--background-color: #f5faf8;
 	--background-color-secondary: #f0f8f5;
 	--background-color-tertiary: #eaf6f1;
@@ -132,7 +131,7 @@
 	--color-primary-950: #25615d;
 }
 
-/* Red Palette - Warm Coral Red */
+/* Common color palettes for all themes */
 :root {
 	--color-red-50: #fef5f4;
 	--color-red-100: #fde9e7;
@@ -146,7 +145,6 @@
 	--color-red-900: #7a241d;
 	--color-red-950: #460f0d;
 
-	/* Orange Palette - Vibrant Warm Orange */
 	--color-orange-50: #fff8f3;
 	--color-orange-100: #ffede3;
 	--color-orange-200: #ffd9c1;
@@ -159,7 +157,6 @@
 	--color-orange-900: #8f2f18;
 	--color-orange-950: #51190a;
 
-	/* Yellow Palette - Sunshine Yellow */
 	--color-yellow-50: #fffef0;
 	--color-yellow-100: #fffbdd;
 	--color-yellow-200: #fff5bb;
@@ -172,7 +169,6 @@
 	--color-yellow-900: #7d5800;
 	--color-yellow-950: #4d3400;
 
-	/* Cyan Palette - Fun Teal */
 	--color-cyan-50: #f0fffe;
 	--color-cyan-100: #d9fffe;
 	--color-cyan-200: #a8fafd;
@@ -185,7 +181,6 @@
 	--color-cyan-900: #1d5968;
 	--color-cyan-950: #0d3540;
 
-	/* Blue Palette - Cheerful Blue */
 	--color-blue-50: #f3f8ff;
 	--color-blue-100: #e6f0ff;
 	--color-blue-200: #c8e0ff;
@@ -198,7 +193,6 @@
 	--color-blue-900: #1e3a8a;
 	--color-blue-950: #0c1e4d;
 
-	/* Purple Palette - Fun Purple */
 	--color-purple-50: #fdf7ff;
 	--color-purple-100: #f8e8ff;
 	--color-purple-200: #f0d0ff;
@@ -211,7 +205,6 @@
 	--color-purple-900: #5e127d;
 	--color-purple-950: #380d4d;
 
-	/* Gray Palette - Warm Grays */
 	--color-gray-50: #faf9f8;
 	--color-gray-100: #f3f1ef;
 	--color-gray-200: #e8e5e1;
@@ -224,7 +217,6 @@
 	--color-gray-900: #2a2622;
 	--color-gray-950: #1a1815;
 
-	/* Animations */
 	--animate-outline-ping: outline-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
