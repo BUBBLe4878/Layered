@@ -17,6 +17,19 @@
 	let changeTrustPending = $state(false);
 
 	let reason = $state('');
+	let displayLayers = $state(0);
+
+	// Initialize display layers from user data
+	$effect(() => {
+		if (user?.clay) {
+			displayLayers = user.clay * 10;
+		}
+	});
+
+	function handleLayersChange(e: Event) {
+		const input = e.target as HTMLInputElement;
+		displayLayers = parseFloat(input.value);
+	}
 </script>
 
 <Head title={'User: ' + user.name} />
@@ -168,16 +181,22 @@
 				>
 					<div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
 						<label class="flex flex-col gap-1">
-							<span class="text-sm font-medium">Layers</span>
+							<span class="text-sm font-medium">Layers (display value)</span>
 							<input
 								type="number"
-								name="clay"
-								value={form?.currency?.fields.clay ?? user.clay*10}
+								value={displayLayers}
+								onchange={handleLayersChange}
 								class="themed-input-on-box"
 								placeholder="Layers"
-								step="0.01"
+								step="10"
 								required
 							/>
+							<input
+								type="hidden"
+								name="clay"
+								value={displayLayers / 10}
+							/>
+							<span class="text-xs text-gray-600">Will submit as: {displayLayers / 10}</span>
 						</label>
 						<label class="flex flex-col gap-1">
 							<span class="text-sm font-medium">Experience</span>
