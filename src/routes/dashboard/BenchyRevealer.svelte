@@ -113,7 +113,7 @@
 			</div>
 
 			<div class="stat-meta">
-				Clay: {clay} / {MAX_CLAY}
+				Layers: {clay*10} / {MAX_CLAY}
 			</div>
 		</div>
 	</div>
