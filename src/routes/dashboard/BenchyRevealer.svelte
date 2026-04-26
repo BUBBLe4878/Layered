@@ -120,11 +120,40 @@
 </div>
 
 <style>
+	:global(body) {
+		--overlay-bg: white;
+		--text-primary: #000;
+		--text-secondary: #999;
+		--text-tertiary: #aaa;
+		--border-color: #eee;
+		--card-bg: #faf8f5;
+		--card-border: #e5e5e5;
+		--progress-bg: #e5e5e5;
+		--progress-fill: #000;
+	}
+
+	:global(body.dark-mode) {
+		--overlay-bg: var(--background-color-secondary);
+		--text-primary: var(--font-color);
+		--text-secondary: #94a3b8;
+		--text-tertiary: #64748b;
+		--border-color: var(--color-blue-700);
+		--card-bg: var(--background-color-tertiary);
+		--card-border: var(--color-blue-700);
+		--progress-bg: var(--color-blue-900);
+		--progress-fill: var(--color-blue-400);
+	}
+
 	.benchy-container-wrapper {
-		background: white;
+		background: var(--overlay-bg);
 		border-radius: 12px;
 		padding: 24px;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	:global(body.dark-mode) .benchy-container-wrapper {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
 
 	.benchy-header {
@@ -135,8 +164,9 @@
 	.benchy-title {
 		font-size: 24px;
 		font-weight: 600;
-		color: #000;
+		color: var(--text-primary);
 		margin: 0;
+		transition: color 0.3s ease;
 	}
 
 	.benchy-container {
@@ -147,7 +177,8 @@
 		background: transparent;
 		border-radius: 12px;
 		overflow: hidden;
-		border: 2px solid #eee;
+		border: 2px solid var(--border-color);
+		transition: border-color 0.3s ease;
 	}
 
 	.benchy-reveal {
@@ -161,7 +192,7 @@
 	.benchy-overlay {
 		position: absolute;
 		inset: 0;
-		background: white;
+		background: var(--overlay-bg);
 		pointer-events: none;
 		transition: clip-path 0.3s ease;
 		z-index: 10;
@@ -169,11 +200,12 @@
 
 	.stat-card {
 		width: 100%;
-		background-color: #faf8f5;
+		background-color: var(--card-bg);
 		border-radius: 12px;
 		padding: 16px;
-		border: 1px solid #e5e5e5;
+		border: 1px solid var(--card-border);
 		text-align: center;
+		transition: background-color 0.3s ease, border-color 0.3s ease;
 	}
 
 	.stat-label {
@@ -182,34 +214,38 @@
 		margin-bottom: 8px;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
-		color: #999;
+		color: var(--text-secondary);
+		transition: color 0.3s ease;
 	}
 
 	.stat-value {
 		font-size: 24px;
 		font-weight: 700;
-		color: #000;
+		color: var(--text-primary);
 		margin-bottom: 8px;
+		transition: color 0.3s ease;
 	}
 
 	.stat-meta {
 		font-size: 12px;
-		color: #aaa;
+		color: var(--text-tertiary);
 		margin-top: 6px;
+		transition: color 0.3s ease;
 	}
 
 	.progress-bar {
 		width: 100%;
 		height: 4px;
-		background: #e5e5e5;
+		background: var(--progress-bg);
 		border-radius: 2px;
 		overflow: hidden;
+		transition: background 0.3s ease;
 	}
 
 	.progress-fill {
 		height: 100%;
-		background: #000;
-		transition: width 0.3s ease;
+		background: var(--progress-fill);
+		transition: width 0.3s ease, background 0.3s ease;
 	}
 
 	.stats-grid {
@@ -220,10 +256,11 @@
 	}
 
 	.mini-stat {
-		background: white;
+		background: var(--overlay-bg);
 		padding: 12px;
 		border-radius: 8px;
-		border: 1px solid #e5e5e5;
+		border: 1px solid var(--card-border);
+		transition: background-color 0.3s ease, border-color 0.3s ease;
 	}
 
 	.mini-label {
@@ -231,14 +268,16 @@
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
-		color: #999;
+		color: var(--text-secondary);
 		margin-bottom: 6px;
+		transition: color 0.3s ease;
 	}
 
 	.mini-value {
 		font-size: 18px;
 		font-weight: 700;
-		color: #000;
+		color: var(--text-primary);
+		transition: color 0.3s ease;
 	}
 
 	@media (max-width: 640px) {
