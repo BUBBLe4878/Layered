@@ -38,24 +38,24 @@
 }
 
 /* ==================== */
-/* COLOR THEME - HAPPY  */
+/* COLOR THEME SYSTEM   */
 /* ==================== */
 
-@theme {
+:root {
 	--font-hero: 'Fredoka', var(--font-sans);
 	--font-hc: 'Phantom Sans', var(--font-sans);
-	--font-sans:
-		'Fredoka', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-		'Segoe UI Symbol', 'Noto Color Emoji';
+	--font-sans: 'Fredoka', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
 
-	/* Background Colors - Light & Warm Happy */
+/* Theme 1: Warm Gold (Default) */
+:root[data-theme="1"],
+:root {
 	--background-color: #faf6f1;
 	--background-color-secondary: #f5f0e870;
 	--background-color-tertiary: #ede6dead;
 	--background-color-quarternary: #e8dcc8;
 	--font-color: #0d0b08;
 
-	/* Primary Color Palette - Warm Gold (happy & vibrant) */
 	--color-primary-50: #fffaf0;
 	--color-primary-100: #fef3c7;
 	--color-primary-200: #fce8a6;
@@ -67,8 +67,73 @@
 	--color-primary-800: #a8823d;
 	--color-primary-900: #8b6a32;
 	--color-primary-950: #5a4623;
+}
 
-	/* Red Palette - Warm Coral Red */
+/* Theme 2: Pastel Blue */
+:root[data-theme="2"] {
+	--background-color: #f5f8fb;
+	--background-color-secondary: #eef3fa;
+	--background-color-tertiary: #e8f0f8;
+	--background-color-quarternary: #dfe9f4;
+	--font-color: #2c3e50;
+
+	--color-primary-50: #f0f6fd;
+	--color-primary-100: #e0ecfb;
+	--color-primary-200: #c1daf7;
+	--color-primary-300: #a1c8f3;
+	--color-primary-400: #81b6ef;
+	--color-primary-500: #60719e;
+	--color-primary-600: #556a94;
+	--color-primary-700: #4a5d8a;
+	--color-primary-800: #3f5080;
+	--color-primary-900: #344376;
+	--color-primary-950: #29366c;
+}
+
+/* Theme 3: Rose/Pink */
+:root[data-theme="3"] {
+	--background-color: #faf6f8;
+	--background-color-secondary: #f5f0f4;
+	--background-color-tertiary: #ede6ed;
+	--background-color-quarternary: #e8dce8;
+	--font-color: #3d1528;
+
+	--color-primary-50: #fdf7fb;
+	--color-primary-100: #fbeff7;
+	--color-primary-200: #f7dff0;
+	--color-primary-300: #f3cfe9;
+	--color-primary-400: #efbfe2;
+	--color-primary-500: #d088c3;
+	--color-primary-600: #c076b6;
+	--color-primary-700: #b064a9;
+	--color-primary-800: #a0529c;
+	--color-primary-900: #90408f;
+	--color-primary-950: #802e82;
+}
+
+/* Theme 4: Teal/Green */
+:root[data-theme="4"] {
+	--background-color: #f5faf8;
+	--background-color-secondary: #f0f8f5;
+	--background-color-tertiary: #eaf6f1;
+	--background-color-quarternary: #e0f1eb;
+	--font-color: #1b3d36;
+
+	--color-primary-50: #f0fdfb;
+	--color-primary-100: #e0fbf7;
+	--color-primary-200: #c1f7ef;
+	--color-primary-300: #a2f3e7;
+	--color-primary-400: #83efdf;
+	--color-primary-500: #4dac9e;
+	--color-primary-600: #459d91;
+	--color-primary-700: #3d8e84;
+	--color-primary-800: #357f77;
+	--color-primary-900: #2d706a;
+	--color-primary-950: #25615d;
+}
+
+/* Red Palette - Warm Coral Red */
+:root {
 	--color-red-50: #fef5f4;
 	--color-red-100: #fde9e7;
 	--color-red-200: #fbcfc7;
@@ -161,28 +226,28 @@
 
 	/* Animations */
 	--animate-outline-ping: outline-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
-	@keyframes outline-ping {
-		0% {
-			outline-width: 0px;
-		}
-		70% {
-			outline-width: 10px;
-			outline-color: transparent;
-		}
-		100% {
-			outline-width: 0px;
-			outline-color: transparent;
-		}
-	}
+}
 
-	/* Smooth fade animation */
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
+@keyframes outline-ping {
+	0% {
+		outline-width: 0px;
+	}
+	70% {
+		outline-width: 10px;
+		outline-color: transparent;
+	}
+	100% {
+		outline-width: 0px;
+		outline-color: transparent;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
 	}
 }
 
@@ -194,7 +259,6 @@
 	body {
 		background-color: var(--background-color);
 		color: var(--font-color);
-		/* Warm, subtle minimalist pattern */
 		background-image:
 			linear-gradient(90deg, rgba(212, 175, 133, 0.05) 1px, transparent 1px),
 			linear-gradient(rgba(212, 175, 133, 0.05) 1px, transparent 1px);
@@ -215,7 +279,6 @@
 			linear-gradient(rgba(96, 165, 250, 0.03) 1px, transparent 1px);
 	}
 
-	/* Smooth defaults */
 	* {
 		transition:
 			color 0.2s ease,
@@ -223,7 +286,6 @@
 			border-color 0.2s ease;
 	}
 
-	/* Text shadow for better readability */
 	body {
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 	}
