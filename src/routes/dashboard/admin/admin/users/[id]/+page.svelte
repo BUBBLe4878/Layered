@@ -172,7 +172,7 @@
 							<input
 								type="number"
 								name="clay"
-								value={form?.currency?.fields.clay ?? user.clay/10}
+								value={form?.currency?.fields.clay ?? user.clay*10}
 								class="themed-input-on-box"
 								placeholder="Layers"
 								step="0.01"
