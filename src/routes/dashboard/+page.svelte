@@ -1,13 +1,15 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
-	import { BarChart3, BookOpen, Compass, PencilRuler, Store } from '@lucide/svelte';
+	import { BarChart3, BookOpen, Compass, PencilRuler, Store, Moon, Sun } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import BenchyRevealer from './BenchyRevealer.svelte';
 	let performanceModeEnabled = $state(false);
 	let performanceModeReady = $state(false);
+	let darkModeEnabled = $state(false);
+	let darkModeReady = $state(false);
 
 	// ✅ Use $page.data instead of props
 	let projectCount = $derived($page.data?.stats?.projectCount ?? 0);
@@ -26,10 +28,28 @@
 		);
 	}
 
+	function persistDarkMode() {
+		window.localStorage.setItem('darkModeEnabled', darkModeEnabled.toString());
+		if (darkModeEnabled) {
+			document.body.classList.add('dark-mode');
+		} else {
+			document.body.classList.remove('dark-mode');
+		}
+		window.dispatchEvent(
+			new CustomEvent('darkModeChanged', {
+				detail: { darkModeEnabled }
+			})
+		);
+	}
+
 	onMount(() => {
 		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
 		performanceModeReady = true;
 		persistPerformanceMode();
+
+		darkModeEnabled = window.localStorage.getItem('darkModeEnabled') === 'true';
+		darkModeReady = true;
+		persistDarkMode();
 	});
 </script>
 
@@ -88,75 +108,113 @@
 	</div>
 
 	<div class="themed-box-solid p-4">
-		<h2 class="text-lg font-bold">Performance mode</h2>
-		<p class="mt-1 text-sm text-gray-700">
-			When enabled, 3D previews are disabled across the site for better performance.
-		</p>
-		<label class="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-primary-200 bg-primary-50/70 px-3 py-2 transition-colors hover:bg-primary-100/80">
-			<input
-				type="checkbox"
-				class="peer sr-only"
-				bind:checked={performanceModeEnabled}
-				onchange={() => {
-					if (!performanceModeReady) return;
-					persistPerformanceMode();
-				}}
-			/>
-			<span
-				class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-primary-300 bg-white text-primary-600 transition-all peer-checked:border-primary-700 peer-checked:bg-primary-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400 peer-focus-visible:ring-offset-2"
-				aria-hidden="true"
-			>
-				{#if performanceModeEnabled}
-					<span class="text-sm font-bold leading-none">✓</span>
-				{/if}
-			</span>
-			<span class="text-sm font-medium">Enable performance mode (disable 3D previews)</span>
-		</label>
-		<p class="mt-2 text-xs text-gray-600">
-			Current status: {performanceModeEnabled ? 'On (3D previews disabled)' : 'Off (3D previews enabled)'}
-		</p>
+		<h2 class="text-lg font-bold">Settings</h2>
+		
+		<!-- Dark Mode Toggle -->
+		<div class="mt-4">
+			<p class="text-sm font-medium mb-2">Theme</p>
+			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-primary-200 bg-primary-50/70 px-3 py-2 transition-colors hover:bg-primary-100/80 dark-mode:border-blue-700 dark-mode:bg-slate-700/70 dark-mode:hover:bg-slate-700">
+				<input
+					type="checkbox"
+					class="peer sr-only"
+					bind:checked={darkModeEnabled}
+					onchange={() => {
+						if (!darkModeReady) return;
+						persistDarkMode();
+					}}
+				/>
+				<span
+					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-primary-300 bg-white text-primary-600 transition-all peer-checked:border-primary-700 peer-checked:bg-primary-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400 peer-focus-visible:ring-offset-2 dark-mode:border-blue-600 dark-mode:bg-slate-800 dark-mode:text-blue-300 dark-mode:peer-checked:border-blue-500 dark-mode:peer-checked:bg-blue-600 dark-mode:peer-checked:text-white"
+					aria-hidden="true"
+				>
+					{#if darkModeEnabled}
+						<span class="text-sm font-bold leading-none">✓</span>
+					{/if}
+				</span>
+				<div class="flex items-center gap-2">
+					{#if darkModeEnabled}
+						<Moon size={16} />
+						<span class="text-sm font-medium">Dark mode</span>
+					{:else}
+						<Sun size={16} />
+						<span class="text-sm font-medium">Light mode</span>
+					{/if}
+				</div>
+			</label>
+		</div>
+
+		<!-- Performance Mode Toggle -->
+		<div class="mt-4">
+			<p class="text-sm font-medium mb-2">Performance</p>
+			<p class="text-xs text-gray-600 dark-mode:text-slate-400 mb-2">
+				When enabled, 3D previews are disabled across the site for better performance.
+			</p>
+			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-primary-200 bg-primary-50/70 px-3 py-2 transition-colors hover:bg-primary-100/80 dark-mode:border-blue-700 dark-mode:bg-slate-700/70 dark-mode:hover:bg-slate-700">
+				<input
+					type="checkbox"
+					class="peer sr-only"
+					bind:checked={performanceModeEnabled}
+					onchange={() => {
+						if (!performanceModeReady) return;
+						persistPerformanceMode();
+					}}
+				/>
+				<span
+					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-primary-300 bg-white text-primary-600 transition-all peer-checked:border-primary-700 peer-checked:bg-primary-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400 peer-focus-visible:ring-offset-2 dark-mode:border-blue-600 dark-mode:bg-slate-800 dark-mode:text-blue-300 dark-mode:peer-checked:border-blue-500 dark-mode:peer-checked:bg-blue-600 dark-mode:peer-checked:text-white"
+					aria-hidden="true"
+				>
+					{#if performanceModeEnabled}
+						<span class="text-sm font-bold leading-none">✓</span>
+					{/if}
+				</span>
+				<span class="text-sm font-medium">Enable performance mode (disable 3D previews)</span>
+			</label>
+			<p class="mt-2 text-xs text-gray-600 dark-mode:text-slate-400">
+				Current status: {performanceModeEnabled ? 'On (3D previews disabled)' : 'Off (3D previews enabled)'}
+			</p>
+		</div>
 	</div>
 </div>
 
 <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 	<a
 		href={resolve('/dashboard/projects')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
 	>
-		<PencilRuler size={22} class="text-primary-800" />
+		<PencilRuler size={22} class="text-primary-800 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Projects</p>
-			<p class="text-xs text-gray-700">Build and manage your work</p>
+			<p class="text-xs text-gray-700 dark-mode:text-slate-400">Build and manage your work</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/explore')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
 	>
-		<Compass size={22} class="text-primary-800" />
+		<Compass size={22} class="text-primary-800 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Explore</p>
-			<p class="text-xs text-gray-700">See what others are making</p>
+			<p class="text-xs text-gray-700 dark-mode:text-slate-400">See what others are making</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/market')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
 	>
-		<Store size={22} class="text-primary-800" />
+		<Store size={22} class="text-primary-800 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Printshop</p>
-			<p class="text-xs text-gray-700">Spend layers and unlock upgrades</p>
+			<p class="text-xs text-gray-700 dark-mode:text-slate-400">Spend layers and unlock upgrades</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/tutorial')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
 	>
-		<BookOpen size={22} class="text-primary-800" />
+		<BookOpen size={22} class="text-primary-800 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Help</p>
-			<p class="text-xs text-gray-700">FAQ, tutorials, and support</p>
+			<p class="text-xs text-gray-700 dark-mode:text-slate-400">FAQ, tutorials, and support</p>
 		</div>
 	</a>
 </div>
