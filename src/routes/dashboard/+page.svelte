@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import BenchyRevealer from './BenchyRevealer.svelte';
+	
 	let performanceModeEnabled = $state(false);
 	let performanceModeReady = $state(false);
 	let darkModeEnabled = $state(false);
@@ -52,13 +53,28 @@
 	}
 
 	function persistTheme() {
+		console.log('Setting theme to:', currentTheme);
 		window.localStorage.setItem('colorTheme', currentTheme);
-		document.documentElement.setAttribute('data-theme', currentTheme);
+		
+		// Remove all theme classes
+		document.body.classList.remove('theme-1', 'theme-2', 'theme-3', 'theme-4');
+		
+		// Add the new theme class (skip theme-1 since it's default)
+		if (currentTheme !== '1') {
+			document.body.classList.add(`theme-${currentTheme}`);
+		}
+		
 		window.dispatchEvent(
 			new CustomEvent('themeChanged', {
 				detail: { currentTheme }
 			})
 		);
+	}
+
+	function changeTheme(themeId: string) {
+		if (!themeReady) return;
+		currentTheme = themeId;
+		persistTheme();
 	}
 
 	onMount(() => {
@@ -140,12 +156,8 @@
 			<div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
 				{#each themes as theme (theme.id)}
 					<button
-						onclick={() => {
-							if (!themeReady) return;
-							currentTheme = theme.id;
-							persistTheme();
-						}}
-						class="relative rounded-lg border-2 p-3 transition-all {currentTheme === theme.id ? 'border-primary-600 bg-primary-50 shadow-lg dark-mode:border-blue-500 dark-mode:bg-slate-700 dark-mode:shadow-blue-900' : 'border-primary-200 hover:border-primary-400 dark-mode:border-blue-700 dark-mode:hover:border-blue-600'}"
+						onclick={() => changeTheme(theme.id)}
+						class="relative rounded-lg border-2 p-3 transition-all {currentTheme === theme.id ? 'border-primary-600 bg-primary-50 shadow-lg dark-mode:border-blue-500 dark-mode:bg-slate-700' : 'border-primary-200 hover:border-primary-400 dark-mode:border-blue-700 dark-mode:hover:border-blue-600'}"
 					>
 						<div class="mb-2 h-6 w-full rounded" style="background-color: {theme.color}"></div>
 						<p class="text-xs font-medium text-center">{theme.name}</p>
@@ -156,7 +168,7 @@
 		
 		<!-- Dark Mode Toggle -->
 		<div class="mt-4">
-			<p class="text-sm font-medium mb-2">Theme</p>
+			<p class="text-sm font-medium mb-2">Display Mode</p>
 			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-primary-200 bg-primary-50/70 px-3 py-2 transition-colors hover:bg-primary-100/80 dark-mode:border-blue-700 dark-mode:bg-slate-700/70 dark-mode:hover:bg-slate-700">
 				<input
 					type="checkbox"
@@ -191,7 +203,7 @@
 		<div class="mt-4">
 			<p class="text-sm font-medium mb-2">Performance</p>
 			<p class="text-xs text-gray-600 dark-mode:text-slate-400 mb-2">
-				When enabled, 3D previews are disabled across the site for better performance.
+				When enabled, 3D previews are disabled for better performance.
 			</p>
 			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-primary-200 bg-primary-50/70 px-3 py-2 transition-colors hover:bg-primary-100/80 dark-mode:border-blue-700 dark-mode:bg-slate-700/70 dark-mode:hover:bg-slate-700">
 				<input
@@ -211,10 +223,10 @@
 						<span class="text-sm font-bold leading-none">✓</span>
 					{/if}
 				</span>
-				<span class="text-sm font-medium">Enable performance mode (disable 3D previews)</span>
+				<span class="text-sm font-medium">Disable 3D previews</span>
 			</label>
 			<p class="mt-2 text-xs text-gray-600 dark-mode:text-slate-400">
-				Current status: {performanceModeEnabled ? 'On (3D previews disabled)' : 'Off (3D previews enabled)'}
+				{performanceModeEnabled ? 'On' : 'Off'}
 			</p>
 		</div>
 	</div>
