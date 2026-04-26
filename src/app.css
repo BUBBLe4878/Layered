@@ -273,16 +273,32 @@
 		@apply bg-primary-600 text-white outline-primary-400 hover:bg-primary-700 hover:shadow-lg;
 	}
 
+	.dark-mode .button.primary {
+		@apply bg-blue-600 text-white outline-blue-400 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900;
+	}
+
 	.button.red {
 		@apply bg-red-600 text-white outline-red-400 hover:bg-red-700 hover:shadow-lg;
+	}
+
+	.dark-mode .button.red {
+		@apply bg-blue-600 text-white outline-blue-400 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900;
 	}
 
 	.button.dark-red {
 		@apply bg-red-700 text-white outline-red-400 hover:bg-red-800 hover:shadow-lg;
 	}
 
+	.dark-mode .button.dark-red {
+		@apply bg-blue-700 text-white outline-blue-400 hover:bg-blue-800 hover:shadow-lg hover:shadow-blue-900;
+	}
+
 	.button.orange {
 		@apply bg-orange-600 text-white outline-orange-400 hover:bg-orange-700 hover:shadow-lg;
+	}
+
+	.dark-mode .button.orange {
+		@apply bg-blue-600 text-white outline-blue-400 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900;
 	}
 
 	/* ---- Links ---- */
@@ -308,7 +324,7 @@
 	}
 
 	.dark-mode .themed-input-light {
-		@apply border-blue-600 bg-slate-800 text-indigo-100 placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500;
+		@apply border-blue-600 bg-slate-700 text-blue-100 placeholder:text-slate-500 focus:border-blue-400 focus:ring-blue-400;
 	}
 
 	.themed-input {
@@ -316,7 +332,7 @@
 	}
 
 	.dark-mode .themed-input {
-		@apply border-blue-600 bg-slate-800 text-indigo-100 placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500;
+		@apply border-blue-600 bg-slate-700 text-blue-100 placeholder:text-slate-500 focus:border-blue-400 focus:ring-blue-400;
 	}
 
 	.themed-input-on-box {
@@ -324,7 +340,7 @@
 	}
 
 	.dark-mode .themed-input-on-box {
-		@apply border-blue-600 bg-slate-700 text-indigo-100 placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500;
+		@apply border-blue-600 bg-slate-700 text-blue-100 placeholder:text-slate-500 focus:border-blue-400 focus:ring-blue-400;
 	}
 
 	.checkbox {
