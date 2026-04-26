@@ -172,19 +172,7 @@
 							<input
 								type="number"
 								name="clay"
-								value={form?.currency?.fields.clay ?? user.clay}
-								class="themed-input-on-box"
-								placeholder="Layers"
-								step="0.01"
-								required
-							/>
-						</label>
-						<label class="flex flex-col gap-1">
-							<span class="text-sm font-medium">Layers</span>
-							<input
-								type="number"
-								name="brick"
-								value={form?.currency?.fields.brick ?? user.brick}
+								value={form?.currency?.fields.clay ?? user.clay/10}
 								class="themed-input-on-box"
 								placeholder="Layers"
 								step="0.01"
