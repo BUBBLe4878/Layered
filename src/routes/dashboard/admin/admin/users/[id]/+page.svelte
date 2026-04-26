@@ -17,27 +17,28 @@
 	let changeTrustPending = $state(false);
 
 	let reason = $state('');
-	let displayLayers = $state(0);
-	let shopScore = $state(0);
-
-	// Initialize display layers from user data
-	$effect(() => {
-		if (user?.clay) {
-			displayLayers = user.clay * 10;
-		}
-		if (user?.shopScore) {
-			shopScore = user.shopScore;
-		}
-	});
+	
+	// ✅ Initialize with derived values to prevent hydration mismatch
+	let displayLayers = $derived((form?.currency?.fields?.clay ?? user.clay ?? 0) * 10);
+	let shopScore = $derived(form?.currency?.fields?.market_score ?? user.shopScore ?? 0);
 
 	function handleLayersChange(e: Event) {
 		const input = e.target as HTMLInputElement;
-		displayLayers = parseFloat(input.value);
+		const newValue = parseFloat(input.value);
+		// Update the hidden clay input
+		const clayInput = document.querySelector('input[name="clay"]') as HTMLInputElement;
+		if (clayInput) {
+			clayInput.value = (newValue / 10).toString();
+		}
 	}
 
 	function handleShopScoreChange(e: Event) {
 		const input = e.target as HTMLInputElement;
-		shopScore = parseFloat(input.value);
+		const newValue = parseFloat(input.value);
+		const scoreInput = document.querySelector('input[name="market_score"]') as HTMLInputElement;
+		if (scoreInput) {
+			scoreInput.value = newValue.toString();
+		}
 	}
 </script>
 
