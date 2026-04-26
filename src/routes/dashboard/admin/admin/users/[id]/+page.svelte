@@ -18,17 +18,26 @@
 
 	let reason = $state('');
 	let displayLayers = $state(0);
+	let shopScore = $state(0);
 
 	// Initialize display layers from user data
 	$effect(() => {
 		if (user?.clay) {
 			displayLayers = user.clay * 10;
 		}
+		if (user?.shopScore) {
+			shopScore = user.shopScore;
+		}
 	});
 
 	function handleLayersChange(e: Event) {
 		const input = e.target as HTMLInputElement;
 		displayLayers = parseFloat(input.value);
+	}
+
+	function handleShopScoreChange(e: Event) {
+		const input = e.target as HTMLInputElement;
+		shopScore = parseFloat(input.value);
 	}
 </script>
 
@@ -203,10 +212,11 @@
 							<input
 								type="number"
 								name="market_score"
-								value={form?.currency?.fields.shopScore ?? user.shopScore}
+								value={shopScore}
+								onchange={handleShopScoreChange}
 								class="themed-input-on-box"
 								placeholder="Experience"
-								step="0.01"
+								step="1"
 								required
 							/>
 						</label>
@@ -222,7 +232,7 @@
 						></textarea>
 					</label>
 					{#if form?.currency?.invalidFields}
-						<p class="w-full text-center text-sm">Invalid fields</p>
+						<p class="w-full text-center text-sm text-red-600">Invalid fields</p>
 					{/if}
 					<button type="submit" class="button md primary mt-3 w-full" disabled={currencyPending}
 						>Apply!</button
@@ -300,7 +310,7 @@
 						</select>
 					</label>
 					{#if form?.changeTrust?.invalidTrust}
-						<p class="w-full text-center text-sm">Invalid trust level</p>
+						<p class="w-full text-center text-sm text-red-600">Invalid trust level</p>
 					{/if}
 					<button type="submit" class="button md primary mt-3 w-full" disabled={changeTrustPending}
 						>Apply!</button
