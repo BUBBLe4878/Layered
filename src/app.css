@@ -273,16 +273,30 @@ body.theme-4 {
 		transition: background-color 0.3s ease, color 0.3s ease;
 	}
 
-	/* Dark Mode - Pastel Blue Theme */
+	/* Dark Mode - True dark theme with pastel-blue accents (#60719E) */
 	body.dark-mode {
-		--background-color: #f5f8fb;
-		--background-color-secondary: #eef3fa;
-		--background-color-tertiary: #e8f0f8;
-		--background-color-quarternary: #dfe9f4;
-		--font-color: #2c3e50;
+		--background-color: #0b1220;
+		--background-color-secondary: #0f1724cc;
+		--background-color-tertiary: #0b122026;
+		--background-color-quarternary: #07101b;
+		--font-color: #e6eef8;
+
+		/* Primary pastel-blue accent (center) and its scale */
+		--color-primary-50: #f2f5fb;
+		--color-primary-100: #e6ecf8;
+		--color-primary-200: #cdd9f0;
+		--color-primary-300: #aab6e1;
+		--color-primary-400: #8793d2;
+		--color-primary-500: #60719e;
+		--color-primary-600: #546186;
+		--color-primary-700: #46506a;
+		--color-primary-800: #38404e;
+		--color-primary-900: #2b303f;
+		--color-primary-950: #1a202b;
+
 		background-image:
-			linear-gradient(90deg, rgba(96, 165, 250, 0.03) 1px, transparent 1px),
-			linear-gradient(rgba(96, 165, 250, 0.03) 1px, transparent 1px);
+			linear-gradient(90deg, rgba(96, 113, 158, 0.03) 1px, transparent 1px),
+			linear-gradient(rgba(96, 113, 158, 0.03) 1px, transparent 1px);
 	}
 
 	* {
