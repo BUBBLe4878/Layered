@@ -8,7 +8,6 @@ export async function load({ locals }) {
 	if (!locals.user) {
 		throw error(500);
 	}
-
 	const marketItems = await db
 		.select({
 			id: marketItem.id,
@@ -24,9 +23,7 @@ export async function load({ locals }) {
 		.from(marketItem)
 		.where(and(eq(marketItem.deleted, false), eq(marketItem.isPublic, true)))
 		.orderBy(marketItem.maxPrice);
-
 	const shopScore = locals.user.shopScore;
-
 	const marketItemsWithPrice = marketItems
 		.map((item) => {
 			const computedPrice = calculateMarketPrice(
@@ -36,13 +33,14 @@ export async function load({ locals }) {
 				item.maxShopScore,
 				shopScore
 			);
-
 			const discountAmount = 1 - computedPrice / item.maxPrice;
 			return { ...item, computedPrice, discountAmount };
 		})
 		.sort((a, b) => a.computedPrice - b.computedPrice);
-
 	return {
-		marketItems: marketItemsWithPrice
+		marketItems: marketItemsWithPrice,
+		user: {
+			hasBasePrinter: locals.user.hasBasePrinter ?? false
+		}
 	};
 }
