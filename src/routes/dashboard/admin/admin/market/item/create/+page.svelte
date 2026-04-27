@@ -1,13 +1,20 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import { enhance } from '$app/forms';
+	
 	let formData = $state({
 		minRequiredShopScore: '0',
 		minShopScore: '0',
+		maxShopScore: '0',
+		minPrice: '0',
 		maxPrice: '0',
 		isHidden: false
 	});
 	let formPending = $state(false);
+
+	function handleSubmit() {
+		console.log('📤 Form submitted with data:', formData);
+	}
 </script>
 
 <Head title="Add market item" />
@@ -15,9 +22,12 @@
 <form
 	method="POST"
 	class="mb-5 flex flex-col gap-3"
+	on:submit={handleSubmit}
 	use:enhance={() => {
+		console.log('🔄 Form submission in progress');
 		formPending = true;
-		return async ({ update }) => {
+		return async ({ update, result }) => {
+			console.log('📥 Server response:', result);
 			await update();
 			formPending = false;
 		};
@@ -81,7 +91,7 @@
 							name="maxShopScore"
 							required
 							min={formData.minShopScore}
-							value="0"
+							bind:value={formData.maxShopScore}
 							class="themed-input-on-box w-full text-center"
 						/>
 					</label>
@@ -110,7 +120,7 @@
 							min="0"
 							required
 							max={formData.maxPrice}
-							value="0"
+							bind:value={formData.minPrice}
 							class="themed-input-on-box w-full text-center"
 						/>
 					</label>
@@ -118,7 +128,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="flex flex-col gap-2">
 		<label class="flex flex-row items-center gap-1">
 			<input type="checkbox" name="isHidden" bind:checked={formData.isHidden} class="checkbox" />
@@ -131,7 +140,6 @@
 			</label>
 		{/if}
 	</div>
-
 	<div class="flex gap-2">
 		<button type="submit" class="button primary md" disabled={formPending}>Create</button>
 		<a href=".." class="button dark-red md">Cancel</a>
