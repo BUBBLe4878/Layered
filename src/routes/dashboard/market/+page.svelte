@@ -20,8 +20,8 @@
 	
 	<!-- Hidden button that only shows when user has a printer -->
 	{#if data.user.hasBasePrinter}
-		<a href={resolve('/dashboard/market/printer-settings')} class="button md secondary mb-5">
-			Printer Settings
+		<a href={resolve('/dashboard/market/hidden')} class="button md secondary mb-5">
+			Hidden Market
 		</a>
 	{/if}
 	
