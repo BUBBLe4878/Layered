@@ -1,34 +1,33 @@
 import { db } from '$lib/server/db/index.js';
-import { marketItem } from '$lib/server/db/schema.js';
+import { hiddenMarketItem } from '$lib/server/db/schema.js'; // Change import
 import { calculateMarketPrice } from '$lib/utils';
 import { error } from '@sveltejs/kit';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 export async function load({ locals }) {
 	if (!locals.user) {
 		throw error(500);
 	}
 
-	// Only allow access if user has a printer
 	if (!locals.user.hasBasePrinter) {
 		throw error(403, 'You need a printer to access the hidden market');
 	}
 
 	const marketItems = await db
 		.select({
-			id: marketItem.id,
-			name: marketItem.name,
-			description: marketItem.description,
-			image: marketItem.image,
-			minPrice: marketItem.minPrice,
-			maxPrice: marketItem.maxPrice,
-			minShopScore: marketItem.minShopScore,
-			maxShopScore: marketItem.maxShopScore,
-			minRequiredShopScore: marketItem.minRequiredShopScore
+			id: hiddenMarketItem.id,
+			name: hiddenMarketItem.name,
+			description: hiddenMarketItem.description,
+			image: hiddenMarketItem.image,
+			minPrice: hiddenMarketItem.minPrice,
+			maxPrice: hiddenMarketItem.maxPrice,
+			minShopScore: hiddenMarketItem.minShopScore,
+			maxShopScore: hiddenMarketItem.maxShopScore,
+			minRequiredShopScore: hiddenMarketItem.minRequiredShopScore
 		})
-		.from(marketItem)
-		.where(and(eq(marketItem.deleted, false), eq(marketItem.isPublic, false))) // Changed to isPublic: false
-		.orderBy(marketItem.maxPrice);
+		.from(hiddenMarketItem)
+		.where(eq(hiddenMarketItem.deleted, false))
+		.orderBy(hiddenMarketItem.maxPrice);
 
 	const shopScore = locals.user.shopScore;
 	const marketItemsWithPrice = marketItems
