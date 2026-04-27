@@ -327,7 +327,7 @@ export const marketItem = pgTable('market_item', {
 	updatedAt: timestamp().notNull().defaultNow()
 });
 
-export const hiddenMarketItem = pgTable('hiddenMarketItem', {
+export const hiddenMarketItem = pgTable('hiddenmarketitem', {
 	id: serial().primaryKey(),
 	createdBy: integer().references(() => user.id),
 
