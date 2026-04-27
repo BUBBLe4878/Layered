@@ -9,7 +9,7 @@ export async function load({ locals }) {
 	}
 	return {};
 }
-
+//comment for redeploy
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		if (!locals.user?.hasAdmin) {
