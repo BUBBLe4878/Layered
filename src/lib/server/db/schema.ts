@@ -327,6 +327,26 @@ export const marketItem = pgTable('market_item', {
 	updatedAt: timestamp().notNull().defaultNow()
 });
 
+export const hiddenMarketItem = pgTable('hiddenMarketItem', {
+	id: serial().primaryKey(),
+	createdBy: integer().references(() => user.id),
+
+	name: text().notNull(),
+	description: text().notNull(),
+	image: text().notNull(),
+
+	minRequiredShopScore: integer().notNull().default(0),
+
+	minShopScore: integer().notNull(),
+	maxShopScore: integer().notNull(),
+	maxPrice: integer().notNull(),
+	minPrice: integer().notNull(),
+
+	deleted: boolean().notNull().default(false),
+	createdAt: timestamp().notNull().defaultNow(),
+	updatedAt: timestamp().notNull().defaultNow()
+});
+
 export const ovenpheusLog = pgTable('ovenpheus_log', {
 	id: serial().primaryKey(),
 	userId: integer().references(() => user.id),
@@ -419,6 +439,7 @@ export type LegionReview = typeof legionReview.$inferSelect;
 export type T2Review = typeof t2Review.$inferSelect;
 
 export type MarketItem = typeof marketItem.$inferSelect;
+export type HiddenMarketItem = typeof hiddenMarketItem.$inferSelect;
 export type Club = typeof club.$inferSelect;
 export type ClubMembership = typeof clubMembership.$inferSelect;
 export type DevlogLike = typeof devlogLike.$inferSelect;
