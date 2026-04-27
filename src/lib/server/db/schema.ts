@@ -328,23 +328,23 @@ export const marketItem = pgTable('market_item', {
 });
 
 export const hiddenMarketItem = pgTable('hiddenmarketitem', {
-	id: serial().primaryKey(),
-	createdBy: integer().references(() => user.id),
+	id: serial('id').primaryKey(),
+	createdBy: integer('createdby').references(() => user.id),
 
-	name: text().notNull(),
-	description: text().notNull(),
-	image: text().notNull(),
+	name: text('name').notNull(),
+	description: text('description').notNull(),
+	image: text('image').notNull(),
 
-	minRequiredShopScore: integer().notNull().default(0),
+	minRequiredShopScore: integer('minrequiredshopscore').notNull().default(0),
 
-	minShopScore: integer().notNull(),
-	maxShopScore: integer().notNull(),
-	maxPrice: integer().notNull(),
-	minPrice: integer().notNull(),
+	minShopScore: integer('minshopscore').notNull(),
+	maxShopScore: integer('maxshopscore').notNull(),
+	maxPrice: integer('maxprice').notNull(),
+	minPrice: integer('minprice').notNull(),
 
-	deleted: boolean().notNull().default(false),
-	createdAt: timestamp().notNull().defaultNow(),
-	updatedAt: timestamp().notNull().defaultNow()
+	deleted: boolean('deleted').notNull().default(false),
+	createdAt: timestamp('createdat').notNull().defaultNow(),
+	updatedAt: timestamp('updatedat').notNull().defaultNow()
 });
 
 export const ovenpheusLog = pgTable('ovenpheus_log', {
