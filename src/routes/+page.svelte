@@ -8,43 +8,24 @@
 	let { data } = $props();
 </script>
 
-<svelte:head>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-</svelte:head>
-
 <Head title="Layered" />
 
-<div class="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/40 flex flex-col overflow-hidden">
-	<!-- Animated background grid -->
-	<div class="fixed inset-0 -z-10 opacity-[0.015]" style="background-image: linear-gradient(90deg, #000 1px, transparent 1px), linear-gradient(#000 1px, transparent 1px); background-size: 40px 40px;"></div>
-	
-	<!-- Gradient accent -->
-	<div class="fixed -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-	
+<div class="min-h-screen bg-[var(--background-color)] flex flex-col">
 	<!-- Header -->
-	<header class="border-b border-slate-200/40 bg-white/50 backdrop-blur-xl sticky top-0 z-50">
+	<header class="border-b border-primary-200 bg-primary-50/40 backdrop-blur-sm sticky top-0 z-50">
 		<div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-			<div class="flex items-center gap-3 group cursor-pointer transition-transform hover:scale-105">
-				<div class="relative">
-					<img src={logo} alt="Layered" class="h-9 w-9 relative z-10" />
-					<div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-20 blur transition-opacity"></div>
-				</div>
-				<span class="font-bold text-slate-900 text-lg tracking-tight">Layered</span>
+			<div class="flex items-center gap-3 group">
+				<img src={logo} alt="Layered" class="h-9 w-9 transition-transform group-hover:scale-110" />
+				<span class="font-bold text-primary-950 text-lg tracking-tight">Layered</span>
 			</div>
 			<nav class="flex items-center gap-6">
-				<a href="/dashboard/tutorial" class="text-sm text-slate-600 hover:text-slate-900 transition-colors duration-200 font-medium">
+				<a href="/dashboard/tutorial" class="text-sm text-primary-700 hover:text-primary-900 transition-colors duration-200 font-medium">
 					Help
 				</a>
 				{#if data.loggedIn}
-					<a href="/dashboard" class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 hover:scale-105">
-						Dashboard
-					</a>
+					<button class="button md primary">Dashboard</button>
 				{:else}
-					<a href="/auth/idv" class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 hover:scale-105">
-						Login
-					</a>
+					<button class="button md primary">Sign In</button>
 				{/if}
 			</nav>
 		</div>
@@ -53,185 +34,255 @@
 	<!-- Main Content -->
 	<main class="flex-1 max-w-6xl mx-auto w-full px-6 py-20 md:py-32">
 		<!-- Hero Section -->
-		<section class="text-center mb-32 relative">
-			<div class="inline-block mb-6 animate-fade-in-up" style="animation-delay: 0ms;">
-				<span class="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 text-slate-700 text-xs font-semibold tracking-wide">
-					✨ Design. Print. Build Your Legacy.
-				</span>
-			</div>
-			
-			<h1 class="text-6xl md:text-7xl font-bold text-slate-900 mb-8 leading-tight tracking-tight animate-fade-in-up" style="animation-delay: 100ms; font-family: 'Clash Display', sans-serif;">
-				Create CAD projects that <span class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">come to life</span>
-			</h1>
-			
-			<p class="text-xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style="animation-delay: 200ms;">
-				Design with any CAD tool, submit your work, get it printed, and earn rewards. Track your progress, build your reputation, and compete on our leaderboard.
-			</p>
-			
-			<div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 300ms;">
-				{#if data.loggedIn}
-					<a href="/dashboard" class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold text-lg hover:shadow-2xl hover:shadow-blue-500/40 transition-all duration-200 hover:scale-105 overflow-hidden">
-						<div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-						<span class="relative flex items-center gap-2">
-							Go to Dashboard
-							<svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-							</svg>
-						</span>
-					</a>
-				{:else}
-					<a href="/auth/idv" class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold text-lg hover:shadow-2xl hover:shadow-blue-500/40 transition-all duration-200 hover:scale-105 overflow-hidden">
-						<div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-						<span class="relative flex items-center gap-2">
-							Sign in with Hack Club
-							<svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-							</svg>
-						</span>
-					</a>
-				{/if}
-				<a href="/dashboard/tutorial" class="group px-8 py-4 rounded-xl border-2 border-slate-300 text-slate-900 font-semibold text-lg hover:bg-slate-50 transition-all duration-200 hover:border-slate-400">
-					Learn More
-				</a>
+		<section class="mb-32">
+			<div class="grid md:grid-cols-2 gap-16 items-center">
+				<!-- Text Content -->
+				<div class="space-y-8">
+					<div class="space-y-4">
+						<div class="inline-block px-3 py-1.5 rounded-lg bg-primary-100/60 border border-primary-300/40">
+							<span class="text-xs font-semibold text-primary-900 tracking-wide">CAD × 3D PRINTING × MAKER</span>
+						</div>
+						<h1 class="text-5xl md:text-6xl font-bold text-primary-950 leading-tight">
+							Design in Layers. <br /> Build Your Vision.
+						</h1>
+						<p class="text-lg text-primary-800 leading-relaxed max-w-xl">
+							Layered is where makers design CAD projects, get them 3D printed, and build reputation. Track your progress, unlock rewards, and compete on the leaderboard.
+						</p>
+					</div>
+
+					<div class="flex flex-col sm:flex-row gap-4 pt-4">
+						{#if data.loggedIn}
+							<button class="button md primary">Go to Dashboard →</button>
+						{:else}
+							<button class="button md primary">Sign in with Hack Club →</button>
+						{/if}
+						<button class="button md" style="background-color: transparent; border: 2px solid var(--color-primary-300); color: var(--font-color); hover: border-color: var(--color-primary-500);">
+							Learn More
+						</button>
+					</div>
+				</div>
+
+				<!-- CAD Blueprint Visualization -->
+				<div class="relative h-96 hidden md:block">
+					<svg viewBox="0 0 400 400" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+						<!-- Grid background -->
+						<defs>
+							<pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+								<path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--color-primary-300)" stroke-width="0.5" opacity="0.3"/>
+							</pattern>
+						</defs>
+						<rect width="400" height="400" fill="var(--background-color)" />
+						<rect width="400" height="400" fill="url(#grid)" />
+
+						<!-- Coordinate axes -->
+						<line x1="50" y1="350" x2="350" y2="350" stroke="var(--color-primary-500)" stroke-width="2"/>
+						<line x1="50" y1="350" x2="50" y2="50" stroke="var(--color-primary-500)" stroke-width="2"/>
+						<text x="360" y="365" font-size="12" fill="var(--color-primary-900)" font-family="monospace">X</text>
+						<text x="25" y="35" font-size="12" fill="var(--color-primary-900)" font-family="monospace">Z</text>
+
+						<!-- Isometric cube 1 (front) -->
+						<g opacity="0.8">
+							<path d="M 100 200 L 150 170 L 150 270 L 100 300 Z" fill="var(--color-primary-100)" stroke="var(--color-primary-600)" stroke-width="2"/>
+							<path d="M 100 200 L 150 170 L 200 200 L 150 230 Z" fill="var(--color-primary-200)" stroke="var(--color-primary-600)" stroke-width="2"/>
+							<path d="M 150 230 L 200 200 L 200 300 L 150 330 Z" fill="var(--color-primary-50)" stroke="var(--color-primary-600)" stroke-width="2"/>
+						</g>
+
+						<!-- Isometric cube 2 (back/stacked) -->
+						<g opacity="0.7">
+							<path d="M 220 240 L 270 210 L 270 310 L 220 340 Z" fill="var(--color-primary-100)" stroke="var(--color-primary-600)" stroke-width="2"/>
+							<path d="M 220 240 L 270 210 L 320 240 L 270 270 Z" fill="var(--color-primary-200)" stroke="var(--color-primary-600)" stroke-width="2"/>
+							<path d="M 270 270 L 320 240 L 320 340 L 270 370 Z" fill="var(--color-primary-50)" stroke="var(--color-primary-600)" stroke-width="2"/>
+						</g>
+
+						<!-- Dimension lines -->
+						<line x1="100" y1="320" x2="220" y2="320" stroke="var(--color-primary-400)" stroke-width="1" stroke-dasharray="3,3"/>
+						<line x1="100" y1="315" x2="100" y2="325" stroke="var(--color-primary-400)" stroke-width="1"/>
+						<line x1="220" y1="315" x2="220" y2="325" stroke="var(--color-primary-400)" stroke-width="1"/>
+						<text x="155" y="345" font-size="10" fill="var(--color-primary-700)" font-family="monospace" text-anchor="middle">120mm</text>
+
+						<!-- Center point markers -->
+						<circle cx="150" cy="230" r="3" fill="var(--color-primary-600)"/>
+						<circle cx="270" cy="270" r="3" fill="var(--color-primary-600)"/>
+
+						<!-- Rotation indicator -->
+						<g opacity="0.5">
+							<path d="M 320 100 Q 340 80 360 100" fill="none" stroke="var(--color-primary-500)" stroke-width="1.5" stroke-dasharray="2,2"/>
+							<text x="365" y="100" font-size="11" fill="var(--color-primary-700)" font-family="monospace">45°</text>
+						</g>
+					</svg>
+				</div>
 			</div>
 		</section>
 
 		<!-- Features Grid -->
 		<section class="grid md:grid-cols-3 gap-6 mb-32">
 			{#each [
-				{ icon: '→', title: 'Build Projects', desc: 'Use any CAD tool you want. We handle the rest. Design with freedom, no restrictions.' },
-				{ icon: '↑', title: 'Track Progress', desc: 'Streaks, layers, and experience. Watch your stats grow as you complete more projects.' },
-				{ icon: '★', title: 'Get Rewards', desc: 'Ship approved projects. Earn stickers, physical rewards, and unlock special perks.' }
-			] as feature, i}
-				<div class="group relative p-8 rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-slate-300/80" style="animation: fade-in-up 0.5s ease-out {400 + i * 100}ms both;">
-					<div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 via-transparent to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-					
-					<div class="relative">
-						<div class="text-5xl font-bold bg-gradient-to-br from-blue-500 to-purple-500 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300 origin-left">
-							{feature.icon}
+				{ title: 'Design', desc: 'Use Fusion 360, Blender, or any CAD tool. Export and submit your models.', icon: '⬡' },
+				{ title: 'Print', desc: 'We handle production. Your designs become real objects you can hold.' , icon: '⬢'},
+				{ title: 'Earn', desc: 'Complete goals, unlock rewards, and build your maker reputation.' , icon: '⬣'}
+			] as feature}
+				<div class="group themed-box-solid hover:-translate-y-1">
+					<div class="flex flex-col h-full gap-4">
+						<div class="text-4xl opacity-70">{feature.icon}</div>
+						<div>
+							<h3 class="text-xl font-bold text-primary-950 mb-2">{feature.title}</h3>
+							<p class="text-primary-800 leading-relaxed">{feature.desc}</p>
 						</div>
-						<h3 class="text-xl font-semibold text-slate-900 mb-3">{feature.title}</h3>
-						<p class="text-slate-600 leading-relaxed">
-							{feature.desc}
-						</p>
 					</div>
 				</div>
 			{/each}
 		</section>
 
-		<!-- How It Works -->
+		<!-- How It Works - Technical Flow -->
 		<section class="mb-32">
-			<div class="text-center mb-16">
-				<h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4" style="font-family: 'Clash Display', sans-serif;">
-					How It Works
-				</h2>
-				<p class="text-slate-600 text-lg">5 simple steps to ship your design</p>
+			<div class="mb-12">
+				<h2 class="text-4xl font-bold text-primary-950 mb-2">The Process</h2>
+				<p class="text-primary-700">5 steps from concept to reality</p>
 			</div>
 
-			<div class="relative">
-				<!-- Connecting line (hidden on mobile) -->
-				<div class="hidden md:block absolute top-12 left-0 right-0 h-1 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 -z-10"></div>
-
-				<div class="grid md:grid-cols-5 gap-6">
-					{#each [
-						{ num: 1, title: 'Design', desc: 'Create a 3D model using any CAD software and upload it.' },
-						{ num: 2, title: 'Submit', desc: 'Send it for review. Our team checks quality and specs.' },
-						{ num: 3, title: 'Review', desc: 'Get feedback and iterate with community. Peers help you improve.' },
-						{ num: 4, title: 'Print', desc: 'Your approved design gets 3D printed and shipped to you.' },
-						{ num: 5, title: 'Earn', desc: 'Gain layers, unlock rewards, climb the leaderboard.' }
-					] as step, i}
-						<div class="relative group" style="animation: fade-in-up 0.5s ease-out {600 + i * 100}ms both;">
-							<div class="flex flex-col items-center">
-								<div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-bold flex items-center justify-center text-2xl mb-4 group-hover:shadow-lg group-hover:shadow-blue-500/40 transition-all duration-300 group-hover:scale-110 relative z-10">
-									{step.num}
-								</div>
-								<h4 class="font-semibold text-slate-900 mb-2 text-center">{step.title}</h4>
-								<p class="text-slate-600 text-sm text-center leading-relaxed">{step.desc}</p>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		</section>
-
-		<!-- Stats Section -->
-		<section class="mb-32">
-			<div class="grid md:grid-cols-3 gap-6">
+			<div class="space-y-6">
 				{#each [
-					{ stat: '24/7', desc: 'Submit projects anytime, anywhere.' },
-					{ stat: 'Real Prints', desc: 'Your designs become physical objects.' },
-					{ stat: 'Community', desc: 'Compete and collaborate with makers.' }
-				] as item, i}
-					<div class="group relative p-8 text-center rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 border border-slate-200/60 hover:shadow-xl hover:border-slate-300/80 transition-all duration-300" style="animation: fade-in-up 0.5s ease-out {900 + i * 100}ms both;">
-						<div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-						<div class="relative">
-							<p class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300 origin-center">
-								{item.stat}
-							</p>
-							<p class="text-slate-600">{item.desc}</p>
+					{ num: '01', title: 'Design', desc: 'Create your CAD model with any tool (Fusion 360, Blender, FreeCAD, etc.)', time: '1-2 weeks' },
+					{ num: '02', title: 'Prepare', desc: 'Export as STL/STEP and prepare for printing. Check dimensions and tolerances.', time: '1-2 days' },
+					{ num: '03', title: 'Submit', desc: 'Upload your files and claim the project. Set your reward goal.', time: 'Minutes' },
+					{ num: '04', title: 'Review', desc: 'Our team reviews your submission. Peers provide feedback and validation.', time: '3-5 days' },
+					{ num: '05', title: 'Receive', desc: 'Approved? We print and ship your design. You earn your reward.', time: '2-3 weeks' }
+				] as step, i}
+					<div class="themed-box-solid flex gap-6 items-start hover:-translate-y-0.5 transition-transform">
+						<div class="flex-shrink-0 w-16 h-16 rounded-lg bg-primary-100 border-2 border-primary-300 flex items-center justify-center">
+							<span class="text-2xl font-bold text-primary-700">{step.num}</span>
+						</div>
+						<div class="flex-1 py-2">
+							<div class="flex items-baseline gap-3 mb-2">
+								<h3 class="text-lg font-bold text-primary-950">{step.title}</h3>
+								<span class="text-xs text-primary-600 bg-primary-100 px-2 py-1 rounded">{step.time}</span>
+							</div>
+							<p class="text-primary-800">{step.desc}</p>
 						</div>
 					</div>
 				{/each}
 			</div>
 		</section>
 
+		<!-- Stats with Grid -->
+		<section class="mb-32">
+			<div class="grid md:grid-cols-3 gap-6">
+				{#each [
+					{ label: '24/7 Access', value: '∞', desc: 'Submit anytime' },
+					{ label: 'Real Prints', value: '📦', desc: 'Physical objects' },
+					{ label: 'Community', value: '👥', desc: 'Compete & Collaborate' }
+				] as stat}
+					<div class="themed-box-solid text-center py-8 hover:shadow-lg transition-shadow">
+						<div class="text-5xl mb-3 opacity-70">{stat.value}</div>
+						<h3 class="text-lg font-bold text-primary-950 mb-1">{stat.label}</h3>
+						<p class="text-sm text-primary-700">{stat.desc}</p>
+					</div>
+				{/each}
+			</div>
+		</section>
+
+		<!-- Blueprint Technical Specs Section -->
+		<section class="mb-32">
+			<div class="themed-box-solid border-2 border-primary-300">
+				<div class="space-y-6">
+					<div>
+						<h2 class="text-3xl font-bold text-primary-950 mb-2">Technical Specs</h2>
+						<p class="text-primary-700">Everything you need to know about submitting</p>
+					</div>
+
+					<div class="grid md:grid-cols-2 gap-8">
+						<div class="space-y-4">
+							<div>
+								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+									<span class="text-lg">📐</span> Supported Formats
+								</h3>
+								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+									<li>• STL, STEP, IGES</li>
+									<li>• OBJ, FBX, 3DS</li>
+									<li>• Native Fusion 360 files</li>
+								</ul>
+							</div>
+							<div>
+								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+									<span class="text-lg">📏</span> Size Limits
+								</h3>
+								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+									<li>• Max 300 × 300 × 300 mm</li>
+									<li>• Min wall thickness: 0.8 mm</li>
+									<li>• File size: ≤ 50 MB</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="space-y-4">
+							<div>
+								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+									<span class="text-lg">⚙️</span> Materials
+								</h3>
+								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+									<li>• PLA (standard)</li>
+									<li>• ABS, PETG</li>
+									<li>• Resin (for precision)</li>
+								</ul>
+							</div>
+							<div>
+								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+									<span class="text-lg">✓</span> Quality Checks
+								</h3>
+								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+									<li>• Structural integrity</li>
+									<li>• Print feasibility</li>
+									<li>• Design originality</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		<!-- CTA Section -->
-		<section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-12 md:p-20 text-center shadow-2xl" style="animation: fade-in-up 0.5s ease-out 1200ms both;">
-			<div class="absolute inset-0 opacity-10 mix-blend-multiply" style="background-image: url('data:image/svg+xml,%3Csvg width=%2260%27 height=%2760%27 viewBox=%270 0 60 60%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cg fill=%27none%27 fill-rule=%27evenodd%27%3E%3Cg fill=%27%23000%27 fill-opacity=%270.1%27%3E%3Cpath d=%27M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z%27/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
-			
-			<div class="relative z-10">
-				<h2 class="text-4xl md:text-5xl font-bold text-white mb-4" style="font-family: 'Clash Display', sans-serif;">
-					Ready to start creating?
-				</h2>
-				<p class="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-					Join the maker community. Design, print, and build your reputation one project at a time.
+		<section class="space-y-8 text-center">
+			<div>
+				<h2 class="text-4xl font-bold text-primary-950 mb-4">Ready to Design?</h2>
+				<p class="text-lg text-primary-800 max-w-2xl mx-auto">
+					Join the Layered community. Your next 3D printed creation is one submission away.
 				</p>
-				
+			</div>
+
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
 				{#if data.loggedIn}
-					<a href="/dashboard" class="inline-block px-8 py-4 rounded-xl bg-white text-purple-600 font-bold text-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-						Go to Dashboard
-					</a>
+					<button class="button md primary">Go to Dashboard →</button>
 				{:else}
-					<a href="/auth/idv" class="inline-block px-8 py-4 rounded-xl bg-white text-purple-600 font-bold text-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-						Sign in with Hack Club
-					</a>
+					<button class="button md primary">Sign in with Hack Club →</button>
 				{/if}
+				<button class="button md" style="background-color: transparent; border: 2px solid var(--color-primary-300); color: var(--font-color);">
+					Read the Docs
+				</button>
 			</div>
 		</section>
 	</main>
 
 	<!-- Footer -->
-	<footer class="mt-20 border-t border-slate-200/40 bg-white/30 backdrop-blur-xl">
-		<div class="max-w-6xl mx-auto px-6 py-12 text-center text-slate-700">
-			<p class="mb-2">Made with ❤ by <a href="https://hackclub.com" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors">Hack Club</a></p>
-			<p class="text-sm text-slate-500">Building the future of maker education</p>
+	<footer class="mt-20 border-t border-primary-200 bg-primary-50/30 backdrop-blur-sm">
+		<div class="max-w-6xl mx-auto px-6 py-12 text-center text-primary-800">
+			<p class="mb-2">Made by <a href="https://hackclub.com" class="text-primary-600 hover:text-primary-700 font-semibold transition-colors">Hack Club</a></p>
+			<p class="text-sm text-primary-700">Building the future of maker education</p>
 		</div>
 	</footer>
 </div>
 
 <style>
-	@keyframes fade-in-up {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
 	:global(body) {
-		font-family: 'Inter', sans-serif;
+		font-family: 'Fredoka', 'Sora', ui-sans-serif, system-ui, sans-serif;
 	}
 
 	:global(h1, h2, h3, h4, h5, h6) {
-		font-family: 'Inter', sans-serif;
+		font-family: 'Fredoka', ui-sans-serif, system-ui, sans-serif;
 		font-weight: 600;
 	}
 
-	:global(.animate-fade-in-up) {
-		animation: fade-in-up 0.6s ease-out forwards;
-		opacity: 0;
+	.button {
+		font-family: 'Fredoka', ui-sans-serif;
 	}
 </style>
