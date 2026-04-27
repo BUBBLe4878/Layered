@@ -273,13 +273,13 @@ body.theme-4 {
 		transition: background-color 0.3s ease, color 0.3s ease;
 	}
 
-	/* Dark Mode */
+	/* Dark Mode - Pastel Blue Theme */
 	body.dark-mode {
-		--background-color: #0f1419;
-		--background-color-secondary: #1a202c;
-		--background-color-tertiary: #2d3748;
-		--background-color-quarternary: #4a5568;
-		--font-color: #e0e7ff;
+		--background-color: #f5f8fb;
+		--background-color-secondary: #eef3fa;
+		--background-color-tertiary: #e8f0f8;
+		--background-color-quarternary: #dfe9f4;
+		--font-color: #2c3e50;
 		background-image:
 			linear-gradient(90deg, rgba(96, 165, 250, 0.03) 1px, transparent 1px),
 			linear-gradient(rgba(96, 165, 250, 0.03) 1px, transparent 1px);
@@ -375,7 +375,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .link {
-		@apply text-blue-400 hover:text-blue-300;
+		@apply text-primary-600 hover:text-primary-700;
 	}
 
 	.list-link {
@@ -383,7 +383,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .list-link {
-		@apply text-blue-400 hover:text-blue-300;
+		@apply text-primary-600 hover:text-primary-700;
 	}
 
 	/* ---- Form Inputs ---- */
@@ -416,7 +416,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .checkbox {
-		@apply border-blue-600 bg-slate-800 accent-blue-500 hover:border-blue-500 transition-all duration-200;
+		@apply border-primary-300 bg-primary-50 accent-primary-500 hover:border-primary-400 transition-all duration-200;
 	}
 
 	/* ---- Themed Boxes ---- */
@@ -431,7 +431,7 @@ body.theme-4 {
 	.dark-mode .themed-box-prominent,
 	.dark-mode .themed-box-solid,
 	.dark-mode .themed-box-solid-prominent {
-		@apply border-blue-700 bg-slate-800/60 p-4;
+		@apply border-primary-300 bg-primary-50/80 p-4;
 	}
 
 	.themed-box-solid {
@@ -439,7 +439,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .themed-box-solid {
-		@apply shadow-lg shadow-slate-900 hover:shadow-xl hover:shadow-slate-800 hover:border-blue-600 transition-all duration-200;
+		@apply shadow-lg shadow-primary-200 hover:shadow-xl hover:shadow-primary-300 hover:border-primary-400 transition-all duration-200;
 	}
 
 	.themed-box-solid-prominent {
@@ -447,7 +447,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .themed-box-solid-prominent {
-		@apply hover:shadow-md hover:shadow-slate-800 hover:border-blue-600 transition-all duration-200;
+		@apply hover:shadow-md hover:shadow-primary-200 hover:border-primary-400 transition-all duration-200;
 	}
 
 	/* ---- Enclosure Background (Textured) ---- */
@@ -460,8 +460,8 @@ body.theme-4 {
 	}
 
 	.dark-mode .enclosure-bg {
-		background-color: #1a202c;
-		@apply border-blue-700;
+		background-color: #f0f6fd;
+		@apply border-primary-300;
 	}
 
 	.enclosure-bg::before {
@@ -550,27 +550,27 @@ body.theme-4 {
 	.dark-mode h4,
 	.dark-mode h5,
 	.dark-mode h6 {
-		@apply text-blue-100;
+		@apply text-primary-900;
 	}
 
 	.dark-mode p {
-		@apply text-slate-300;
+		@apply text-primary-800;
 	}
 
 	.dark-mode .text-primary-900 {
-		@apply text-blue-200;
+		@apply text-primary-900;
 	}
 
 	.dark-mode .text-gray-700 {
-		@apply text-slate-300;
+		@apply text-primary-800;
 	}
 
 	.dark-mode .text-gray-600 {
-		@apply text-slate-400;
+		@apply text-primary-700;
 	}
 
 	.dark-mode .text-primary-800 {
-		@apply text-blue-300;
+		@apply text-primary-800;
 	}
 }
 
