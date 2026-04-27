@@ -8,6 +8,12 @@ export async function load({ locals }) {
 	if (!locals.user) {
 		throw error(500);
 	}
+
+	// Only allow access if user has a printer
+	if (!locals.user.hasBasePrinter) {
+		throw error(403, 'You need a printer to access the hidden market');
+	}
+
 	const marketItems = await db
 		.select({
 			id: marketItem.id,
@@ -21,8 +27,9 @@ export async function load({ locals }) {
 			minRequiredShopScore: marketItem.minRequiredShopScore
 		})
 		.from(marketItem)
-		.where(and(eq(marketItem.deleted, false), eq(marketItem.isPublic, true)))
+		.where(and(eq(marketItem.deleted, false), eq(marketItem.isPublic, false))) // Changed to isPublic: false
 		.orderBy(marketItem.maxPrice);
+
 	const shopScore = locals.user.shopScore;
 	const marketItemsWithPrice = marketItems
 		.map((item) => {
@@ -37,6 +44,7 @@ export async function load({ locals }) {
 			return { ...item, computedPrice, discountAmount };
 		})
 		.sort((a, b) => a.computedPrice - b.computedPrice);
+
 	return {
 		marketItems: marketItemsWithPrice,
 		user: {
