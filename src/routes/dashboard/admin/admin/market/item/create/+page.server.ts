@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { marketItem } from '$lib/server/db/schema.js';
+import { marketItem, hiddenMarketItem } from '$lib/server/db/schema.js';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
@@ -7,7 +7,6 @@ export async function load({ locals }) {
 	if (!locals.user?.hasAdmin) {
 		throw error(403, { message: 'oi get out' });
 	}
-
 	return {};
 }
 
@@ -27,8 +26,7 @@ export const actions: Actions = {
 		const minPrice = parseInt(formData.get('minPrice')?.toString() || '0');
 		const maxPrice = parseInt(formData.get('maxPrice')?.toString() || '0');
 		const isPublic = formData.get('isPublic') === 'on';
-
-		// Don't need to implement proper validation, page is admins only
+		const isHidden = formData.get('isHidden') === 'on';
 
 		if (!name || !description || !image) {
 			throw error(400, { message: 'Missing required fields' });
@@ -44,18 +42,32 @@ export const actions: Actions = {
 			});
 		}
 
-		await db.insert(marketItem).values({
-			createdBy: locals.user.id,
-			name,
-			description,
-			image,
-			minRequiredShopScore,
-			minShopScore,
-			maxShopScore,
-			minPrice,
-			maxPrice,
-			isPublic
-		});
+		if (isHidden) {
+			await db.insert(hiddenMarketItem).values({
+				createdBy: locals.user.id,
+				name,
+				description,
+				image,
+				minRequiredShopScore,
+				minShopScore,
+				maxShopScore,
+				minPrice,
+				maxPrice
+			});
+		} else {
+			await db.insert(marketItem).values({
+				createdBy: locals.user.id,
+				name,
+				description,
+				image,
+				minRequiredShopScore,
+				minShopScore,
+				maxShopScore,
+				minPrice,
+				maxPrice,
+				isPublic
+			});
+		}
 
 		return redirect(302, '/dashboard/admin/admin/market');
 	}
