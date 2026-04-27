@@ -1,20 +1,17 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import { enhance } from '$app/forms';
-
 	let formData = $state({
 		minRequiredShopScore: '0',
 		minShopScore: '0',
-		maxPrice: '0'
+		maxPrice: '0',
+		isHidden: false
 	});
-
 	let formPending = $state(false);
 </script>
 
 <Head title="Add market item" />
-
 <h1 class="mt-5 mb-3 font-hero text-3xl">Add market item</h1>
-
 <form
 	method="POST"
 	class="mb-5 flex flex-col gap-3"
@@ -30,7 +27,6 @@
 		Name
 		<input type="text" name="name" placeholder="Orpheus" required class="themed-input w-full" />
 	</label>
-
 	<label class="flex flex-col gap-1">
 		Description
 		<textarea
@@ -40,7 +36,6 @@
 			class="themed-input w-full"
 		></textarea>
 	</label>
-
 	<label class="flex flex-col gap-1">
 		Image URL
 		<input
@@ -51,7 +46,6 @@
 			class="themed-input w-full"
 		/>
 	</label>
-
 	<label class="flex flex-col gap-1">
 		Min required experience
 		<input
@@ -62,7 +56,6 @@
 			class="themed-input w-full"
 		/>
 	</label>
-
 	<div class="flex flex-col gap-1">
 		<p class="flex flex-col gap-1">Pricing</p>
 		<div class="themed-box flex flex-col gap-3 p-3">
@@ -94,7 +87,6 @@
 					</label>
 				</div>
 			</div>
-
 			<div class="flex flex-row gap-3">
 				<div class="flex-1">
 					<label class="flex flex-col gap-1">
@@ -127,10 +119,18 @@
 		</div>
 	</div>
 
-	<label class="flex flex-row items-center gap-1">
-		<input type="checkbox" name="isPublic" class="checkbox" />
-		<span>Is public</span>
-	</label>
+	<div class="flex flex-col gap-2">
+		<label class="flex flex-row items-center gap-1">
+			<input type="checkbox" name="isHidden" bind:checked={formData.isHidden} class="checkbox" />
+			<span>Hidden market item</span>
+		</label>
+		{#if !formData.isHidden}
+			<label class="flex flex-row items-center gap-1">
+				<input type="checkbox" name="isPublic" class="checkbox" />
+				<span>Is public</span>
+			</label>
+		{/if}
+	</div>
 
 	<div class="flex gap-2">
 		<button type="submit" class="button primary md" disabled={formPending}>Create</button>
