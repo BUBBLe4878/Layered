@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { marketItem, marketItemOrder, user } from '$lib/server/db/schema.js';
+import { hiddenMarketItem, marketItemOrder, user } from '$lib/server/db/schema.js';
 import { decrypt } from '$lib/server/encryption';
 import { getUserData } from '$lib/server/idvUserData';
 import { calculateMarketPrice } from '$lib/utils';
@@ -13,7 +13,6 @@ export async function load({ locals, params }) {
 	}
 
 	const id: number = parseInt(params.id);
-
 	const itemWithPrice = await getItemWithPrice(id, locals);
 
 	let userDataError = false;
@@ -21,14 +20,12 @@ export async function load({ locals, params }) {
 
 	if (locals.user.idvToken) {
 		let userData = null;
-
 		try {
 			const token = decrypt(locals.user.idvToken);
 			userData = await getUserData(token);
 		} catch {
 			userDataError = true;
 		}
-
 		addresses = userData?.addresses;
 	} else {
 		userDataError = true;
@@ -48,7 +45,6 @@ export const actions = {
 		}
 
 		const id: number = parseInt(params.id);
-
 		const data = await request.formData();
 		const addressId = data.get('address')?.toString();
 		const notes = data.get('notes')?.toString();
@@ -64,7 +60,6 @@ export const actions = {
 		const itemWithPrice = await getItemWithPrice(id, locals);
 
 		let userData = null;
-
 		try {
 			const token = decrypt(locals.user.idvToken!);
 			userData = await getUserData(token);
@@ -115,18 +110,18 @@ export const actions = {
 async function getItemWithPrice(id: number, locals: { user: { shopScore: number } | null }) {
 	const [item] = await db
 		.select({
-			id: marketItem.id,
-			name: marketItem.name,
-			description: marketItem.description,
-			image: marketItem.image,
-			minPrice: marketItem.minPrice,
-			maxPrice: marketItem.maxPrice,
-			minShopScore: marketItem.minShopScore,
-			maxShopScore: marketItem.maxShopScore,
-			minRequiredShopScore: marketItem.minRequiredShopScore
+			id: hiddenMarketItem.id,
+			name: hiddenMarketItem.name,
+			description: hiddenMarketItem.description,
+			image: hiddenMarketItem.image,
+			minPrice: hiddenMarketItem.minPrice,
+			maxPrice: hiddenMarketItem.maxPrice,
+			minShopScore: hiddenMarketItem.minShopScore,
+			maxShopScore: hiddenMarketItem.maxShopScore,
+			minRequiredShopScore: hiddenMarketItem.minRequiredShopScore
 		})
-		.from(marketItem)
-		.where(and(eq(marketItem.deleted, false), eq(marketItem.isPublic, true), eq(marketItem.id, id)))
+		.from(hiddenMarketItem)
+		.where(and(eq(hiddenMarketItem.deleted, false), eq(hiddenMarketItem.id, id)))
 		.limit(1);
 
 	if (!item) {
@@ -142,7 +137,6 @@ async function getItemWithPrice(id: number, locals: { user: { shopScore: number 
 		shopScore
 	);
 	const discountAmount = 1 - computedPrice / item.maxPrice;
-
 	const itemWithPrice = { ...item, computedPrice, discountAmount };
 
 	return itemWithPrice;
