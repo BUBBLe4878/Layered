@@ -26,20 +26,20 @@ export async function load({ url, locals }) {
 		// LEADERBOARD QUERY (FIXED)
 		// -----------------------------
 		const leaderboardRaw = await db
-			.select({
-				id: user.id,
-				name: user.name,
-
-				totalHours: sql<number>`COALESCE(SUM(${devlog.viewCount}), 0)`,
-				totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
-				totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
-				totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
-			})
-			.from(user)
-			.leftJoin(devlog, eq(devlog.userId, user.id))
-			.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
-			.leftJoin(project, eq(project.userId, user.id))
-			.groupBy(user.id, user.name);
+		.select({
+			id: user.id,
+			name: user.name,
+	
+			totalHours: sql<number>`COALESCE(SUM(${devlog.viewCount}), 0)`,
+			totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
+			totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
+			totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
+		})
+		.from(user)
+		.leftJoin(devlog, eq(devlog.userId, user.id))
+		.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
+		.leftJoin(project, eq(project.userId, user.id))
+		.groupBy(user.id, user.name);
 
 		const leaderboard = leaderboardRaw
 			.map((u) => {
