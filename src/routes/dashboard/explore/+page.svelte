@@ -185,9 +185,9 @@
 						<div class="stat-value">{selectedUser.totalHours}h</div>
 						<div class="stat-breakdown">
 							<div class="breakdown-bar">
-								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalHours * 0.4 / selectedUser.score) * 100 : 0}%"></div>
+								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalHours * 0.3 / selectedUser.score) * 100 : 0}%"></div>
 							</div>
-							<div class="breakdown-text">{(selectedUser.totalHours * 0.4).toFixed(2)} pts (40%)</div>
+							<div class="breakdown-text">{(selectedUser.totalHours * 0.3).toFixed(2)} pts (30%)</div>
 						</div>
 					</div>
 
@@ -196,9 +196,9 @@
 						<div class="stat-value">{selectedUser.totalLogs}</div>
 						<div class="stat-breakdown">
 							<div class="breakdown-bar">
-								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalLogs * 0.35 / selectedUser.score) * 100 : 0}%"></div>
+								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalLogs * 0.3 / selectedUser.score) * 100 : 0}%"></div>
 							</div>
-							<div class="breakdown-text">{(selectedUser.totalLogs * 0.35).toFixed(2)} pts (35%)</div>
+							<div class="breakdown-text">{(selectedUser.totalLogs * 0.3).toFixed(2)} pts (30%)</div>
 						</div>
 					</div>
 
@@ -207,9 +207,20 @@
 						<div class="stat-value">{selectedUser.totalLikes}</div>
 						<div class="stat-breakdown">
 							<div class="breakdown-bar">
-								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalLikes * 0.25 / selectedUser.score) * 100 : 0}%"></div>
+								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalLikes * 0.2 / selectedUser.score) * 100 : 0}%"></div>
 							</div>
-							<div class="breakdown-text">{(selectedUser.totalLikes * 0.25).toFixed(2)} pts (25%)</div>
+							<div class="breakdown-text">{(selectedUser.totalLikes * 0.2).toFixed(2)} pts (20%)</div>
+						</div>
+					</div>
+
+					<div class="stat-card">
+						<div class="stat-label">Layers Earned</div>
+						<div class="stat-value">{selectedUser.totalClay}</div>
+						<div class="stat-breakdown">
+							<div class="breakdown-bar">
+								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalClay * 0.2 / selectedUser.score) * 100 : 0}%"></div>
+							</div>
+							<div class="breakdown-text">{(selectedUser.totalClay * 0.2).toFixed(2)} pts (20%)</div>
 						</div>
 					</div>
 				</div>
