@@ -49,7 +49,7 @@ export async function load({ url, locals }) {
 				const projects = Number(u.totalProjects ?? 0);
 
 				const score =
-				    hours * 0.4 +
+				    (hours/40) * 0.4 +
 				    logs * 0.35 +
 				    likes * 0.25;
 
