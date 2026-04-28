@@ -19,6 +19,7 @@
 	let performanceModeEnabled = $state(false);
 	let hoveredDevlogId = $state<number | null>(null);
 	let leaderboard = $state(data.leaderboard);
+	let selectedUser = $state<any>(null);
 
 	const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 	const timeFormatter = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
@@ -140,20 +141,87 @@
 			</div>
 		</div>
 	</div>
-	<div class="leaderboard flex flex-col gap-2">
+
+	<!-- LEADERBOARD -->
+	<div class="leaderboard-container">
+		<div class="leaderboard">
 			{#each leaderboard as user, i}
-				<div class="flex items-center justify-between rounded bg-white p-3 shadow">
-					<div class="flex items-center gap-2">
-						<span class="font-bold">#{i + 1}</span>
-						<span>{user.name}</span>
+				<button
+					onclick={() => selectedUser = user}
+					class="leaderboard-item"
+				>
+					<div class="rank">#{i + 1}</div>
+					<div class="user-info">
+						<div class="name">{user.name}</div>
+						<div class="score-preview">{user.score.toFixed(2)} pts</div>
 					</div>
-		
-					<div class="text-sm text-gray-600">
-						Score: {user.score.toFixed(2)}
+					<div class="medal">
+						{#if i === 0}
+							🥇
+						{:else if i === 1}
+							🥈
+						{:else if i === 2}
+							🥉
+						{/if}
 					</div>
-				</div>
+				</button>
 			{/each}
 		</div>
+	</div>
+
+	{#if selectedUser}
+		<div class="modal-overlay" onclick={(e) => e.target === e.currentTarget && (selectedUser = null)}>
+			<div class="modal-content">
+				<button class="close-btn" onclick={() => selectedUser = null}>✕</button>
+				
+				<div class="modal-header">
+					<h2>{selectedUser.name}</h2>
+					<div class="total-score">{selectedUser.score.toFixed(2)}</div>
+				</div>
+
+				<div class="stats-grid">
+					<div class="stat-card">
+						<div class="stat-label">3D Modeling Time</div>
+						<div class="stat-value">{selectedUser.totalHours}h</div>
+						<div class="stat-breakdown">
+							<div class="breakdown-bar">
+								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalHours * 0.4 / selectedUser.score) * 100 : 0}%"></div>
+							</div>
+							<div class="breakdown-text">{(selectedUser.totalHours * 0.4).toFixed(2)} pts (40%)</div>
+						</div>
+					</div>
+
+					<div class="stat-card">
+						<div class="stat-label">Devlogs Created</div>
+						<div class="stat-value">{selectedUser.totalLogs}</div>
+						<div class="stat-breakdown">
+							<div class="breakdown-bar">
+								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalLogs * 0.35 / selectedUser.score) * 100 : 0}%"></div>
+							</div>
+							<div class="breakdown-text">{(selectedUser.totalLogs * 0.35).toFixed(2)} pts (35%)</div>
+						</div>
+					</div>
+
+					<div class="stat-card">
+						<div class="stat-label">Likes Received</div>
+						<div class="stat-value">{selectedUser.totalLikes}</div>
+						<div class="stat-breakdown">
+							<div class="breakdown-bar">
+								<div class="breakdown-fill" style="width: {selectedUser.score > 0 ? (selectedUser.totalLikes * 0.25 / selectedUser.score) * 100 : 0}%"></div>
+							</div>
+							<div class="breakdown-text">{(selectedUser.totalLikes * 0.25).toFixed(2)} pts (25%)</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="bonus-stat">
+					<span>Projects Created:</span>
+					<span class="value">{selectedUser.totalProjects}</span>
+				</div>
+			</div>
+		</div>
+	{/if}
+
 	<!-- GRID -->
 	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
@@ -244,13 +312,6 @@
 					</div>
 				</a>
 
-				<!-- VIEW COUNT -->
-				<!--
-				<div class="absolute top-2 right-2 text-xs bg-white/80 px-2 py-1 rounded">
-					👁 {devlog.viewCount}
-				</div>
-				-->
-
 			</div>
 		{/each}
 
@@ -260,3 +321,259 @@
 	<div bind:this={sentinel} class="h-10"></div>
 
 </div>
+
+<style>
+	.leaderboard-container {
+		max-height: 400px;
+		overflow-y: auto;
+		border-radius: 12px;
+		background: linear-gradient(135deg, #f5f7fa 0%, #f0f4f8 100%);
+		padding: 8px;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+	}
+
+	.leaderboard {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.leaderboard-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 16px;
+		background: white;
+		border: 2px solid transparent;
+		border-radius: 10px;
+		cursor: pointer;
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		font-family: inherit;
+		text-align: left;
+		width: 100%;
+	}
+
+	.leaderboard-item:hover {
+		border-color: #3b82f6;
+		box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+		transform: translateX(4px);
+	}
+
+	.rank {
+		font-weight: 700;
+		font-size: 14px;
+		color: #1f2937;
+		min-width: 40px;
+	}
+
+	.user-info {
+		flex: 1;
+		margin-left: 12px;
+	}
+
+	.name {
+		font-weight: 600;
+		font-size: 14px;
+		color: #111827;
+	}
+
+	.score-preview {
+		font-size: 12px;
+		color: #6b7280;
+		margin-top: 2px;
+	}
+
+	.medal {
+		font-size: 20px;
+		min-width: 30px;
+		text-align: right;
+	}
+
+	/* MODAL STYLES */
+	.modal-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+		animation: fadeIn 0.3s ease-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	.modal-content {
+		background: white;
+		border-radius: 16px;
+		padding: 32px;
+		max-width: 500px;
+		width: 90%;
+		max-height: 90vh;
+		overflow-y: auto;
+		position: relative;
+		box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+		animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@keyframes slideUp {
+		from {
+			transform: translateY(20px);
+			opacity: 0;
+		}
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+
+	.close-btn {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		background: #f3f4f6;
+		border: none;
+		width: 36px;
+		height: 36px;
+		border-radius: 8px;
+		cursor: pointer;
+		font-size: 18px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.2s ease;
+	}
+
+	.close-btn:hover {
+		background: #e5e7eb;
+		transform: scale(1.1);
+	}
+
+	.modal-header {
+		text-align: center;
+		margin-bottom: 32px;
+	}
+
+	.modal-header h2 {
+		font-size: 28px;
+		font-weight: 700;
+		color: #111827;
+		margin: 0 0 8px 0;
+	}
+
+	.total-score {
+		font-size: 36px;
+		font-weight: 800;
+		background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.stats-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 16px;
+		margin-bottom: 24px;
+	}
+
+	.stat-card {
+		background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		padding: 16px;
+	}
+
+	.stat-label {
+		font-size: 12px;
+		font-weight: 600;
+		color: #64748b;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		margin-bottom: 6px;
+	}
+
+	.stat-value {
+		font-size: 24px;
+		font-weight: 700;
+		color: #1e293b;
+		margin-bottom: 12px;
+	}
+
+	.stat-breakdown {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.breakdown-bar {
+		height: 8px;
+		background: #e2e8f0;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.breakdown-fill {
+		height: 100%;
+		background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+		border-radius: 4px;
+		transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.breakdown-text {
+		font-size: 12px;
+		color: #475569;
+		font-weight: 500;
+	}
+
+	.bonus-stat {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 16px;
+		background: #f0fdf4;
+		border: 1px solid #dcfce7;
+		border-radius: 8px;
+		font-weight: 500;
+		color: #166534;
+	}
+
+	.bonus-stat .value {
+		font-weight: 700;
+		font-size: 18px;
+	}
+
+	@media (max-width: 640px) {
+		.modal-content {
+			padding: 24px;
+			width: 95%;
+		}
+
+		.modal-header h2 {
+			font-size: 24px;
+		}
+
+		.total-score {
+			font-size: 28px;
+		}
+
+		.leaderboard-item {
+			padding: 10px 12px;
+		}
+
+		.name {
+			font-size: 13px;
+		}
+
+		.score-preview {
+			font-size: 11px;
+		}
+	}
+</style>
