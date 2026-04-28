@@ -20,6 +20,10 @@ function parsePositiveInt(value: FormDataEntryValue | null): number | null {
 	return parsed;
 }
 
+function missingWeeklyAwardsActionError(errorKey: string) {
+	return fail(503, { [errorKey]: 'Weekly Awards is still being provisioned.' } as Record<string, string>);
+}
+
 export async function load({ locals }) {
 	if (!locals.user?.hasAdmin) {
 		throw error(403, { message: 'oi get out' });
@@ -165,26 +169,34 @@ export const actions = {
 			throw error(403, { message: 'oi get out' });
 		}
 
-		const formData = await request.formData();
-		const weekStartRaw = formData.get('weekStart')?.toString().trim();
-		const label = formData.get('label')?.toString().trim();
+		try {
+			const formData = await request.formData();
+			const weekStartRaw = formData.get('weekStart')?.toString().trim();
+			const label = formData.get('label')?.toString().trim();
 
-		if (!weekStartRaw) {
-			return fail(400, { createRoundError: 'Week start is required.' });
+			if (!weekStartRaw) {
+				return fail(400, { createRoundError: 'Week start is required.' });
+			}
+
+			const weekStart = new Date(`${weekStartRaw}T00:00:00.000Z`);
+			if (Number.isNaN(weekStart.getTime())) {
+				return fail(400, { createRoundError: 'Invalid week start date.' });
+			}
+
+			await db.insert(weeklyAwardRound).values({
+				label: label && label.length > 0 ? label : `Week of ${weekStartRaw}`,
+				weekStart,
+				createdBy: locals.user.id
+			});
+
+			return { createdRound: true };
+		} catch (error) {
+			if (isMissingWeeklyAwardsSchemaError(error)) {
+				return missingWeeklyAwardsActionError('createRoundError');
+			}
+
+			throw error;
 		}
-
-		const weekStart = new Date(`${weekStartRaw}T00:00:00.000Z`);
-		if (Number.isNaN(weekStart.getTime())) {
-			return fail(400, { createRoundError: 'Invalid week start date.' });
-		}
-
-		await db.insert(weeklyAwardRound).values({
-			label: label && label.length > 0 ? label : `Week of ${weekStartRaw}`,
-			weekStart,
-			createdBy: locals.user.id
-		});
-
-		return { createdRound: true };
 	},
 
 	toggleVoting: async ({ locals, request }) => {
@@ -192,23 +204,31 @@ export const actions = {
 			throw error(403, { message: 'oi get out' });
 		}
 
-		const formData = await request.formData();
-		const roundId = parsePositiveInt(formData.get('roundId'));
-		const votingOpen = formData.get('votingOpen')?.toString() === 'true';
+		try {
+			const formData = await request.formData();
+			const roundId = parsePositiveInt(formData.get('roundId'));
+			const votingOpen = formData.get('votingOpen')?.toString() === 'true';
 
-		if (!roundId) {
-			return fail(400, { toggleVotingError: 'Invalid round id.' });
+			if (!roundId) {
+				return fail(400, { toggleVotingError: 'Invalid round id.' });
+			}
+
+			await db
+				.update(weeklyAwardRound)
+				.set({
+					votingOpen,
+					updatedAt: new Date()
+				})
+				.where(eq(weeklyAwardRound.id, roundId));
+
+			return { toggledVoting: true };
+		} catch (error) {
+			if (isMissingWeeklyAwardsSchemaError(error)) {
+				return missingWeeklyAwardsActionError('toggleVotingError');
+			}
+
+			throw error;
 		}
-
-		await db
-			.update(weeklyAwardRound)
-			.set({
-				votingOpen,
-				updatedAt: new Date()
-			})
-			.where(eq(weeklyAwardRound.id, roundId));
-
-		return { toggledVoting: true };
 	},
 
 	createCategory: async ({ locals, request }) => {
@@ -216,26 +236,34 @@ export const actions = {
 			throw error(403, { message: 'oi get out' });
 		}
 
-		const formData = await request.formData();
-		const roundId = parsePositiveInt(formData.get('roundId'));
-		const name = formData.get('name')?.toString().trim();
-		const description = formData.get('description')?.toString().trim() || null;
-		const bonusLayersRaw = parsePositiveInt(formData.get('bonusLayers'));
-		const bonusLayers = bonusLayersRaw ?? 50;
+		try {
+			const formData = await request.formData();
+			const roundId = parsePositiveInt(formData.get('roundId'));
+			const name = formData.get('name')?.toString().trim();
+			const description = formData.get('description')?.toString().trim() || null;
+			const bonusLayersRaw = parsePositiveInt(formData.get('bonusLayers'));
+			const bonusLayers = bonusLayersRaw ?? 50;
 
-		if (!roundId || !name) {
-			return fail(400, { createCategoryError: 'Round and category name are required.' });
+			if (!roundId || !name) {
+				return fail(400, { createCategoryError: 'Round and category name are required.' });
+			}
+
+			await db.insert(weeklyAwardCategory).values({
+				roundId,
+				name,
+				description,
+				bonusLayers,
+				createdBy: locals.user.id
+			});
+
+			return { createdCategory: true };
+		} catch (error) {
+			if (isMissingWeeklyAwardsSchemaError(error)) {
+				return missingWeeklyAwardsActionError('createCategoryError');
+			}
+
+			throw error;
 		}
-
-		await db.insert(weeklyAwardCategory).values({
-			roundId,
-			name,
-			description,
-			bonusLayers,
-			createdBy: locals.user.id
-		});
-
-		return { createdCategory: true };
 	},
 
 	addFinalist: async ({ locals, request }) => {
@@ -243,23 +271,31 @@ export const actions = {
 			throw error(403, { message: 'oi get out' });
 		}
 
-		const formData = await request.formData();
-		const categoryId = parsePositiveInt(formData.get('categoryId'));
-		const userId = parsePositiveInt(formData.get('userId'));
-		const reason = formData.get('reason')?.toString().trim() || null;
+		try {
+			const formData = await request.formData();
+			const categoryId = parsePositiveInt(formData.get('categoryId'));
+			const userId = parsePositiveInt(formData.get('userId'));
+			const reason = formData.get('reason')?.toString().trim() || null;
 
-		if (!categoryId || !userId) {
-			return fail(400, { addFinalistError: 'Category and finalist are required.' });
+			if (!categoryId || !userId) {
+				return fail(400, { addFinalistError: 'Category and finalist are required.' });
+			}
+
+			await db.insert(weeklyAwardFinalist).values({
+				categoryId,
+				userId,
+				reason,
+				createdBy: locals.user.id
+			});
+
+			return { createdFinalist: true };
+		} catch (error) {
+			if (isMissingWeeklyAwardsSchemaError(error)) {
+				return missingWeeklyAwardsActionError('addFinalistError');
+			}
+
+			throw error;
 		}
-
-		await db.insert(weeklyAwardFinalist).values({
-			categoryId,
-			userId,
-			reason,
-			createdBy: locals.user.id
-		});
-
-		return { createdFinalist: true };
 	},
 
 	removeFinalist: async ({ locals, request }) => {
@@ -267,42 +303,50 @@ export const actions = {
 			throw error(403, { message: 'oi get out' });
 		}
 
-		const formData = await request.formData();
-		const finalistId = parsePositiveInt(formData.get('finalistId'));
+		try {
+			const formData = await request.formData();
+			const finalistId = parsePositiveInt(formData.get('finalistId'));
 
-		if (!finalistId) {
-			return fail(400, { removeFinalistError: 'Invalid finalist id.' });
+			if (!finalistId) {
+				return fail(400, { removeFinalistError: 'Invalid finalist id.' });
+			}
+
+			// load finalist and category
+			const [finalist] = await db
+				.select({ id: weeklyAwardFinalist.id, categoryId: weeklyAwardFinalist.categoryId })
+				.from(weeklyAwardFinalist)
+				.where(eq(weeklyAwardFinalist.id, finalistId));
+
+			if (!finalist) {
+				return fail(404, { removeFinalistError: 'Finalist not found.' });
+			}
+
+			// don't allow removal if payout already granted for category
+			const [payout] = await db
+				.select({ id: weeklyAwardPayout.id })
+				.from(weeklyAwardPayout)
+				.where(eq(weeklyAwardPayout.categoryId, finalist.categoryId));
+
+			if (payout) {
+				return fail(400, { removeFinalistError: 'Cannot remove finalist after payout has been granted.' });
+			}
+
+			await db.transaction(async (tx) => {
+				// remove any votes for this finalist
+				await tx.delete(weeklyAwardVote).where(eq(weeklyAwardVote.finalistId, finalistId));
+
+				// remove finalist
+				await tx.delete(weeklyAwardFinalist).where(eq(weeklyAwardFinalist.id, finalistId));
+			});
+
+			return { removedFinalist: true };
+		} catch (error) {
+			if (isMissingWeeklyAwardsSchemaError(error)) {
+				return missingWeeklyAwardsActionError('removeFinalistError');
+			}
+
+			throw error;
 		}
-
-		// load finalist and category
-		const [finalist] = await db
-			.select({ id: weeklyAwardFinalist.id, categoryId: weeklyAwardFinalist.categoryId })
-			.from(weeklyAwardFinalist)
-			.where(eq(weeklyAwardFinalist.id, finalistId));
-
-		if (!finalist) {
-			return fail(404, { removeFinalistError: 'Finalist not found.' });
-		}
-
-		// don't allow removal if payout already granted for category
-		const [payout] = await db
-			.select({ id: weeklyAwardPayout.id })
-			.from(weeklyAwardPayout)
-			.where(eq(weeklyAwardPayout.categoryId, finalist.categoryId));
-
-		if (payout) {
-			return fail(400, { removeFinalistError: 'Cannot remove finalist after payout has been granted.' });
-		}
-
-		await db.transaction(async (tx) => {
-			// remove any votes for this finalist
-			await tx.delete(weeklyAwardVote).where(eq(weeklyAwardVote.finalistId, finalistId));
-
-			// remove finalist
-			await tx.delete(weeklyAwardFinalist).where(eq(weeklyAwardFinalist.id, finalistId));
-		});
-
-		return { removedFinalist: true };
 	},
 
 	grantWinner: async ({ locals, request }) => {
@@ -310,92 +354,100 @@ export const actions = {
 			throw error(403, { message: 'oi get out' });
 		}
 
-		const formData = await request.formData();
-		const categoryId = parsePositiveInt(formData.get('categoryId'));
-		const finalistId = parsePositiveInt(formData.get('finalistId'));
+		try {
+			const formData = await request.formData();
+			const categoryId = parsePositiveInt(formData.get('categoryId'));
+			const finalistId = parsePositiveInt(formData.get('finalistId'));
 
-		if (!categoryId || !finalistId) {
-			return fail(400, { grantWinnerError: 'Category and finalist are required.' });
-		}
+			if (!categoryId || !finalistId) {
+				return fail(400, { grantWinnerError: 'Category and finalist are required.' });
+			}
 
-		const [category] = await db
-			.select({
-				id: weeklyAwardCategory.id,
-				name: weeklyAwardCategory.name,
-				bonusLayers: weeklyAwardCategory.bonusLayers
-			})
-			.from(weeklyAwardCategory)
-			.where(eq(weeklyAwardCategory.id, categoryId));
+			const [category] = await db
+				.select({
+					id: weeklyAwardCategory.id,
+					name: weeklyAwardCategory.name,
+					bonusLayers: weeklyAwardCategory.bonusLayers
+				})
+				.from(weeklyAwardCategory)
+				.where(eq(weeklyAwardCategory.id, categoryId));
 
-		if (!category) {
-			return fail(404, { grantWinnerError: 'Category not found.' });
-		}
+			if (!category) {
+				return fail(404, { grantWinnerError: 'Category not found.' });
+			}
 
-		const [finalist] = await db
-			.select({
-				id: weeklyAwardFinalist.id,
-				userId: weeklyAwardFinalist.userId
-			})
-			.from(weeklyAwardFinalist)
-			.where(
-				and(eq(weeklyAwardFinalist.id, finalistId), eq(weeklyAwardFinalist.categoryId, categoryId))
-			);
+			const [finalist] = await db
+				.select({
+					id: weeklyAwardFinalist.id,
+					userId: weeklyAwardFinalist.userId
+				})
+				.from(weeklyAwardFinalist)
+				.where(
+					and(eq(weeklyAwardFinalist.id, finalistId), eq(weeklyAwardFinalist.categoryId, categoryId))
+				);
 
-		if (!finalist) {
-			return fail(404, { grantWinnerError: 'Finalist not found for this category.' });
-		}
+			if (!finalist) {
+				return fail(404, { grantWinnerError: 'Finalist not found for this category.' });
+			}
 
-		const [alreadyGranted] = await db
-			.select({ id: weeklyAwardPayout.id })
-			.from(weeklyAwardPayout)
-			.where(eq(weeklyAwardPayout.categoryId, categoryId));
+			const [alreadyGranted] = await db
+				.select({ id: weeklyAwardPayout.id })
+				.from(weeklyAwardPayout)
+				.where(eq(weeklyAwardPayout.categoryId, categoryId));
 
-		if (alreadyGranted) {
-			return fail(400, { grantWinnerError: 'A payout was already granted for this category.' });
-		}
+			if (alreadyGranted) {
+				return fail(400, { grantWinnerError: 'A payout was already granted for this category.' });
+			}
 
-		const [winner] = await db
-			.select({
-				id: user.id,
-				clay: user.clay,
-				brick: user.brick,
-				shopScore: user.shopScore
-			})
-			.from(user)
-			.where(eq(user.id, finalist.userId));
+			const [winner] = await db
+				.select({
+					id: user.id,
+					clay: user.clay,
+					brick: user.brick,
+					shopScore: user.shopScore
+				})
+				.from(user)
+				.where(eq(user.id, finalist.userId));
 
-		if (!winner) {
-			return fail(404, { grantWinnerError: 'Winner user not found.' });
-		}
+			if (!winner) {
+				return fail(404, { grantWinnerError: 'Winner user not found.' });
+			}
 
-		const bonusLayers = category.bonusLayers;
-		const oldClay = winner.clay;
-		const newClay = oldClay + bonusLayers;
+			const bonusLayers = category.bonusLayers;
+			const oldClay = winner.clay;
+			const newClay = oldClay + bonusLayers;
 
-		await db.transaction(async (tx) => {
-			await tx.update(user).set({ clay: newClay }).where(eq(user.id, winner.id));
+			await db.transaction(async (tx) => {
+				await tx.update(user).set({ clay: newClay }).where(eq(user.id, winner.id));
 
-			await tx.insert(weeklyAwardPayout).values({
-				categoryId,
-				winnerUserId: winner.id,
-				layersGranted: bonusLayers,
-				grantedBy: locals.user!.id
+				await tx.insert(weeklyAwardPayout).values({
+					categoryId,
+					winnerUserId: winner.id,
+					layersGranted: bonusLayers,
+					grantedBy: locals.user!.id
+				});
+
+				await tx.insert(currencyAuditLog).values({
+					adminUserId: locals.user!.id,
+					targetUserId: winner.id,
+					reason: `Weekly Awards winner payout (${category.name})`,
+					oldClay,
+					oldBrick: winner.brick,
+					oldShopScore: winner.shopScore,
+					newClay,
+					newBrick: winner.brick,
+					newShopScore: winner.shopScore
+				});
 			});
 
-			await tx.insert(currencyAuditLog).values({
-				adminUserId: locals.user!.id,
-				targetUserId: winner.id,
-				reason: `Weekly Awards winner payout (${category.name})`,
-				oldClay,
-				oldBrick: winner.brick,
-				oldShopScore: winner.shopScore,
-				newClay,
-				newBrick: winner.brick,
-				newShopScore: winner.shopScore
-			});
-		});
+			return { grantedWinner: true };
+		} catch (error) {
+			if (isMissingWeeklyAwardsSchemaError(error)) {
+				return missingWeeklyAwardsActionError('grantWinnerError');
+			}
 
-		return { grantedWinner: true };
+			throw error;
+		}
 	}
 	,
 
@@ -404,40 +456,48 @@ export const actions = {
 			throw error(403, { message: 'oi get out' });
 		}
 
-		const formData = await request.formData();
-		const categoryId = parsePositiveInt(formData.get('categoryId'));
+		try {
+			const formData = await request.formData();
+			const categoryId = parsePositiveInt(formData.get('categoryId'));
 
-		if (!categoryId) {
-			return fail(400, { deleteCategoryError: 'Invalid category id.' });
-		}
-
-		// don't allow deletion if payout exists
-		const [payout] = await db
-			.select({ id: weeklyAwardPayout.id })
-			.from(weeklyAwardPayout)
-			.where(eq(weeklyAwardPayout.categoryId, categoryId));
-
-		if (payout) {
-			return fail(400, { deleteCategoryError: 'Cannot delete category after payout has been granted.' });
-		}
-
-		await db.transaction(async (tx) => {
-			// find finalists for this category
-			const finalists = await tx.select({ id: weeklyAwardFinalist.id }).from(weeklyAwardFinalist).where(eq(weeklyAwardFinalist.categoryId, categoryId));
-
-			const finalistIds = finalists.map((f) => f.id);
-
-			if (finalistIds.length > 0) {
-				// delete votes for those finalists
-				await tx.delete(weeklyAwardVote).where(inArray(weeklyAwardVote.finalistId, finalistIds));
-				// delete finalists
-				await tx.delete(weeklyAwardFinalist).where(inArray(weeklyAwardFinalist.id, finalistIds));
+			if (!categoryId) {
+				return fail(400, { deleteCategoryError: 'Invalid category id.' });
 			}
 
-			// delete category
-			await tx.delete(weeklyAwardCategory).where(eq(weeklyAwardCategory.id, categoryId));
-		});
+			// don't allow deletion if payout exists
+			const [payout] = await db
+				.select({ id: weeklyAwardPayout.id })
+				.from(weeklyAwardPayout)
+				.where(eq(weeklyAwardPayout.categoryId, categoryId));
 
-		return { deletedCategory: true };
+			if (payout) {
+				return fail(400, { deleteCategoryError: 'Cannot delete category after payout has been granted.' });
+			}
+
+			await db.transaction(async (tx) => {
+				// find finalists for this category
+				const finalists = await tx.select({ id: weeklyAwardFinalist.id }).from(weeklyAwardFinalist).where(eq(weeklyAwardFinalist.categoryId, categoryId));
+
+				const finalistIds = finalists.map((f) => f.id);
+
+				if (finalistIds.length > 0) {
+					// delete votes for those finalists
+					await tx.delete(weeklyAwardVote).where(inArray(weeklyAwardVote.finalistId, finalistIds));
+					// delete finalists
+					await tx.delete(weeklyAwardFinalist).where(inArray(weeklyAwardFinalist.id, finalistIds));
+				}
+
+				// delete category
+				await tx.delete(weeklyAwardCategory).where(eq(weeklyAwardCategory.id, categoryId));
+			});
+
+			return { deletedCategory: true };
+		} catch (error) {
+			if (isMissingWeeklyAwardsSchemaError(error)) {
+				return missingWeeklyAwardsActionError('deleteCategoryError');
+			}
+
+			throw error;
+		}
 	}
 } satisfies Actions;
