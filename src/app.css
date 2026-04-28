@@ -168,8 +168,8 @@ body {
 
 /* Theme 2: Pastel Blue */
 body.theme-2 {
-	--background-color: #f5f8fb;
-	--background-color-secondary: #1e1e1e;
+	--background-color: #1e1e1e;
+	--background-color-secondary: #333333;
 	--background-color-tertiary: #e8f0f8;
 	--background-color-quarternary: #dfe9f4;
 	--font-color: #2c3e50;
