@@ -122,10 +122,10 @@
 		<div class="relative w-44">
 
 			<div class="flex gap-2">
-				<button on:click={() => changeSort('newest')}>Newest</button>
-				<button on:click={() => changeSort('trending')}>Trending</button>
-				<button on:click={() => changeSort('random')}>Random</button>
-				<button on:click={() => changeSort('liked')}>Liked</button>
+				<button onclick={() => changeSort('newest')}>Newest</button>
+				<button onclick={() => changeSort('trending')}>Trending</button>
+				<button onclick={() => changeSort('random')}>Random</button>
+				<button onclick={() => changeSort('liked')}>Liked</button>
 			</div>
 
 
