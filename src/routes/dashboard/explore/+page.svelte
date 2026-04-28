@@ -18,6 +18,7 @@
 	let sortBy: SortType = $state('newest');
 	let performanceModeEnabled = $state(false);
 	let hoveredDevlogId = $state<number | null>(null);
+	let leaderboard = $state(data.leaderboard);
 
 	const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 	const timeFormatter = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
@@ -139,7 +140,20 @@
 			</div>
 		</div>
 	</div>
-
+	<div class="leaderboard flex flex-col gap-2">
+			{#each leaderboard as user, i}
+				<div class="flex items-center justify-between rounded bg-white p-3 shadow">
+					<div class="flex items-center gap-2">
+						<span class="font-bold">#{i + 1}</span>
+						<span>{user.name}</span>
+					</div>
+		
+					<div class="text-sm text-gray-600">
+						Score: {user.score.toFixed(2)}
+					</div>
+				</div>
+			{/each}
+		</div>
 	<!-- GRID -->
 	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
