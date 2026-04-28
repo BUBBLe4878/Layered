@@ -43,13 +43,13 @@ export async function load({ url, locals }) {
 
 		const leaderboard = leaderboardRaw
 			.map((u) => {
-				const hours = Number(u.totalHours ?? 0);
+				const hours = (Number(u.totalHours ?? 0)/40);
 				const logs = Number(u.totalLogs ?? 0);
 				const likes = Number(u.totalLikes ?? 0);
 				const projects = Number(u.totalProjects ?? 0);
 
 				const score =
-				    (hours/40) * 0.4 +
+				    hours * 0.4 +
 				    logs * 0.35 +
 				    likes * 0.25;
 
