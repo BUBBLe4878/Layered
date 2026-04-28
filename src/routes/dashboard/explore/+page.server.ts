@@ -25,16 +25,29 @@ export async function load({ url, locals }) {
 
 		const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
 
-		const leaderboard = await db
-		.select({
-			userId: user.id,
-			name: user.name,
-	
-			totalHours: sql<number>`COALESCE(SUM(${devlog.timeSpent}), 0) / 60`,
-			totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
-			totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
-			totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
-		})
+		const leaderboard = leaderboardRaw
+	.map((u) => {
+		const hours = Number(u.totalHours ?? 0);
+		const logs = Number(u.totalLogs ?? 0);
+		const likes = Number(u.totalLikes ?? 0);
+		const projects = Number(u.totalProjects ?? 0);
+
+		const score =
+			hours * 0.5 +
+			logs * 0.2 +
+			likes * 0.2 +
+			projects * 0.1;
+
+		return {
+			...u,
+			totalHours: hours,
+			totalLogs: logs,
+			totalLikes: likes,
+			totalProjects: projects,
+			score
+		};
+	})
+	.sort((a, b) => b.score - a.score);
 		.from(user)
 		.leftJoin(devlog, eq(devlog.userId, user.id))
 		.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
