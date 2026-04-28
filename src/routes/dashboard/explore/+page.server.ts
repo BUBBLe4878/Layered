@@ -47,7 +47,8 @@ export async function load({ url, locals }) {
 		return {
 			devlogs,
 			nextOffset: devlogs.length,
-			hasMore
+			hasMore,
+			leaderboard
 		};
 	} catch (err) {
 		console.error('[explore/+page.server.ts] Load failed:', err);
