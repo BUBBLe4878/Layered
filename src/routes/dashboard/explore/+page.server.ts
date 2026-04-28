@@ -33,14 +33,15 @@ export async function load({ url, locals }) {
 				totalHours: sql<number>`COALESCE(SUM(COALESCE(${devlog.timeSpent}, 0)), 0)`,
 				totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
 				totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
-				totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
+				totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`,
+				totalClay: sql<number>`COALESCE(${user.clay}, 0)`
 			})
 			.from(user)
 			.leftJoin(devlog, eq(devlog.userId, user.id))
-			.leftJoin(devlogLike, eq(devlogLike.devlogId, devlog.id))  // ← Join to devlog, not user
+			.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
 			.leftJoin(project, eq(project.userId, user.id))
 			.groupBy(user.id, user.name);
-
+		
 		const leaderboard = leaderboardRaw
 			.map((u) => {
 				const hours = (Number(u.totalHours ?? 0)/10);
