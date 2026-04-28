@@ -13,10 +13,8 @@ export async function fetchExploreDevlogs(
 ) {
 	console.log(`[fetchExploreDevlogs] Starting with sort=${sort}, offset=${offset}, userId=${userId}, limit=${limit}`);
 
-	// Create an alias for counting likes (since we use devlogLike twice in 'liked' sort)
-	const devlogLikeForCount = alias(devlogLike, 'devlog_like_count');
-
 	// Base select fields (consistent across all queries)
+	// Use the original table references here (not aliases) for aggregates to work properly
 	const selectFields = {
 		devlog: {
 			id: devlog.id,
@@ -34,12 +32,15 @@ export async function fetchExploreDevlogs(
 			id: user.id,
 			name: user.name
 		},
-		likeCount: count(devlogLikeForCount.id).as('likeCount'),
+		likeCount: count(devlogLike.id).as('likeCount'),
 		viewCount: count(devlogView.id).as('viewCount'),
-		userLiked: sql<boolean>`COUNT(CASE WHEN ${devlogLikeForCount.userId} = ${userId || null} THEN 1 END) > 0`.as(
+		userLiked: sql<boolean>`COUNT(CASE WHEN ${devlogLike.userId} = ${userId || null} THEN 1 END) > 0`.as(
 			'userLiked'
 		)
 	};
+
+	// Create an alias for the second join in 'liked' sort (to avoid duplicate table names)
+	const devlogLikeForJoin = alias(devlogLike, 'devlog_like_for_join');
 
 	let query;
 
@@ -50,7 +51,7 @@ export async function fetchExploreDevlogs(
 			.from(devlog)
 			.innerJoin(project, eq(devlog.projectId, project.id))
 			.innerJoin(user, eq(devlog.userId, user.id))
-			.leftJoin(devlogLikeForCount, eq(devlog.id, devlogLikeForCount.devlogId))
+			.leftJoin(devlogLike, eq(devlog.id, devlogLike.devlogId))
 			.leftJoin(devlogView, eq(devlog.id, devlogView.devlogId))
 			.where(eq(devlog.deleted, false))
 			.groupBy(devlog.id, project.id, user.id)
@@ -69,8 +70,8 @@ export async function fetchExploreDevlogs(
 			.innerJoin(project, eq(devlog.projectId, project.id))
 			.innerJoin(user, eq(devlog.userId, user.id))
 			.leftJoin(
-				devlogLikeForCount,
-				and(eq(devlog.id, devlogLikeForCount.devlogId), gte(devlogLikeForCount.createdAt, sevenDaysAgo))
+				devlogLike,
+				and(eq(devlog.id, devlogLike.devlogId), gte(devlogLike.createdAt, sevenDaysAgo))
 			)
 			.leftJoin(
 				devlogView,
@@ -80,7 +81,7 @@ export async function fetchExploreDevlogs(
 			.groupBy(devlog.id, project.id, user.id)
 			.orderBy(
 				desc(
-					sql`COALESCE(COUNT(DISTINCT ${devlogLikeForCount.id}), 0) + COALESCE(COUNT(DISTINCT ${devlogView.id}), 0)`
+					sql`COALESCE(COUNT(DISTINCT ${devlogLike.id}), 0) + COALESCE(COUNT(DISTINCT ${devlogView.id}), 0)`
 				),
 				desc(devlog.createdAt)
 			)
@@ -94,7 +95,7 @@ export async function fetchExploreDevlogs(
 			.from(devlog)
 			.innerJoin(project, eq(devlog.projectId, project.id))
 			.innerJoin(user, eq(devlog.userId, user.id))
-			.leftJoin(devlogLikeForCount, eq(devlog.id, devlogLikeForCount.devlogId))
+			.leftJoin(devlogLike, eq(devlog.id, devlogLike.devlogId))
 			.leftJoin(devlogView, eq(devlog.id, devlogView.devlogId))
 			.where(eq(devlog.deleted, false))
 			.groupBy(devlog.id, project.id, user.id)
@@ -111,22 +112,21 @@ export async function fetchExploreDevlogs(
 				.from(devlog)
 				.innerJoin(project, eq(devlog.projectId, project.id))
 				.innerJoin(user, eq(devlog.userId, user.id))
-				.leftJoin(devlogLikeForCount, eq(devlog.id, devlogLikeForCount.devlogId))
+				.leftJoin(devlogLike, eq(devlog.id, devlogLike.devlogId))
 				.leftJoin(devlogView, eq(devlog.id, devlogView.devlogId))
 				.where(eq(devlog.deleted, false))
 				.groupBy(devlog.id, project.id, user.id)
 				.limit(0);
 		} else {
 			console.log(`[fetchExploreDevlogs] Filtering likes by userId=${userId}`);
-			// For 'liked' sort, we start from the user's likes and join everything else
-			// We use devlogLike to filter, and devlogLikeForCount to get the count
+			// For 'liked' sort, we start from the user's likes, so we need an alias for the count join
 			query = db
 				.select(selectFields)
 				.from(devlogLike)
 				.innerJoin(devlog, eq(devlogLike.devlogId, devlog.id))
 				.innerJoin(project, eq(devlog.projectId, project.id))
 				.innerJoin(user, eq(devlog.userId, user.id))
-				.leftJoin(devlogLikeForCount, eq(devlog.id, devlogLikeForCount.devlogId))
+				.leftJoin(devlogLikeForJoin, eq(devlog.id, devlogLikeForJoin.devlogId))
 				.leftJoin(devlogView, eq(devlog.id, devlogView.devlogId))
 				.where(and(eq(devlogLike.userId, userId), eq(devlog.deleted, false)))
 				.groupBy(devlog.id, project.id, user.id)
