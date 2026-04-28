@@ -3,6 +3,7 @@ import { error as svelteError, json } from '@sveltejs/kit';
 import { db } from '$lib/server/db/index.js';
 import { devlogLike } from '$lib/server/db/schema.js';
 import { eq, and, sql } from 'drizzle-orm';
+import { user, devlog, devlogLike, project } from '$lib/server/db/schema.js';
 
 export async function load({ url, locals }) {
 	console.log('[explore/+page.server.ts] Load starting');
