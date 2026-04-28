@@ -5,29 +5,45 @@ import { devlogLike } from '$lib/server/db/schema.js';
 import { eq, and, sql } from 'drizzle-orm';
 
 export async function load({ url, locals }) {
+	console.log('[explore/+page.server.ts] Load starting');
+	
 	const sortParam = url.searchParams.get('sort') as SortType | null;
 	const sort: SortType = sortParam || 'newest';
-
+	console.log(`[explore/+page.server.ts] Sort parameter: ${sortParam}, using sort: ${sort}`);
+	console.log(`[explore/+page.server.ts] User ID: ${locals.user?.id}`);
+	
 	try {
+		console.log(`[explore/+page.server.ts] Calling fetchExploreDevlogs with offset=0, sort=${sort}`);
 		const devlogs = await fetchExploreDevlogs(0, sort, locals.user?.id);
-
+		
+		console.log(`[explore/+page.server.ts] Received ${devlogs?.length || 0} devlogs`);
+		
 		if (!Array.isArray(devlogs)) {
+			console.error('[explore/+page.server.ts] Devlogs is not an array!', typeof devlogs);
 			throw new Error('Devlogs not an array');
 		}
 
+		const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
+		console.log(`[explore/+page.server.ts] Load complete. hasMore=${hasMore}, nextOffset=${devlogs.length}`);
+		
 		return {
 			devlogs,
 			nextOffset: devlogs.length,
-			hasMore: devlogs.length === DEVLOGS_PAGE_SIZE
+			hasMore
 		};
 	} catch (err) {
-		throw svelteError(500, 'Failed to load explore');
+		console.error('[explore/+page.server.ts] Load failed:', err);
+		throw svelteError(500, `Failed to load explore: ${err instanceof Error ? err.message : String(err)}`);
 	}
 }
 
 export const actions = {
 	toggleLike: async ({ request, locals }) => {
+		console.log('[explore/+page.server.ts] toggleLike action starting');
+		console.log(`[explore/+page.server.ts] User ID: ${locals.user?.id}`);
+		
 		if (!locals.user?.id) {
+			console.log('[explore/+page.server.ts] User not authenticated');
 			return {
 				success: false,
 				error: 'Not authenticated'
@@ -37,8 +53,11 @@ export const actions = {
 		const form = await request.formData();
 		const raw = form.get('devlogId');
 		const devlogId = Number(raw);
+		
+		console.log(`[explore/+page.server.ts] Raw devlogId: ${raw}, parsed: ${devlogId}`);
 
 		if (!devlogId || Number.isNaN(devlogId)) {
+			console.log('[explore/+page.server.ts] Invalid devlogId');
 			return {
 				success: false,
 				error: 'Invalid devlogId'
@@ -46,6 +65,7 @@ export const actions = {
 		}
 
 		try {
+			console.log(`[explore/+page.server.ts] Checking if user already liked devlog ${devlogId}`);
 			const existing = await db
 				.select()
 				.from(devlogLike)
@@ -57,8 +77,10 @@ export const actions = {
 				);
 
 			const alreadyLiked = existing.length > 0;
+			console.log(`[explore/+page.server.ts] Already liked: ${alreadyLiked}`);
 
 			if (alreadyLiked) {
+				console.log(`[explore/+page.server.ts] Deleting like for devlog ${devlogId}`);
 				await db
 					.delete(devlogLike)
 					.where(
@@ -68,13 +90,15 @@ export const actions = {
 						)
 					);
 			} else {
+				console.log(`[explore/+page.server.ts] Inserting like for devlog ${devlogId}`);
 				await db.insert(devlogLike).values({
 					devlogId,
 					userId: locals.user.id
 				});
 			}
 
-			// count likes (safe version)
+			// Count likes
+			console.log(`[explore/+page.server.ts] Counting likes for devlog ${devlogId}`);
 			const likeCount = (
 				await db
 					.select({ id: devlogLike.id })
@@ -82,17 +106,18 @@ export const actions = {
 					.where(eq(devlogLike.devlogId, devlogId))
 			).length;
 
+			console.log(`[explore/+page.server.ts] Final like count: ${likeCount}`);
+
 			return {
 				success: true,
 				liked: !alreadyLiked,
 				likeCount
 			};
 		} catch (err) {
-			console.error(err);
-
+			console.error('[explore/+page.server.ts] toggleLike error:', err);
 			return {
 				success: false,
-				error: 'Database error'
+				error: `Database error: ${err instanceof Error ? err.message : String(err)}`
 			};
 		}
 	}
