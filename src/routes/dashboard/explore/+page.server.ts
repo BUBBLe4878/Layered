@@ -6,70 +6,81 @@ import { eq, and, sql } from 'drizzle-orm';
 
 export async function load({ url, locals }) {
 	console.log('[explore/+page.server.ts] Load starting');
-	
+
 	const sortParam = url.searchParams.get('sort') as SortType | null;
 	const sort: SortType = sortParam || 'newest';
-	console.log(`[explore/+page.server.ts] Sort parameter: ${sortParam}, using sort: ${sort}`);
+
+	console.log(`[explore/+page.server.ts] Sort: ${sort}`);
 	console.log(`[explore/+page.server.ts] User ID: ${locals.user?.id}`);
-	
+
 	try {
-		console.log(`[explore/+page.server.ts] Calling fetchExploreDevlogs with offset=0, sort=${sort}`);
 		const devlogs = await fetchExploreDevlogs(0, sort, locals.user?.id);
-		
-		console.log(`[explore/+page.server.ts] Received ${devlogs?.length || 0} devlogs`);
-		
+
 		if (!Array.isArray(devlogs)) {
-			console.error('[explore/+page.server.ts] Devlogs is not an array!', typeof devlogs);
 			throw new Error('Devlogs not an array');
 		}
 
 		const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
 
+		// -----------------------------
+		// LEADERBOARD QUERY (FIXED)
+		// -----------------------------
+		const leaderboardRaw = await db
+			.select({
+				id: user.id,
+				name: user.name,
+
+				totalHours: sql<number>`COALESCE(SUM(${devlog.viewCount}), 0)`,
+				totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
+				totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
+				totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
+			})
+			.from(user)
+			.leftJoin(devlog, eq(devlog.userId, user.id))
+			.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
+			.leftJoin(project, eq(project.userId, user.id))
+			.groupBy(user.id, user.name);
+
 		const leaderboard = leaderboardRaw
-	.map((u) => {
-		const hours = Number(u.totalHours ?? 0);
-		const logs = Number(u.totalLogs ?? 0);
-		const likes = Number(u.totalLikes ?? 0);
-		const projects = Number(u.totalProjects ?? 0);
+			.map((u) => {
+				const hours = Number(u.totalHours ?? 0);
+				const logs = Number(u.totalLogs ?? 0);
+				const likes = Number(u.totalLikes ?? 0);
+				const projects = Number(u.totalProjects ?? 0);
 
-		const score =
-			hours * 0.5 +
-			logs * 0.2 +
-			likes * 0.2 +
-			projects * 0.1;
+				const score =
+					hours * 0.5 +
+					logs * 0.2 +
+					likes * 0.2 +
+					projects * 0.1;
 
-		return {
-			...u,
-			totalHours: hours,
-			totalLogs: logs,
-			totalLikes: likes,
-			totalProjects: projects,
-			score
-		};
-	})
-	.sort((a, b) => b.score - a.score);
-		.from(user)
-		.leftJoin(devlog, eq(devlog.userId, user.id))
-		.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
-		.leftJoin(project, eq(project.userId, user.id))
-		.groupBy(user.id);
+				return {
+					...u,
+					totalHours: hours,
+					totalLogs: logs,
+					totalLikes: likes,
+					totalProjects: projects,
+					score
+				};
+			})
+			.sort((a, b) => b.score - a.score);
 
-		
-		console.log(`[explore/+page.server.ts] Load complete. hasMore=${hasMore}, nextOffset=${devlogs.length}`);
-		
+		console.log(`[explore] leaderboard size: ${leaderboard.length}`);
+
 		return {
 			devlogs,
 			nextOffset: devlogs.length,
 			hasMore,
-			leaderboard,
-			leaderboard: leaderboard ?? []
+			leaderboard
 		};
 	} catch (err) {
 		console.error('[explore/+page.server.ts] Load failed:', err);
-		throw svelteError(500, `Failed to load explore: ${err instanceof Error ? err.message : String(err)}`);
+		throw svelteError(
+			500,
+			`Failed to load explore: ${err instanceof Error ? err.message : String(err)}`
+		);
 	}
 }
-
 export const actions = {
 	toggleLike: async ({ request, locals }) => {
 		console.log('[explore/+page.server.ts] toggleLike action starting');
