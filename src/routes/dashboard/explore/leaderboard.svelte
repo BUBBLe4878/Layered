@@ -114,3 +114,18 @@
 		};
 	});
 </script>
+<div class="relative w-44">
+		<select
+			bind:value={sortBy}
+			onchange={(e) => changeSort(e.currentTarget.value as SortType)}
+			class="themed-input w-full appearance-none pr-9 text-sm font-medium"
+		>
+			<option value="newest">Newest</option>
+			<option value="trending">Trending</option>
+			<option value="random">Random</option>
+			<option value="liked">Liked</option>
+		</select>
+	<div class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-600">
+		<ChevronDown size={16} />
+	</div>
+</div>
