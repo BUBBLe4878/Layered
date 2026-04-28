@@ -430,7 +430,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .checkbox {
-		@apply border-primary-300 bg-primary-50 accent-primary-500 hover:border-primary-400 transition-all duration-200;
+		@apply border-slate-600 bg-slate-800 accent-blue-400 hover:border-slate-500 transition-all duration-200;
 	}
 
 	/* ---- Themed Boxes ---- */
@@ -445,7 +445,7 @@ body.theme-4 {
 	.dark-mode .themed-box-prominent,
 	.dark-mode .themed-box-solid,
 	.dark-mode .themed-box-solid-prominent {
-		@apply border-primary-300 bg-primary-50/80 p-4;
+		@apply border-slate-700 bg-slate-900/85 p-4;
 	}
 
 	.themed-box-solid {
@@ -453,7 +453,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .themed-box-solid {
-		@apply shadow-lg shadow-primary-200 hover:shadow-xl hover:shadow-primary-300 hover:border-primary-400 transition-all duration-200;
+		@apply shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-blue-950/30 hover:border-slate-500 transition-all duration-200;
 	}
 
 	.themed-box-solid-prominent {
@@ -461,7 +461,7 @@ body.theme-4 {
 	}
 
 	.dark-mode .themed-box-solid-prominent {
-		@apply hover:shadow-md hover:shadow-primary-200 hover:border-primary-400 transition-all duration-200;
+		@apply hover:shadow-md hover:shadow-blue-950/25 hover:border-slate-500 transition-all duration-200;
 	}
 
 	/* ---- Enclosure Background (Textured) ---- */
@@ -474,8 +474,8 @@ body.theme-4 {
 	}
 
 	.dark-mode .enclosure-bg {
-		background-color: #f0f6fd;
-		@apply border-primary-300;
+		background-color: #0f1724;
+		@apply border-slate-700;
 	}
 
 	.enclosure-bg::before {
@@ -564,27 +564,27 @@ body.theme-4 {
 	.dark-mode h4,
 	.dark-mode h5,
 	.dark-mode h6 {
-		@apply text-primary-900;
+		@apply text-gray-100;
 	}
 
 	.dark-mode p {
-		@apply text-primary-800;
+		@apply text-gray-300;
 	}
 
 	.dark-mode .text-primary-900 {
-		@apply text-primary-900;
+		@apply text-gray-100;
 	}
 
 	.dark-mode .text-gray-700 {
-		@apply text-primary-800;
+		@apply text-gray-300;
 	}
 
 	.dark-mode .text-gray-600 {
-		@apply text-primary-700;
+		@apply text-gray-400;
 	}
 
 	.dark-mode .text-primary-800 {
-		@apply text-primary-800;
+		@apply text-gray-200;
 	}
 }
 
