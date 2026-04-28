@@ -248,6 +248,49 @@ export const actions = {
 		return { createdFinalist: true };
 	},
 
+	removeFinalist: async ({ locals, request }) => {
+		if (!locals.user?.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
+
+		const formData = await request.formData();
+		const finalistId = parsePositiveInt(formData.get('finalistId'));
+
+		if (!finalistId) {
+			return fail(400, { removeFinalistError: 'Invalid finalist id.' });
+		}
+
+		// load finalist and category
+		const [finalist] = await db
+			.select({ id: weeklyAwardFinalist.id, categoryId: weeklyAwardFinalist.categoryId })
+			.from(weeklyAwardFinalist)
+			.where(eq(weeklyAwardFinalist.id, finalistId));
+
+		if (!finalist) {
+			return fail(404, { removeFinalistError: 'Finalist not found.' });
+		}
+
+		// don't allow removal if payout already granted for category
+		const [payout] = await db
+			.select({ id: weeklyAwardPayout.id })
+			.from(weeklyAwardPayout)
+			.where(eq(weeklyAwardPayout.categoryId, finalist.categoryId));
+
+		if (payout) {
+			return fail(400, { removeFinalistError: 'Cannot remove finalist after payout has been granted.' });
+		}
+
+		await db.transaction(async (tx) => {
+			// remove any votes for this finalist
+			await tx.delete(weeklyAwardVote).where(eq(weeklyAwardVote.finalistId, finalistId));
+
+			// remove finalist
+			await tx.delete(weeklyAwardFinalist).where(eq(weeklyAwardFinalist.id, finalistId));
+		});
+
+		return { removedFinalist: true };
+	},
+
 	grantWinner: async ({ locals, request }) => {
 		if (!locals.user?.hasAdmin) {
 			throw error(403, { message: 'oi get out' });
@@ -339,5 +382,48 @@ export const actions = {
 		});
 
 		return { grantedWinner: true };
+	}
+	,
+
+	deleteCategory: async ({ locals, request }) => {
+		if (!locals.user?.hasAdmin) {
+			throw error(403, { message: 'oi get out' });
+		}
+
+		const formData = await request.formData();
+		const categoryId = parsePositiveInt(formData.get('categoryId'));
+
+		if (!categoryId) {
+			return fail(400, { deleteCategoryError: 'Invalid category id.' });
+		}
+
+		// don't allow deletion if payout exists
+		const [payout] = await db
+			.select({ id: weeklyAwardPayout.id })
+			.from(weeklyAwardPayout)
+			.where(eq(weeklyAwardPayout.categoryId, categoryId));
+
+		if (payout) {
+			return fail(400, { deleteCategoryError: 'Cannot delete category after payout has been granted.' });
+		}
+
+		await db.transaction(async (tx) => {
+			// find finalists for this category
+			const finalists = await tx.select({ id: weeklyAwardFinalist.id }).from(weeklyAwardFinalist).where(eq(weeklyAwardFinalist.categoryId, categoryId));
+
+			const finalistIds = finalists.map((f) => f.id);
+
+			if (finalistIds.length > 0) {
+				// delete votes for those finalists
+				await tx.delete(weeklyAwardVote).where(inArray(weeklyAwardVote.finalistId, finalistIds));
+				// delete finalists
+				await tx.delete(weeklyAwardFinalist).where(inArray(weeklyAwardFinalist.id, finalistIds));
+			}
+
+			// delete category
+			await tx.delete(weeklyAwardCategory).where(eq(weeklyAwardCategory.id, categoryId));
+		});
+
+		return { deletedCategory: true };
 	}
 } satisfies Actions;

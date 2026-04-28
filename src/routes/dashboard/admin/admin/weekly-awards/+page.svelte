@@ -88,11 +88,18 @@
 										{/if}
 										<p class="text-xs text-gray-300">Winner bonus: {category.bonusLayers} Layers</p>
 									</div>
-									{#if category.payout}
+										{#if category.payout}
 										<span class="rounded bg-emerald-800 px-2 py-1 text-xs text-emerald-100">
 											Awarded to {category.payout.winnerName ?? `User #${category.payout.winnerUserId}`}
 										</span>
-									{/if}
+										{/if}
+										{#if !category.payout}
+											<form method="POST" action="?/deleteCategory" on:submit|preventDefault={() => confirm('Delete this category? This will remove finalists and votes.')}
+											>
+												<input type="hidden" name="categoryId" value={category.id} />
+												<button class="button sm red" type="submit">Delete category</button>
+											</form>
+										{/if}
 								</div>
 
 								<form method="POST" action="?/addFinalist" class="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-4">
@@ -121,13 +128,17 @@
 													<p class="text-xs text-gray-300">Votes: {finalist.voteCount}</p>
 												</div>
 												{#if !category.payout}
-													<form method="POST" action="?/grantWinner">
+													<div class="flex items-center gap-2">
+													<form method="POST" action="?/grantWinner" on:submit|preventDefault={() => confirm('Grant winner bonus to this finalist?') }>
 														<input type="hidden" name="categoryId" value={category.id} />
 														<input type="hidden" name="finalistId" value={finalist.id} />
-														<button class="button sm" type="submit">
-															Grant {category.bonusLayers} Layers
-														</button>
+														<button class="button sm" type="submit">Grant {category.bonusLayers} Layers</button>
 													</form>
+													<form method="POST" action="?/removeFinalist" on:submit|preventDefault={() => confirm('Remove this finalist? Votes will be deleted.') }>
+														<input type="hidden" name="finalistId" value={finalist.id} />
+														<button class="button sm red" type="submit">Remove finalist</button>
+													</form>
+													</div>
 												{/if}
 											</div>
 										{/each}
