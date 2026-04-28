@@ -129,3 +129,6 @@
 		<ChevronDown size={16} />
 	</div>
 </div>
+<div class="leaderboard">
+
+</div>
