@@ -47,11 +47,6 @@
 					resets it.
 				</p>
 			</Accordion>
-			<Accordion text="How do weekly awards work?">
-				<p>
-					Staff pick top projects, the community votes on finalists, and winners can receive bonus Layers.
-				</p>
-			</Accordion>
 			<Accordion text="Is there a leaderboard?">
 				<p>
 					Yes. It tracks total Layers, experience, and project count.
