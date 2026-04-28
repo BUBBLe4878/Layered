@@ -16,7 +16,7 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
 		"db:studio": "drizzle-kit studio",
-		"vercel-build": "npm run build && npm run db:migrate"
+		"vercel-build": "npm run build"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.1",
