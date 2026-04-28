@@ -14,6 +14,15 @@
 		</p>
 	</div>
 
+	{#if data.weeklyAwardsReady === false}
+		<div class="themed-box border border-amber-400/50 bg-amber-950/30 p-4 shadow-xl/30">
+			<p class="font-medium text-amber-100">Weekly Awards is still being provisioned.</p>
+			<p class="mt-1 text-sm text-amber-200/90">
+				The database migration for this feature has not landed in this environment yet.
+			</p>
+		</div>
+	{/if}
+
 	{#if !data.activeRound}
 		<div class="themed-box p-4 shadow-xl/30">
 			<p>Voting is closed right now. Check back when staff opens this week&apos;s ballot.</p>

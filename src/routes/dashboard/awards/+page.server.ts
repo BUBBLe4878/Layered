@@ -6,6 +6,7 @@ import {
 	weeklyAwardRound,
 	weeklyAwardVote
 } from '$lib/server/db/schema.js';
+import { isMissingWeeklyAwardsSchemaError } from '$lib/server/weekly-awards';
 import { error, fail } from '@sveltejs/kit';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { Actions } from './$types';
@@ -22,103 +23,119 @@ export async function load({ locals }) {
 		throw error(401, { message: 'Unauthorized' });
 	}
 
-	const [activeRound] = await db
-		.select({
-			id: weeklyAwardRound.id,
-			label: weeklyAwardRound.label,
-			weekStart: weeklyAwardRound.weekStart
-		})
-		.from(weeklyAwardRound)
-		.where(eq(weeklyAwardRound.votingOpen, true))
-		.orderBy(desc(weeklyAwardRound.weekStart))
-		.limit(1);
+	try {
+		const [activeRound] = await db
+			.select({
+				id: weeklyAwardRound.id,
+				label: weeklyAwardRound.label,
+				weekStart: weeklyAwardRound.weekStart
+			})
+			.from(weeklyAwardRound)
+			.where(eq(weeklyAwardRound.votingOpen, true))
+			.orderBy(desc(weeklyAwardRound.weekStart))
+			.limit(1);
 
-	if (!activeRound) {
-		return {
-			activeRound: null,
-			categories: [],
-			votesByCategory: {}
-		};
-	}
+		if (!activeRound) {
+			return {
+				activeRound: null,
+				categories: [],
+				votesByCategory: {},
+				weeklyAwardsReady: true
+			};
+		}
 
-	const categories = await db
-		.select({
-			id: weeklyAwardCategory.id,
-			name: weeklyAwardCategory.name,
-			description: weeklyAwardCategory.description,
-			bonusLayers: weeklyAwardCategory.bonusLayers
-		})
-		.from(weeklyAwardCategory)
-		.where(eq(weeklyAwardCategory.roundId, activeRound.id));
+		const categories = await db
+			.select({
+				id: weeklyAwardCategory.id,
+				name: weeklyAwardCategory.name,
+				description: weeklyAwardCategory.description,
+				bonusLayers: weeklyAwardCategory.bonusLayers
+			})
+			.from(weeklyAwardCategory)
+			.where(eq(weeklyAwardCategory.roundId, activeRound.id));
 
-	const categoryIds = categories.map((category) => category.id);
+		const categoryIds = categories.map((category) => category.id);
 
-	if (categoryIds.length === 0) {
+		if (categoryIds.length === 0) {
+			return {
+				activeRound,
+				categories: [],
+				votesByCategory: {},
+				weeklyAwardsReady: true
+			};
+		}
+
+		const finalists = await db
+			.select({
+				id: weeklyAwardFinalist.id,
+				categoryId: weeklyAwardFinalist.categoryId,
+				reason: weeklyAwardFinalist.reason,
+				user: {
+					id: user.id,
+					name: user.name,
+					profilePicture: user.profilePicture
+				}
+			})
+			.from(weeklyAwardFinalist)
+			.leftJoin(user, eq(user.id, weeklyAwardFinalist.userId))
+			.where(inArray(weeklyAwardFinalist.categoryId, categoryIds));
+
+		const voteCounts = await db
+			.select({
+				finalistId: weeklyAwardVote.finalistId,
+				voteCount: sql<number>`COUNT(*)`
+			})
+			.from(weeklyAwardVote)
+			.where(inArray(weeklyAwardVote.categoryId, categoryIds))
+			.groupBy(weeklyAwardVote.finalistId);
+
+		const myVotes = await db
+			.select({
+				categoryId: weeklyAwardVote.categoryId,
+				finalistId: weeklyAwardVote.finalistId
+			})
+			.from(weeklyAwardVote)
+			.where(
+				and(
+					eq(weeklyAwardVote.voterUserId, locals.user.id),
+					inArray(weeklyAwardVote.categoryId, categoryIds)
+				)
+			);
+
+		const voteCountByFinalist = new Map(voteCounts.map((row) => [row.finalistId, Number(row.voteCount)]));
+		const myVoteByCategory = Object.fromEntries(myVotes.map((vote) => [vote.categoryId, vote.finalistId]));
+
+		const finalistsByCategory = new Map<number, Array<(typeof finalists)[number] & { voteCount: number }>>();
+		for (const finalist of finalists) {
+			const current = finalistsByCategory.get(finalist.categoryId) ?? [];
+			current.push({
+				...finalist,
+				voteCount: voteCountByFinalist.get(finalist.id) ?? 0
+			});
+			finalistsByCategory.set(finalist.categoryId, current);
+		}
+
 		return {
 			activeRound,
-			categories: [],
-			votesByCategory: {}
+			categories: categories.map((category) => ({
+				...category,
+				finalists: finalistsByCategory.get(category.id) ?? []
+			})),
+			votesByCategory: myVoteByCategory,
+			weeklyAwardsReady: true
 		};
+	} catch (error) {
+		if (isMissingWeeklyAwardsSchemaError(error)) {
+			return {
+				activeRound: null,
+				categories: [],
+				votesByCategory: {},
+				weeklyAwardsReady: false
+			};
+		}
+
+		throw error;
 	}
-
-	const finalists = await db
-		.select({
-			id: weeklyAwardFinalist.id,
-			categoryId: weeklyAwardFinalist.categoryId,
-			reason: weeklyAwardFinalist.reason,
-			user: {
-				id: user.id,
-				name: user.name,
-				profilePicture: user.profilePicture
-			}
-		})
-		.from(weeklyAwardFinalist)
-		.leftJoin(user, eq(user.id, weeklyAwardFinalist.userId))
-		.where(inArray(weeklyAwardFinalist.categoryId, categoryIds));
-
-	const voteCounts = await db
-		.select({
-			finalistId: weeklyAwardVote.finalistId,
-			voteCount: sql<number>`COUNT(*)`
-		})
-		.from(weeklyAwardVote)
-		.where(inArray(weeklyAwardVote.categoryId, categoryIds))
-		.groupBy(weeklyAwardVote.finalistId);
-
-	const myVotes = await db
-		.select({
-			categoryId: weeklyAwardVote.categoryId,
-			finalistId: weeklyAwardVote.finalistId
-		})
-		.from(weeklyAwardVote)
-		.where(
-			and(
-				eq(weeklyAwardVote.voterUserId, locals.user.id),
-				inArray(weeklyAwardVote.categoryId, categoryIds)
-			)
-		);
-
-	const voteCountByFinalist = new Map(voteCounts.map((row) => [row.finalistId, Number(row.voteCount)]));
-	const myVoteByCategory = Object.fromEntries(myVotes.map((vote) => [vote.categoryId, vote.finalistId]));
-
-	const finalistsByCategory = new Map<number, Array<(typeof finalists)[number] & { voteCount: number }>>();
-	for (const finalist of finalists) {
-		const current = finalistsByCategory.get(finalist.categoryId) ?? [];
-		current.push({
-			...finalist,
-			voteCount: voteCountByFinalist.get(finalist.id) ?? 0
-		});
-		finalistsByCategory.set(finalist.categoryId, current);
-	}
-
-	return {
-		activeRound,
-		categories: categories.map((category) => ({
-			...category,
-			finalists: finalistsByCategory.get(category.id) ?? []
-		})),
-		votesByCategory: myVoteByCategory
-	};
 }
 
 export const actions = {

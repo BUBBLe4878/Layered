@@ -8,6 +8,7 @@ import {
 	weeklyAwardRound,
 	weeklyAwardVote
 } from '$lib/server/db/schema.js';
+import { isMissingWeeklyAwardsSchemaError } from '$lib/server/weekly-awards';
 import { error, fail } from '@sveltejs/kit';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { Actions } from './$types';
@@ -24,125 +25,138 @@ export async function load({ locals }) {
 		throw error(403, { message: 'oi get out' });
 	}
 
-	const rounds = await db
-		.select({
-			id: weeklyAwardRound.id,
-			label: weeklyAwardRound.label,
-			weekStart: weeklyAwardRound.weekStart,
-			votingOpen: weeklyAwardRound.votingOpen,
-			createdAt: weeklyAwardRound.createdAt
-		})
-		.from(weeklyAwardRound)
-		.orderBy(desc(weeklyAwardRound.weekStart));
+	try {
+		const rounds = await db
+			.select({
+				id: weeklyAwardRound.id,
+				label: weeklyAwardRound.label,
+				weekStart: weeklyAwardRound.weekStart,
+				votingOpen: weeklyAwardRound.votingOpen,
+				createdAt: weeklyAwardRound.createdAt
+			})
+			.from(weeklyAwardRound)
+			.orderBy(desc(weeklyAwardRound.weekStart));
 
-	const roundIds = rounds.map((round) => round.id);
+		const roundIds = rounds.map((round) => round.id);
 
-	const categories =
-		roundIds.length > 0
-			? await db
-					.select({
-						id: weeklyAwardCategory.id,
-						roundId: weeklyAwardCategory.roundId,
-						name: weeklyAwardCategory.name,
-						description: weeklyAwardCategory.description,
-						bonusLayers: weeklyAwardCategory.bonusLayers,
-						createdAt: weeklyAwardCategory.createdAt
-					})
-					.from(weeklyAwardCategory)
-					.where(inArray(weeklyAwardCategory.roundId, roundIds))
-			: [];
+		const categories =
+			roundIds.length > 0
+				? await db
+						.select({
+							id: weeklyAwardCategory.id,
+							roundId: weeklyAwardCategory.roundId,
+							name: weeklyAwardCategory.name,
+							description: weeklyAwardCategory.description,
+							bonusLayers: weeklyAwardCategory.bonusLayers,
+							createdAt: weeklyAwardCategory.createdAt
+						})
+						.from(weeklyAwardCategory)
+						.where(inArray(weeklyAwardCategory.roundId, roundIds))
+				: [];
 
-	const categoryIds = categories.map((category) => category.id);
+		const categoryIds = categories.map((category) => category.id);
 
-	const finalists =
-		categoryIds.length > 0
-			? await db
-					.select({
-						id: weeklyAwardFinalist.id,
-						categoryId: weeklyAwardFinalist.categoryId,
-						reason: weeklyAwardFinalist.reason,
-						createdAt: weeklyAwardFinalist.createdAt,
-						user: {
-							id: user.id,
-							name: user.name
-						}
-					})
-					.from(weeklyAwardFinalist)
-					.leftJoin(user, eq(user.id, weeklyAwardFinalist.userId))
-					.where(inArray(weeklyAwardFinalist.categoryId, categoryIds))
-			: [];
+		const finalists =
+			categoryIds.length > 0
+				? await db
+						.select({
+							id: weeklyAwardFinalist.id,
+							categoryId: weeklyAwardFinalist.categoryId,
+							reason: weeklyAwardFinalist.reason,
+							createdAt: weeklyAwardFinalist.createdAt,
+							user: {
+								id: user.id,
+								name: user.name
+							}
+						})
+						.from(weeklyAwardFinalist)
+						.leftJoin(user, eq(user.id, weeklyAwardFinalist.userId))
+						.where(inArray(weeklyAwardFinalist.categoryId, categoryIds))
+				: [];
 
-	const voteCounts =
-		categoryIds.length > 0
-			? await db
-					.select({
-						finalistId: weeklyAwardVote.finalistId,
-						voteCount: sql<number>`COUNT(*)`
-					})
-					.from(weeklyAwardVote)
-					.where(inArray(weeklyAwardVote.categoryId, categoryIds))
-					.groupBy(weeklyAwardVote.finalistId)
-			: [];
+		const voteCounts =
+			categoryIds.length > 0
+				? await db
+						.select({
+							finalistId: weeklyAwardVote.finalistId,
+							voteCount: sql<number>`COUNT(*)`
+						})
+						.from(weeklyAwardVote)
+						.where(inArray(weeklyAwardVote.categoryId, categoryIds))
+						.groupBy(weeklyAwardVote.finalistId)
+				: [];
 
-	const payouts =
-		categoryIds.length > 0
-			? await db
-					.select({
-						id: weeklyAwardPayout.id,
-						categoryId: weeklyAwardPayout.categoryId,
-						winnerUserId: weeklyAwardPayout.winnerUserId,
-						layersGranted: weeklyAwardPayout.layersGranted,
-						createdAt: weeklyAwardPayout.createdAt,
-						winnerName: user.name
-					})
-					.from(weeklyAwardPayout)
-					.leftJoin(user, eq(user.id, weeklyAwardPayout.winnerUserId))
-					.where(inArray(weeklyAwardPayout.categoryId, categoryIds))
-			: [];
+		const payouts =
+			categoryIds.length > 0
+				? await db
+						.select({
+							id: weeklyAwardPayout.id,
+							categoryId: weeklyAwardPayout.categoryId,
+							winnerUserId: weeklyAwardPayout.winnerUserId,
+							layersGranted: weeklyAwardPayout.layersGranted,
+							createdAt: weeklyAwardPayout.createdAt,
+							winnerName: user.name
+						})
+						.from(weeklyAwardPayout)
+						.leftJoin(user, eq(user.id, weeklyAwardPayout.winnerUserId))
+						.where(inArray(weeklyAwardPayout.categoryId, categoryIds))
+				: [];
 
-	const awardUsers = await db
-		.select({
-			id: user.id,
-			name: user.name
-		})
-		.from(user)
-		.orderBy(user.name);
+		const awardUsers = await db
+			.select({
+				id: user.id,
+				name: user.name
+			})
+			.from(user)
+			.orderBy(user.name);
 
-	const voteCountByFinalistId = new Map(voteCounts.map((row) => [row.finalistId, Number(row.voteCount)]));
-	const payoutByCategoryId = new Map(payouts.map((payout) => [payout.categoryId, payout]));
+		const voteCountByFinalistId = new Map(voteCounts.map((row) => [row.finalistId, Number(row.voteCount)]));
+		const payoutByCategoryId = new Map(payouts.map((payout) => [payout.categoryId, payout]));
 
-	const finalistsByCategoryId = new Map<number, typeof finalists>();
-	for (const finalist of finalists) {
-		const current = finalistsByCategoryId.get(finalist.categoryId) ?? [];
-		current.push(finalist);
-		finalistsByCategoryId.set(finalist.categoryId, current);
-	}
+		const finalistsByCategoryId = new Map<number, typeof finalists>();
+		for (const finalist of finalists) {
+			const current = finalistsByCategoryId.get(finalist.categoryId) ?? [];
+			current.push(finalist);
+			finalistsByCategoryId.set(finalist.categoryId, current);
+		}
 
-	const categoriesByRoundId = new Map<number, Array<(typeof categories)[number] & {
-		finalists: Array<(typeof finalists)[number] & { voteCount: number }>;
-		payout: (typeof payouts)[number] | null;
-	}>>();
+		const categoriesByRoundId = new Map<number, Array<(typeof categories)[number] & {
+			finalists: Array<(typeof finalists)[number] & { voteCount: number }>;
+			payout: (typeof payouts)[number] | null;
+		}>>();
 
-	for (const category of categories) {
-		const current = categoriesByRoundId.get(category.roundId) ?? [];
-		current.push({
-			...category,
-			finalists: (finalistsByCategoryId.get(category.id) ?? []).map((finalist) => ({
-				...finalist,
-				voteCount: voteCountByFinalistId.get(finalist.id) ?? 0
+		for (const category of categories) {
+			const current = categoriesByRoundId.get(category.roundId) ?? [];
+			current.push({
+				...category,
+				finalists: (finalistsByCategoryId.get(category.id) ?? []).map((finalist) => ({
+					...finalist,
+					voteCount: voteCountByFinalistId.get(finalist.id) ?? 0
+				})),
+				payout: payoutByCategoryId.get(category.id) ?? null
+			});
+			categoriesByRoundId.set(category.roundId, current);
+		}
+
+		return {
+			rounds: rounds.map((round) => ({
+				...round,
+				categories: categoriesByRoundId.get(round.id) ?? []
 			})),
-			payout: payoutByCategoryId.get(category.id) ?? null
-		});
-		categoriesByRoundId.set(category.roundId, current);
-	}
+			awardUsers,
+			weeklyAwardsReady: true
+		};
+	} catch (error) {
+		if (isMissingWeeklyAwardsSchemaError(error)) {
+			return {
+				rounds: [],
+				awardUsers: [],
+				weeklyAwardsReady: false
+			};
+		}
 
-	return {
-		rounds: rounds.map((round) => ({
-			...round,
-			categories: categoriesByRoundId.get(round.id) ?? []
-		})),
-		awardUsers
-	};
+		throw error;
+	}
 }
 
 export const actions = {
