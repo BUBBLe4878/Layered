@@ -51,10 +51,14 @@
 	// ---------------------------
 	async function changeSort(sort: SortType) {
 		sortBy = sort;
-
+	
+		devlogs = [];
+		nextOffset = 0;
+		hasMore = true;
+	
 		const res = await fetch(`/dashboard/explore?offset=0&sort=${sort}`);
 		const json = await res.json();
-
+	
 		devlogs = json.devlogs;
 		nextOffset = json.nextOffset;
 		hasMore = json.hasMore;
@@ -120,27 +124,16 @@
 		<h1 class="text-3xl font-medium">Explore</h1>
 
 		<div class="relative w-44">
-
-			<div class="flex gap-2">
-				<button onclick={() => changeSort('newest')}>Newest</button>
-				<button onclick={() => changeSort('trending')}>Trending</button>
-				<button onclick={() => changeSort('random')}>Random</button>
-				<button onclick={() => changeSort('liked')}>Liked</button>
-			</div>
-
-
-			<!--
-			<select
-				bind:value={sortBy}
-				onchange={(e) => changeSort(e.currentTarget.value as SortType)}
-				class="themed-input w-full appearance-none pr-9 text-sm font-medium"
-			>
-				<option value="newest">Newest</option>
-				<option value="trending">Trending</option>
-				<option value="random">Random</option>
-				<option value="liked">Liked</option>
-			</select>
-			-->
+				<select
+					bind:value={sortBy}
+					onchange={(e) => changeSort(e.currentTarget.value as SortType)}
+					class="themed-input w-full appearance-none pr-9 text-sm font-medium"
+				>
+					<option value="newest">Newest</option>
+					<option value="trending">Trending</option>
+					<option value="random">Random</option>
+					<option value="liked">Liked</option>
+				</select>
 			<div class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-600">
 				<ChevronDown size={16} />
 			</div>
