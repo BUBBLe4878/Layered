@@ -117,7 +117,7 @@
 		<!-- Dark Mode Toggle -->
 		<div class="mt-4">
 			<p class="text-sm font-medium mb-2">Display Mode</p>
-			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-primary-300 bg-primary-50 px-3 py-2 transition-colors hover:border-primary-400 hover:bg-primary-100 dark-mode:border-primary-600 dark-mode:bg-slate-800 dark-mode:hover:border-primary-500 dark-mode:hover:bg-slate-700">
+			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-gray-100 transition-colors hover:bg-slate-800 dark-mode:border-blue-700 dark-mode:bg-slate-900/80 dark-mode:hover:bg-slate-800">
 				<input
 					type="checkbox"
 					class="peer sr-only"
@@ -128,7 +128,7 @@
 					}}
 				/>
 				<span
-					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-primary-300 bg-primary-50 text-primary-600 transition-all peer-checked:border-primary-500 peer-checked:bg-primary-500 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400 peer-focus-visible:ring-offset-2 dark-mode:border-primary-600 dark-mode:bg-slate-700 dark-mode:text-primary-400 dark-mode:peer-checked:border-primary-500 dark-mode:peer-checked:bg-primary-500 dark-mode:peer-checked:text-white dark-mode:peer-focus-visible:ring-primary-400"
+					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-slate-600 bg-slate-800 text-blue-300 transition-all peer-checked:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900"
 					aria-hidden="true"
 				>
 					{#if darkModeEnabled}
@@ -153,7 +153,7 @@
 			<p class="text-xs text-gray-600 dark-mode:text-gray-400 mb-2">
 				When enabled, 3D previews are disabled for better performance.
 			</p>
-			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-primary-300 bg-primary-50 px-3 py-2 transition-colors hover:border-primary-400 hover:bg-primary-100 dark-mode:border-primary-600 dark-mode:bg-slate-800 dark-mode:hover:border-primary-500 dark-mode:hover:bg-slate-700">
+			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-gray-100 transition-colors hover:bg-slate-800 dark-mode:border-blue-700 dark-mode:bg-slate-900/80 dark-mode:hover:bg-slate-800">
 				<input
 					type="checkbox"
 					class="peer sr-only"
@@ -164,7 +164,7 @@
 					}}
 				/>
 				<span
-					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-primary-300 bg-primary-50 text-primary-600 transition-all peer-checked:border-primary-500 peer-checked:bg-primary-500 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400 peer-focus-visible:ring-offset-2 dark-mode:border-primary-600 dark-mode:bg-slate-700 dark-mode:text-primary-400 dark-mode:peer-checked:border-primary-500 dark-mode:peer-checked:bg-primary-500 dark-mode:peer-checked:text-white dark-mode:peer-focus-visible:ring-primary-400"
+					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-slate-600 bg-slate-800 text-blue-300 transition-all peer-checked:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900"
 					aria-hidden="true"
 				>
 					{#if performanceModeEnabled}

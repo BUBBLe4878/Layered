@@ -575,6 +575,56 @@ body.theme-4 {
 		@apply text-gray-100;
 	}
 
+	.dark-mode .text-primary-950 {
+		@apply text-gray-100;
+	}
+
+	.dark-mode .text-primary-700 {
+		@apply text-gray-300;
+	}
+
+	.dark-mode .text-primary-600 {
+		@apply text-gray-300;
+	}
+
+	.dark-mode .text-primary-500 {
+		@apply text-blue-200;
+	}
+
+	/* Smoother hover/transition rules for panels to avoid bright flashes */
+	.dark-mode .themed-box-solid {
+		transition-property: background-color, box-shadow, transform, color;
+		transition-duration: 200ms;
+		transition-timing-function: ease;
+		will-change: transform, box-shadow, background-color, color;
+	}
+
+	.dark-mode .themed-box-solid:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+	}
+
+	/* Soften utility classes that would otherwise be very bright in dark mode */
+
+	.dark-mode .bg-white {
+		background-color: rgba(255,255,255,0.02) !important;
+	}
+
+	.dark-mode .bg-white\/80 {
+		background-color: rgba(255,255,255,0.03) !important;
+	}
+
+	/* Make ring utilities subtler in dark mode to avoid flashy bright rings */
+
+	.dark-mode .ring-primary-50 {
+		--tw-ring-color: rgba(96,113,158,0.08) !important;
+	}
+
+	.dark-mode .ring-primary-500,
+	.dark-mode .ring-primary-600 {
+		--tw-ring-color: rgba(96,113,158,0.28) !important;
+	}
+
 	.dark-mode .text-gray-700 {
 		@apply text-gray-300;
 	}
