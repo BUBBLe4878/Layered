@@ -1,6 +1,7 @@
 import { db } from '$lib/server/db/index.js';
 import { devlog, project, user, devlogLike, devlogView } from '$lib/server/db/schema.js';
 import { desc, eq, count, sql, and, gte } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 
 export const DEVLOGS_PAGE_SIZE = 15;
 export type SortType = 'newest' | 'trending' | 'random' | 'liked';
@@ -14,6 +15,7 @@ export async function fetchExploreDevlogs(
 	console.log(`[fetchExploreDevlogs] Starting with sort=${sort}, offset=${offset}, userId=${userId}, limit=${limit}`);
 
 	// Base select fields (consistent across all queries)
+	// Use the original table references here (not aliases) for aggregates to work properly
 	const selectFields = {
 		devlog: {
 			id: devlog.id,
@@ -37,6 +39,9 @@ export async function fetchExploreDevlogs(
 			'userLiked'
 		)
 	};
+
+	// Create an alias for the second join in 'liked' sort (to avoid duplicate table names)
+	const devlogLikeForJoin = alias(devlogLike, 'devlog_like_for_join');
 
 	let query;
 
@@ -115,13 +120,14 @@ export async function fetchExploreDevlogs(
 				.limit(0);
 		} else {
 			console.log(`[fetchExploreDevlogs] Filtering likes by userId=${userId}`);
+			// For 'liked' sort, we start from the user's likes, so we need an alias for the count join
 			query = db
 				.select(selectFields)
 				.from(devlogLike)
 				.innerJoin(devlog, eq(devlogLike.devlogId, devlog.id))
 				.innerJoin(project, eq(devlog.projectId, project.id))
 				.innerJoin(user, eq(devlog.userId, user.id))
-				.leftJoin(devlogLike, eq(devlog.id, devlogLike.devlogId))
+				.leftJoin(devlogLikeForJoin, eq(devlog.id, devlogLikeForJoin.devlogId))
 				.leftJoin(devlogView, eq(devlog.id, devlogView.devlogId))
 				.where(and(eq(devlogLike.userId, userId), eq(devlog.deleted, false)))
 				.groupBy(devlog.id, project.id, user.id)
