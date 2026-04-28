@@ -120,6 +120,16 @@
 		<h1 class="text-3xl font-medium">Explore</h1>
 
 		<div class="relative w-44">
+
+			<div class="flex gap-2">
+				<button on:click={() => changeSort('newest')}>Newest</button>
+				<button on:click={() => changeSort('trending')}>Trending</button>
+				<button on:click={() => changeSort('random')}>Random</button>
+				<button on:click={() => changeSort('liked')}>Liked</button>
+			</div>
+
+
+			<!--
 			<select
 				bind:value={sortBy}
 				onchange={(e) => changeSort(e.currentTarget.value as SortType)}
@@ -130,6 +140,7 @@
 				<option value="random">Random</option>
 				<option value="liked">Liked</option>
 			</select>
+			-->
 			<div class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-600">
 				<ChevronDown size={16} />
 			</div>
