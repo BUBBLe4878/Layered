@@ -24,6 +24,24 @@ export async function load({ url, locals }) {
 		}
 
 		const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
+
+		const leaderboard = await db
+		.select({
+			userId: user.id,
+			name: user.name,
+	
+			totalHours: sql<number>`COALESCE(SUM(${devlog.timeSpent}), 0) / 60`,
+			totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
+			totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
+			totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
+		})
+		.from(user)
+		.leftJoin(devlog, eq(devlog.userId, user.id))
+		.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
+		.leftJoin(project, eq(project.userId, user.id))
+		.groupBy(user.id);
+
+		
 		console.log(`[explore/+page.server.ts] Load complete. hasMore=${hasMore}, nextOffset=${devlogs.length}`);
 		
 		return {
