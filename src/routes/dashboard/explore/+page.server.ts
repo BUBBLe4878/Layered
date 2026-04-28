@@ -30,7 +30,7 @@ export async function load({ url, locals }) {
 			id: user.id,
 			name: user.name,
 	
-			totalHours: sql<number>`COALESCE(SUM(${devlog.viewCount}), 0)`,
+			totalHours: sql<number>`COALESCE(SUM(COALESCE(${devlog.timeSpent}, 0)), 0)`,
 			totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
 			totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
 			totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
