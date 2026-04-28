@@ -54,7 +54,7 @@
 		user.isPrinter || user.hasT1Review || user.hasT2Review || user.hasAdmin
 	);
 
-	type NavKey = 'home' | 'projects' | 'explore' | 'market' | 'clubs' | 'tutorial';
+	type NavKey = 'home' | 'projects' | 'explore' | 'awards' | 'market' | 'clubs' | 'tutorial';
 
 	function navButtonClass(key: NavKey, isActive: boolean, compact = false) {
 		const base = compact
@@ -77,6 +77,10 @@
 			return `${base} border-cyan-200/95 bg-cyan-700 ring-2 ring-cyan-200/70 shadow-[0_0_0_2px_rgba(165,243,252,0.35)]`;
 		}
 
+		if (key === 'awards') {
+			return `${base} border-emerald-200/95 bg-emerald-700 ring-2 ring-emerald-200/70 shadow-[0_0_0_2px_rgba(167,243,208,0.35)]`;
+		}
+
 		if (key === 'market') {
 			return `${base} border-orange-200/95 bg-orange-700 ring-2 ring-orange-200/70 shadow-[0_0_0_2px_rgba(254,215,170,0.35)]`;
 		}
@@ -92,6 +96,7 @@
 		if (key === 'home') return 'bg-yellow-200';
 		if (key === 'projects') return 'bg-blue-200';
 		if (key === 'explore') return 'bg-cyan-200';
+		if (key === 'awards') return 'bg-emerald-200';
 		if (key === 'market') return 'bg-orange-200';
 		if (key === 'clubs') return 'bg-purple-200';
 		return 'bg-red-200';
@@ -151,6 +156,18 @@
 				<span>Explore</span>
 				{#if page.url.pathname.startsWith('/dashboard/explore')}
 					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('explore')}`}></span>
+				{/if}
+			</a>
+
+			<!-- Market -->
+			<a
+				href={resolve('/dashboard/awards')}
+				class={navButtonClass('awards', page.url.pathname.startsWith('/dashboard/awards'))}
+			>
+				<Zap size={20} />
+				<span>Awards</span>
+				{#if page.url.pathname.startsWith('/dashboard/awards')}
+					<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('awards')}`}></span>
 				{/if}
 			</a>
 
@@ -341,6 +358,21 @@
 						<span>Explore</span>
 						{#if page.url.pathname.startsWith('/dashboard/explore')}
 							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('explore')}`}></span>
+						{/if}
+					</a>
+					<a
+						href={resolve('/dashboard/awards')}
+						class={navButtonClass(
+							'awards',
+							page.url.pathname.startsWith('/dashboard/awards'),
+							true
+						)}
+						onclick={() => (showMobileMenu = false)}
+					>
+						<Zap size={18} />
+						<span>Awards</span>
+						{#if page.url.pathname.startsWith('/dashboard/awards')}
+							<span class={`pointer-events-none absolute bottom-1 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full ${navIndicatorClass('awards')}`}></span>
 						{/if}
 					</a>
 					<a

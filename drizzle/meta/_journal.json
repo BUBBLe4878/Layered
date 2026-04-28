@@ -253,6 +253,20 @@
       "when": 1775052317026,
       "tag": "0035_easy_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1775332800000,
+      "tag": "0036_daily_streak",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1775336400000,
+      "tag": "0037_weekly_awards",
+      "breakpoints": true
     }
   ]
 }
