@@ -506,7 +506,6 @@
 
 	.contest-card {
 		min-width: 90%;
-		max-width: 91%;
 		flex-shrink: 0;
 		background: white;
 		border-radius: 12px;
@@ -526,6 +525,7 @@
 	.contest-image-wrapper {
 		position: relative;
 		width: 100%;
+		height: auto;
 		padding-bottom: 66.67%; /* 3:2 aspect ratio */
 		overflow: hidden;
 		background: linear-gradient(135deg, #f0f4f8 0%, #e5ebf1 100%);
