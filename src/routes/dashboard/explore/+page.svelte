@@ -191,7 +191,7 @@
 		</div>
 
 		{#if contests.length > 0}
-			<div class="contests-grid">
+			<div class="contests-grid" bind:this={contestsContainer}>
 				{#each contests as c (c.id)}
 					{@const deadline = parseDate(c.deadline)}
 					{@const status = getContestStatus(c)}
@@ -450,6 +450,7 @@
 	/* ========================
 	   CONTESTS SECTION
 	   ======================== */
+
 	.contests-section {
 		animation: fadeInUp 0.6s ease-out;
 	}
@@ -683,6 +684,22 @@
 	.no-contests p {
 		margin-top: 12px;
 		font-size: 14px;
+	}
+
+	.arrow-btn {
+		width: 36px;
+		height: 36px;
+		border-radius: 8px;
+		border: 1px solid #e5e7eb;
+		background: white;
+		cursor: pointer;
+		font-size: 16px;
+		transition: all 0.2s ease;
+	}
+	
+	.arrow-btn:hover {
+		background: #f3f4f6;
+		transform: translateY(-1px);
 	}
 
 	/* ========================
