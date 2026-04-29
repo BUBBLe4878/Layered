@@ -1,8 +1,8 @@
 import { DEVLOGS_PAGE_SIZE, fetchExploreDevlogs, type SortType } from './devlogs.js';
 import { error as svelteError, json } from '@sveltejs/kit';
 import { db } from '$lib/server/db/index.js';
-import { user, devlog, devlogLike, project } from '$lib/server/db/schema.js';
-import { eq, and, sql } from 'drizzle-orm';
+import { user, devlog, devlogLike, project, contest } from '$lib/server/db/schema.js';
+import { eq, and, sql, desc, gt } from 'drizzle-orm';
 
 export async function load({ url, locals }) {
 	console.log('[explore/+page.server.ts] Load starting');
@@ -21,6 +21,28 @@ export async function load({ url, locals }) {
 		}
 
 		const hasMore = devlogs.length === DEVLOGS_PAGE_SIZE;
+
+		// -----------------------------
+		// FETCH CONTESTS
+		// -----------------------------
+		const contests = await db
+			.select()
+			.from(contest)
+			.orderBy(desc(contest.deadline))
+			.limit(6); // Fetch up to 6 contests
+
+		// Map contests to include daysRemaining
+		const mappedContests = contests.map((c) => {
+			const now = new Date();
+			const deadline = new Date(c.deadline);
+			const daysRemaining = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+			
+			return {
+				...c,
+				daysRemaining,
+				isActive: daysRemaining > 0
+			};
+		});
 
 		// -----------------------------
 		// LEADERBOARD QUERY (FIXED)
@@ -44,7 +66,7 @@ export async function load({ url, locals }) {
 		
 		const leaderboard = leaderboardRaw
 			.map((u) => {
-				const hours = ((Number(u.totalHours ?? 0))/10)/1;//i put/1 bc im lazyyyyyyyyyy
+				const hours = ((Number(u.totalHours ?? 0))/10)/1;
 				const logs = Number(u.totalLogs ?? 0);
 				const likes = Number(u.totalLikes ?? 0);
 				const clay = (Number(u.totalClay ?? 0))*10;
@@ -69,11 +91,13 @@ export async function load({ url, locals }) {
 			.sort((a, b) => b.score - a.score);
 
 		console.log(`[explore] leaderboard size: ${leaderboard.length}`);
+		console.log(`[explore] contests count: ${mappedContests.length}`);
 
 		return {
 			devlogs,
 			nextOffset: devlogs.length,
 			hasMore,
+			contests: mappedContests,
 			leaderboard
 		};
 	} catch (err) {
@@ -84,6 +108,7 @@ export async function load({ url, locals }) {
 		);
 	}
 }
+
 export const actions = {
 	toggleLike: async ({ request, locals }) => {
 		console.log('[explore/+page.server.ts] toggleLike action starting');
