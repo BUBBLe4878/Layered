@@ -525,16 +525,16 @@
 	.contest-image-wrapper {
 		position: relative;
 		width: 100%;
-		aspect-ratio: 3 / 2;
-		overflow: hidden;
+		height: 250px;      
+		overflow: hidden;   
 	}
 
 	.contest-image {
 		position: absolute;
 		inset: 0;
 		width: 100%;
-		height: 100%;
-		object-fit: cover;
+		height: 100%;     
+		object-fit: cover;   
 	}
 
 	.contest-badge {
