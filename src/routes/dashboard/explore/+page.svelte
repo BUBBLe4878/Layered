@@ -178,10 +178,10 @@
 				</div>
 		
 				<div class="flex gap-2">
-					<button on:click={() => scrollContests('left')} class="arrow-btn">
+					<button onclick={() => scrollContests('left')} class="arrow-btn">
 						←
 					</button>
-					<button on:click={() => scrollContests('right')} class="arrow-btn">
+					<button onclick={() => scrollContests('right')} class="arrow-btn">
 						→
 					</button>
 				</div>
