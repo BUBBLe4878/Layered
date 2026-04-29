@@ -499,8 +499,10 @@
 	.contests-viewport {
 		overflow: hidden;
 		width: 100%;
+		max-width: 900px; /* or whatever design width you want */
+		margin: 0 auto;
 	}
-	
+		
 	.contests-track {
 		display: flex;
 		gap: 20px;
@@ -508,9 +510,8 @@
 	}
 	
 	.contest-card {
-		min-width: 280px;
-		max-width: 280px;
-		flex-shrink: 0;
+		flex: 0 0 100%;
+		max-width: 100%;
 	}
 
 	.contest-card:hover {
