@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import Head from '$lib/components/Head.svelte';
 	import { ChevronDown, Clock3, Heart, Trophy, Zap } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
@@ -23,9 +23,10 @@
 	let selectedUser = $state<any>(null);
 	let contestsContainer: HTMLDivElement | null = null;
 
-	let currentIndex = 0;
-	const visibleCount = 1; // how many cards visible at once
-	const cardWidth = 900;
+	let currentIndex = $state(0);
+	const visibleCount = 1;
+	let autoScrollEnabled = $state(true);
+	let autoScrollInterval: NodeJS.Timeout | null = null;
 
 	const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 	const timeFormatter = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
@@ -36,10 +37,23 @@
 	// Contests
 	// ---------------------------
 	function scrollContests(direction: 'left' | 'right') {
+		if (contests.length === 0) return;
+		
 		if (direction === 'right') {
-			currentIndex = Math.min(currentIndex + 1, contests.length - visibleCount);
+			currentIndex = (currentIndex + 1) % contests.length;
 		} else {
-			currentIndex = Math.max(currentIndex - 1, 0);
+			currentIndex = (currentIndex - 1 + contests.length) % contests.length;
+		}
+		
+		resetAutoScroll();
+	}
+
+	function resetAutoScroll() {
+		if (autoScrollInterval) clearInterval(autoScrollInterval);
+		if (autoScrollEnabled && contests.length > 1) {
+			autoScrollInterval = setInterval(() => {
+				currentIndex = (currentIndex + 1) % contests.length;
+			}, 5000);
 		}
 	}
 
@@ -121,10 +135,16 @@
 
 		window.addEventListener('enableModelRenderingChanged', onPerformanceModeChange);
 
+		// Start auto-scroll
+		if (contests.length > 1) {
+			resetAutoScroll();
+		}
+
 		if (!sentinel) {
 			return () => {
 				window.removeEventListener('storage', onStorage);
 				window.removeEventListener('enableModelRenderingChanged', onPerformanceModeChange);
+				if (autoScrollInterval) clearInterval(autoScrollInterval);
 			};
 		}
 
@@ -140,7 +160,12 @@
 			observer.disconnect();
 			window.removeEventListener('storage', onStorage);
 			window.removeEventListener('enableModelRenderingChanged', onPerformanceModeChange);
+			if (autoScrollInterval) clearInterval(autoScrollInterval);
 		};
+	});
+
+	onDestroy(() => {
+		if (autoScrollInterval) clearInterval(autoScrollInterval);
 	});
 </script>
 
@@ -179,10 +204,10 @@
 				</div>
 		
 				<div class="flex gap-2">
-					<button onclick={() => scrollContests('left')} class="arrow-btn">
+					<button onclick={() => scrollContests('left')} class="arrow-btn" title="Previous">
 						←
 					</button>
-					<button onclick={() => scrollContests('right')} class="arrow-btn">
+					<button onclick={() => scrollContests('right')} class="arrow-btn" title="Next">
 						→
 					</button>
 				</div>
@@ -195,64 +220,64 @@
 			<div class="contests-viewport">
 				<div
 					class="contests-track"
-					style="transform: translateX(-{currentIndex * 300}px)"
+					style="transform: translateX(-{currentIndex * 100}%)"
 				>
-				{#each contests as c (c.id)}
-					{@const deadline = parseDate(c.deadline)}
-					{@const status = getContestStatus(c)}
-					<div class="contest-card">
-						<!-- Featured Image -->
-						<div class="contest-image-wrapper">
-							<img src={c.image} alt={c.title} class="contest-image" />
-							
-							<!-- Status Badge -->
-							<div class="contest-badge" class:badge-active={status === 'active'} class:badge-ending={status === 'ending-soon'} class:badge-ended={status === 'ended'}>
-								{#if status === 'active'}
-									<Zap size={14} class="badge-icon" />
-									Active
-								{:else if status === 'ending-soon'}
-									<Clock3 size={14} class="badge-icon" />
-									Ending Soon
-								{:else}
-									Ended
+					{#each contests as c (c.id)}
+						{@const deadline = parseDate(c.deadline)}
+						{@const status = getContestStatus(c)}
+						<div class="contest-card">
+							<!-- Featured Image -->
+							<div class="contest-image-wrapper">
+								<img src={c.image} alt={c.title} class="contest-image" />
+								
+								<!-- Status Badge -->
+								<div class="contest-badge" class:badge-active={status === 'active'} class:badge-ending={status === 'ending-soon'} class:badge-ended={status === 'ended'}>
+									{#if status === 'active'}
+										<Zap size={14} class="badge-icon" />
+										Active
+									{:else if status === 'ending-soon'}
+										<Clock3 size={14} class="badge-icon" />
+										Ending Soon
+									{:else}
+										Ended
+									{/if}
+								</div>
+
+								<!-- Days Remaining -->
+								{#if c.isActive}
+									<div class="days-remaining">
+										<div class="days-number">{c.daysRemaining}</div>
+										<div class="days-label">days left</div>
+									</div>
 								{/if}
 							</div>
 
-							<!-- Days Remaining -->
-							{#if c.isActive}
-								<div class="days-remaining">
-									<div class="days-number">{c.daysRemaining}</div>
-									<div class="days-label">days left</div>
-								</div>
-							{/if}
-						</div>
+							<!-- Content -->
+							<div class="contest-content">
+								<h3 class="contest-title">{c.title}</h3>
+								<p class="contest-description">{c.description}</p>
 
-						<!-- Content -->
-						<div class="contest-content">
-							<h3 class="contest-title">{c.title}</h3>
-							<p class="contest-description">{c.description}</p>
+								<div class="contest-meta">
+									<div class="meta-item">
+										<Trophy size={16} class="text-amber-500" />
+										<span>{c.prize}</span>
+									</div>
+									<div class="meta-item">
+										<Clock3 size={16} class="text-blue-500" />
+										<span>{dateFormatter.format(deadline)}</span>
+									</div>
+								</div>
 
-							<div class="contest-meta">
-								<div class="meta-item">
-									<Trophy size={16} class="text-amber-500" />
-									<span>{c.prize}</span>
-								</div>
-								<div class="meta-item">
-									<Clock3 size={16} class="text-blue-500" />
-									<span>{dateFormatter.format(deadline)}</span>
-								</div>
+								<button class="contest-btn">
+									<a href="https://layered-xi.vercel.app/dashboard/projects">
+										{c.isActive ? 'Enter Contest' : 'View Details'}
+									</a>
+								</button>
 							</div>
-
-							<button class="contest-btn">
-								<a href="https://layered-xi.vercel.app/dashboard/projects">
-									{c.isActive ? 'Enter Contest' : 'View Details'}
-								</a>
-							</button>
 						</div>
-					</div>
-				{/each}
+					{/each}
+				</div>
 			</div>
-		</div>
 		{:else}
 			<div class="no-contests">
 				<Trophy size={48} class="text-gray-300" />
@@ -499,31 +524,34 @@
 	.contests-viewport {
 		overflow: hidden;
 		width: 100%;
-		max-width: 900px; /* or whatever design width you want */
-		margin: 0 auto;
+		border-radius: 12px;
 	}
 		
 	.contests-track {
 		display: flex;
-		gap: 20px;
-		transition: transform 0.4s ease;
+		transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 	}
-	
+		
 	.contest-card {
 		flex: 0 0 100%;
-		max-width: 100%;
+		min-width: 100%;
+		display: flex;
+		flex-direction: column;
+		border-radius: 12px;
+		overflow: hidden;
+		background: white;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		transition: box-shadow 0.3s ease;
 	}
 
 	.contest-card:hover {
-		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-		transform: translateY(-4px);
-		scroll-snap-align: start;
+		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 	}
 
 	.contest-image-wrapper {
 		position: relative;
 		width: 100%;
-		height: 250px;      
+		height: 300px;      
 		overflow: hidden;   
 	}
 
@@ -605,14 +633,15 @@
 	}
 
 	.contest-content {
-		padding: 16px;
+		padding: 20px;
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
+		flex: 1;
 	}
 
 	.contest-title {
-		font-size: 18px;
+		font-size: 20px;
 		font-weight: 700;
 		color: #1f2937;
 		margin: 0;
@@ -620,10 +649,10 @@
 	}
 
 	.contest-description {
-		font-size: 13px;
+		font-size: 14px;
 		color: #6b7280;
 		margin: 0;
-		line-height: 1.4;
+		line-height: 1.5;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
@@ -637,27 +666,28 @@
 		padding: 8px 0;
 		border-top: 1px solid #f3f4f6;
 		border-bottom: 1px solid #f3f4f6;
+		margin-top: auto;
 	}
 
 	.meta-item {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		font-size: 12px;
+		font-size: 13px;
 		color: #4b5563;
 	}
 
 	.contest-btn {
-		padding: 10px 16px;
+		padding: 12px 16px;
 		background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 		color: white;
 		border: none;
 		border-radius: 8px;
-		font-size: 13px;
+		font-size: 14px;
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.3s ease;
-		margin-top: 4px;
+		margin-top: 8px;
 	}
 
 	.contest-btn:hover {
@@ -667,6 +697,11 @@
 
 	.contest-btn:active {
 		transform: translateY(0);
+	}
+
+	.contest-btn a {
+		color: white;
+		text-decoration: none;
 	}
 
 	.no-contests {
@@ -685,19 +720,30 @@
 	}
 
 	.arrow-btn {
-		width: 36px;
-		height: 36px;
+		width: 40px;
+		height: 40px;
 		border-radius: 8px;
-		border: 1px solid #e5e7eb;
+		border: 2px solid #e5e7eb;
 		background: white;
 		cursor: pointer;
-		font-size: 16px;
+		font-size: 18px;
+		font-weight: 600;
 		transition: all 0.2s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #374151;
 	}
 	
 	.arrow-btn:hover {
-		background: #f3f4f6;
-		transform: translateY(-1px);
+		background: #3b82f6;
+		border-color: #3b82f6;
+		color: white;
+		transform: translateY(-2px);
+	}
+
+	.arrow-btn:active {
+		transform: translateY(0);
 	}
 
 	/* ========================
@@ -933,16 +979,12 @@
 	}
 
 	@media (max-width: 768px) {
-		.contests-grid {
-			grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+		.contests-card {
+			border-radius: 8px;
 		}
 	}
 
 	@media (max-width: 640px) {
-		.contests-grid {
-			grid-template-columns: 1fr;
-		}
-
 		.modal-content {
 			padding: 24px;
 			width: 95%;
@@ -970,6 +1012,28 @@
 
 		.contests-title-group h2 {
 			font-size: 24px;
+		}
+
+		.arrow-btn {
+			width: 36px;
+			height: 36px;
+			font-size: 16px;
+		}
+
+		.contest-image-wrapper {
+			height: 200px;
+		}
+
+		.contest-content {
+			padding: 16px;
+		}
+
+		.contest-title {
+			font-size: 18px;
+		}
+
+		.contest-description {
+			font-size: 13px;
 		}
 	}
 </style>
