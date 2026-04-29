@@ -8,7 +8,8 @@
 		Printer,
 		ScrollText,
 		Store,
-		Users
+		Users,
+		Dices
 	} from '@lucide/svelte';
 
 	let { data } = $props();
@@ -46,6 +47,15 @@
 				<Store size={40} />
 			</div>
 			<p class="text-2xl font-bold">Market</p>
+		</a>
+		<a
+			class="themed-box flex flex-col items-center justify-center gap-2 p-3 shadow-xl transition-transform hover:scale-105"
+			href="admin/contests"
+		>
+			<div>
+				<Dices size={40} />
+			</div>
+			<p class="text-2xl font-bold">Contests</p>
 		</a>
 		<a
 			class="themed-box flex flex-col items-center justify-center gap-2 p-3 shadow-xl transition-transform hover:scale-105"
