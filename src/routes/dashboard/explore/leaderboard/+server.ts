@@ -11,7 +11,7 @@ export async function GET() {
 			name: user.name,
 
 			// raw stats
-			totalHours: sql<number>`COALESCE(SUM(${devlog.timeSpent}), 0) / 60`,
+			totalHours: sql<number>`COALESCE(SUM(${devlog.timeSpent})/60, 0)`,
 			totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
 			totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
 			totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`
