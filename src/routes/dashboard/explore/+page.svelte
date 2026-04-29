@@ -212,7 +212,9 @@
 							</div>
 
 							<button class="contest-btn">
-								{c.isActive ? 'Enter Contest' : 'View Details'}
+								<a href="https://layered-xi.vercel.app/dashboard/projects">
+									{c.isActive ? 'Enter Contest' : 'View Details'}
+								</a>
 							</button>
 						</div>
 					</div>
