@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { Trash2, Edit2, Plus } from 'lucide-svelte';
 	import type { ActionData } from './$types';
 
@@ -76,6 +77,7 @@
 				use:enhance={() => {
 					return async ({ result }) => {
 						if (result.type === 'success') {
+							await invalidateAll();
 							resetForm();
 						}
 					};
@@ -199,8 +201,10 @@
 							method="POST"
 							action="?/delete"
 							use:enhance={() => {
-								return async () => {
-									// Form will auto-refresh
+								return async ({ result }) => {
+									if (result.type === 'success') {
+										await invalidateAll();
+									}
 								};
 							}}
 							class="inline"
@@ -225,5 +229,3 @@
 		<!--{/if}-->
 	</div>
 </div>
-
-
