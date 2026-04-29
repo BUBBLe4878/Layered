@@ -169,11 +169,11 @@
 
 	<!-- Contests List -->
 	<div class="grid grid-cols-1 gap-4">
-		{#if contests.length === 0}
+		<!--{#if contests.length === 0}
 			<div class="text-center py-12 text-gray-500">
 				<p class="text-lg">No contests yet</p>
 			</div>
-		{:else}
+		{:else}-->
 			{#each contests as contest (contest.id)}
 				<div class="bg-white border rounded-lg p-4 flex items-center justify-between hover:shadow-md transition">
 					<div class="flex-1">
@@ -222,7 +222,7 @@
 					</div>
 				</div>
 			{/each}
-		{/if}
+		<!--{/if}-->
 	</div>
 </div>
 
