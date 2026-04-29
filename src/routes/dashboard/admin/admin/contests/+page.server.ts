@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.select()
 		.from(contest)
 		.where(eq(contest.deleted, false));
-
+		console.log('Contests from DB:', contests); // debugging
 	return { contests };
 };
 
