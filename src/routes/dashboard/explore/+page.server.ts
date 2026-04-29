@@ -69,7 +69,7 @@ export async function load({ url, locals }) {
 				const hours = ((Number(u.totalHours ?? 0))/10)/1;
 				const logs = Number(u.totalLogs ?? 0);
 				const likes = Number(u.totalLikes ?? 0);
-				const clay = (Number(u.totalClay ?? 0))*10;
+				const clay = Number(u.totalClay ?? 0);
 				const projects = Number(u.totalProjects ?? 0);
 		
 				const score =
