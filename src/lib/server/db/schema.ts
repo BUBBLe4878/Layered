@@ -11,6 +11,8 @@ import {
 	unique
 } from 'drizzle-orm/pg-core';
 
+import { relations } from 'drizzle-orm';
+
 export const hackatimeTrustEnum = pgEnum('hackatime_trust', ['green', 'blue', 'yellow', 'red']);
 export const trustEnum = pgEnum('trust', ['green', 'blue', 'yellow', 'red']);
 export const clubRoleEnum = pgEnum('club_role', ['leader', 'member']);
@@ -302,6 +304,40 @@ export const devlogView = pgTable('devlog_view', {
 	userId: integer('user_id').references(() => user.id), // null if anonymous
 	createdAt: timestamp('created_at').notNull().defaultNow()
 });
+
+//contests
+export const contest = pgTable('contest', {
+	id: serial('id').primaryKey(),
+	title: text('title').notNull(),
+	description: text('description').notNull(),
+	image: text('image').notNull(), // URL to background image
+	status: text('status').notNull().default('upcoming'), // 'upcoming', 'active', 'ended'
+	prize: text('prize').notNull(), // Prize description/amount
+	deadline: timestamp('deadline').notNull(),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at').notNull().defaultNow()
+});
+
+//link contests to submissions 
+
+export const contestSubmission = pgTable('contest_submission', {
+	id: serial('id').primaryKey(),
+	contestId: integer('contest_id').notNull().references(() => contest.id, { onDelete: 'cascade' }),
+	userId: integer('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+	projectId: integer('project_id').notNull().references(() => project.id, { onDelete: 'cascade' }),
+	createdAt: timestamp('created_at').notNull().defaultNow()
+});
+ 
+export const contestRelations = relations(contest, ({ many }) => ({
+	submissions: many(contestSubmission)
+}));
+ 
+export const contestSubmissionRelations = relations(contestSubmission, ({ one }) => ({
+	contest: one(contest, { fields: [contestSubmission.contestId], references: [contest.id] }),
+	user: one(user, { fields: [contestSubmission.userId], references: [user.id] }),
+	project: one(project, { fields: [contestSubmission.projectId], references: [project.id] })
+}));
+
 
 // Market
 
