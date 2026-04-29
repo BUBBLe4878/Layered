@@ -526,7 +526,7 @@
 		position: relative;
 		width: 100%;
 		height: 250px;
-		padding-bottom: 66.67%; /* 3:2 aspect ratio */
+		/*padding-bottom: 66.67%; /* 3:2 aspect ratio */*/
 		overflow: hidden;
 		background: linear-gradient(135deg, #f0f4f8 0%, #e5ebf1 100%);
 	}
@@ -536,7 +536,7 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 50%;
+		height: auto;
 		object-fit: cover;
 	}
 
