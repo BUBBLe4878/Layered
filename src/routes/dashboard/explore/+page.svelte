@@ -496,6 +496,8 @@
 		overflow-x: auto;
 		scroll-behavior: smooth;
 		padding-bottom: 8px;
+		flex-wrap: nowrap;
+		scroll-snap-type: x mandatory;
 	}
 	
 	.contests-grid::-webkit-scrollbar {
@@ -518,6 +520,7 @@
 	.contest-card:hover {
 		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 		transform: translateY(-4px);
+		scroll-snap-align: start;
 	}
 
 	.contest-image-wrapper {
