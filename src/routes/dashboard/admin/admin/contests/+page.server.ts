@@ -2,19 +2,22 @@ import { db } from '$lib/server/db/index.js';
 import { contest } from '$lib/server/db/schema.js';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
-export async function load({ locals }) {
+export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user?.hasAdmin) {
 		throw error(403, { message: 'oi get out' });
 	}
 
-	const contest = await db.select().from(contest).where(eq(contest.deleted, false));
+	const contests = await db
+		.select()
+		.from(contest)
+		.where(eq(contest.deleted, false));
 
 	return {
-		contest
+		contests
 	};
-}
+};
 
 export const actions: Actions = {
 	delete: async ({ request, locals }) => {
