@@ -9,7 +9,7 @@ export async function load({ locals }) {
 		throw error(403, { message: 'oi get out' });
 	}
 
-	const marketItems = await db.select().from(marketItem).where(eq(marketItem.deleted, false));
+	const marketItems = await db.select().from(contest).where(eq(contest.deleted, false));
 
 	return {
 		marketItems
