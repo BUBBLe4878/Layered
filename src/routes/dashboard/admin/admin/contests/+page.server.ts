@@ -85,3 +85,4 @@ export const actions: Actions = {
 		return { success: true };
 	}
 };
+console.log('Contests from DB:', contests);
