@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Head from '$lib/components/Head.svelte';
-	import { ChevronDown, Clock3, Heart } from '@lucide/svelte';
+	import { ChevronDown, Clock3, Heart, Trophy, Zap } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
 	import Spinny3DPreview from '$lib/components/Spinny3DPreview.svelte';
 
@@ -10,6 +10,7 @@
 	type SortType = 'newest' | 'trending' | 'random' | 'liked';
 
 	let devlogs = $state(data.devlogs);
+	let contests = $state(data.contests || []);
 	let hasMore = $state(data.hasMore);
 	let nextOffset = $state(data.nextOffset);
 	let loadingMore = $state(false);
@@ -74,6 +75,16 @@
 		return !performanceModeEnabled && hoveredDevlogId === devlogId && Boolean(modelUrl);
 	}
 
+	function getContestStatus(contest: any) {
+		if (!contest.isActive) {
+			return 'ended';
+		}
+		if (contest.daysRemaining <= 3) {
+			return 'ending-soon';
+		}
+		return 'active';
+	}
+
 	// ---------------------------
 	// INFINITE SCROLL
 	// ---------------------------
@@ -119,7 +130,7 @@
 
 <Head title="Explore" />
 
-<div class="flex flex-col gap-5">
+<div class="flex flex-col gap-8">
 
 	<!-- HEADER -->
 	<div class="flex justify-between items-center">
@@ -140,6 +151,79 @@
 				<ChevronDown size={16} />
 			</div>
 		</div>
+	</div>
+
+	<!-- DESIGN CONTESTS SECTION -->
+	<div class="contests-section">
+		<div class="contests-header">
+			<div class="contests-title-group">
+				<Trophy size={28} class="text-amber-500" />
+				<h2>Design Contests</h2>
+			</div>
+			<p class="contests-subtitle">Show your skills and win exciting prizes</p>
+		</div>
+
+		{#if contests.length > 0}
+			<div class="contests-grid">
+				{#each contests as c (c.id)}
+					{@const deadline = parseDate(c.deadline)}
+					{@const status = getContestStatus(c)}
+					<div class="contest-card">
+						<!-- Featured Image -->
+						<div class="contest-image-wrapper">
+							<img src={c.image} alt={c.title} class="contest-image" />
+							
+							<!-- Status Badge -->
+							<div class="contest-badge" class:badge-active={status === 'active'} class:badge-ending={status === 'ending-soon'} class:badge-ended={status === 'ended'}>
+								{#if status === 'active'}
+									<Zap size={14} class="badge-icon" />
+									Active
+								{:else if status === 'ending-soon'}
+									<Clock3 size={14} class="badge-icon" />
+									Ending Soon
+								{:else}
+									Ended
+								{/if}
+							</div>
+
+							<!-- Days Remaining -->
+							{#if c.isActive}
+								<div class="days-remaining">
+									<div class="days-number">{c.daysRemaining}</div>
+									<div class="days-label">days left</div>
+								</div>
+							{/if}
+						</div>
+
+						<!-- Content -->
+						<div class="contest-content">
+							<h3 class="contest-title">{c.title}</h3>
+							<p class="contest-description">{c.description}</p>
+
+							<div class="contest-meta">
+								<div class="meta-item">
+									<Trophy size={16} class="text-amber-500" />
+									<span>{c.prize}</span>
+								</div>
+								<div class="meta-item">
+									<Clock3 size={16} class="text-blue-500" />
+									<span>{dateFormatter.format(deadline)}</span>
+								</div>
+							</div>
+
+							<button class="contest-btn">
+								{c.isActive ? 'Enter Contest' : 'View Details'}
+							</button>
+						</div>
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<div class="no-contests">
+				<Trophy size={48} class="text-gray-300" />
+				<p>No contests available right now. Check back soon!</p>
+			</div>
+		{/if}
 	</div>
 
 	<!-- LEADERBOARD -->
@@ -334,6 +418,238 @@
 </div>
 
 <style>
+	/* ========================
+	   CONTESTS SECTION
+	   ======================== */
+	.contests-section {
+		animation: fadeInUp 0.6s ease-out;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.contests-header {
+		margin-bottom: 24px;
+	}
+
+	.contests-title-group {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 8px;
+	}
+
+	.contests-title-group h2 {
+		font-size: 28px;
+		font-weight: 700;
+		color: #1f2937;
+		margin: 0;
+	}
+
+	.contests-subtitle {
+		font-size: 14px;
+		color: #6b7280;
+		margin: 0;
+	}
+
+	.contests-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 20px;
+		margin-bottom: 32px;
+	}
+
+	.contest-card {
+		background: white;
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		border: 1px solid #e5e7eb;
+	}
+
+	.contest-card:hover {
+		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+		transform: translateY(-4px);
+	}
+
+	.contest-image-wrapper {
+		position: relative;
+		width: 100%;
+		padding-bottom: 66.67%; /* 3:2 aspect ratio */
+		overflow: hidden;
+		background: linear-gradient(135deg, #f0f4f8 0%, #e5ebf1 100%);
+	}
+
+	.contest-image {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.contest-badge {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 12px;
+		border-radius: 20px;
+		font-size: 12px;
+		font-weight: 600;
+		backdrop-filter: blur(8px);
+		background: rgba(255, 255, 255, 0.9);
+		color: #1f2937;
+		border: 1px solid rgba(255, 255, 255, 0.5);
+	}
+
+	.badge-icon {
+		display: inline-block;
+	}
+
+	.contest-badge.badge-active {
+		background: rgba(34, 197, 94, 0.15);
+		border-color: rgba(34, 197, 94, 0.3);
+		color: #16a34a;
+	}
+
+	.contest-badge.badge-ending {
+		background: rgba(245, 158, 11, 0.15);
+		border-color: rgba(245, 158, 11, 0.3);
+		color: #d97706;
+	}
+
+	.contest-badge.badge-ended {
+		background: rgba(107, 114, 128, 0.15);
+		border-color: rgba(107, 114, 128, 0.3);
+		color: #6b7280;
+	}
+
+	.days-remaining {
+		position: absolute;
+		bottom: 12px;
+		left: 12px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 50px;
+		height: 50px;
+		background: rgba(59, 130, 246, 0.95);
+		color: white;
+		border-radius: 8px;
+		backdrop-filter: blur(4px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+	}
+
+	.days-number {
+		font-size: 20px;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.days-label {
+		font-size: 10px;
+		font-weight: 600;
+		margin-top: 2px;
+		text-transform: uppercase;
+	}
+
+	.contest-content {
+		padding: 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.contest-title {
+		font-size: 18px;
+		font-weight: 700;
+		color: #1f2937;
+		margin: 0;
+		line-height: 1.3;
+	}
+
+	.contest-description {
+		font-size: 13px;
+		color: #6b7280;
+		margin: 0;
+		line-height: 1.4;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.contest-meta {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 8px 0;
+		border-top: 1px solid #f3f4f6;
+		border-bottom: 1px solid #f3f4f6;
+	}
+
+	.meta-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 12px;
+		color: #4b5563;
+	}
+
+	.contest-btn {
+		padding: 10px 16px;
+		background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+		color: white;
+		border: none;
+		border-radius: 8px;
+		font-size: 13px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		margin-top: 4px;
+	}
+
+	.contest-btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+	}
+
+	.contest-btn:active {
+		transform: translateY(0);
+	}
+
+	.no-contests {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 48px 24px;
+		text-align: center;
+		color: #9ca3af;
+	}
+
+	.no-contests p {
+		margin-top: 12px;
+		font-size: 14px;
+	}
+
+	/* ========================
+	   LEADERBOARD SECTION
+	   ======================== */
 	.leaderboard-container {
 		max-height: 400px;
 		overflow-y: auto;
@@ -400,7 +716,9 @@
 		text-align: right;
 	}
 
-	/* MODAL STYLES */
+	/* ========================
+	   MODAL STYLES
+	   ======================== */
 	.modal-overlay {
 		position: fixed;
 		inset: 0;
@@ -561,7 +879,17 @@
 		font-size: 18px;
 	}
 
+	@media (max-width: 768px) {
+		.contests-grid {
+			grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+		}
+	}
+
 	@media (max-width: 640px) {
+		.contests-grid {
+			grid-template-columns: 1fr;
+		}
+
 		.modal-content {
 			padding: 24px;
 			width: 95%;
@@ -585,6 +913,10 @@
 
 		.score-preview {
 			font-size: 11px;
+		}
+
+		.contests-title-group h2 {
+			font-size: 24px;
 		}
 	}
 </style>
