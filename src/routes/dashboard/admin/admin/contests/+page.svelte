@@ -45,11 +45,13 @@
 			deadline: ''
 		};
 	}
+	console.log('Contests:', contests);
 </script>
 
 <Head title="Manage Contests" />
 
 <div class="p-6">
+	<p>DEBUG: {contests.length} contests found</p>
 	<div class="flex justify-between items-center mb-6">
 		<h1 class="text-3xl font-bold">Manage Contests</h1>
 		<button
