@@ -52,7 +52,7 @@ export async function load({ url, locals }) {
 				id: user.id,
 				name: user.name,
 		
-				totalHours: sql<number>`COALESCE(SUM(COALESCE(${devlog.timeSpent}, 0)/60), 0)`,
+				totalHours: sql<number>`COALESCE(SUM(COALESCE(${devlog.timeSpent}, 0)), 0)`,
 				totalLogs: sql<number>`COUNT(DISTINCT ${devlog.id})`,
 				totalLikes: sql<number>`COUNT(DISTINCT ${devlogLike.id})`,
 				totalProjects: sql<number>`COUNT(DISTINCT ${project.id})`,
@@ -66,7 +66,7 @@ export async function load({ url, locals }) {
 		
 		const leaderboard = leaderboardRaw
 			.map((u) => {
-				const hours = ((Number(u.totalHours ?? 0))/10)/1;
+				const hours = (Number(u.totalHours ?? 0))/60;
 				const logs = Number(u.totalLogs ?? 0);
 				const likes = Number(u.totalLikes ?? 0);
 				const clay = Number(u.totalClay ?? 0);
