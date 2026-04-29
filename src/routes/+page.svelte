@@ -5,6 +5,8 @@
 
 	import logo from '$lib/assets/logo-nobg.png';
 
+	export let data;
+
 	let hoursTracked = 0;
 </script>
 
