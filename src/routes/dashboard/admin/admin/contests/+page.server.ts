@@ -18,6 +18,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	try {
 		console.log('📊 Fetching contests from DB...');
+		console.log('Contest table object:', contest);
+		console.log('Contest.deleted field:', contest.deleted);
+
+		// Try without the WHERE clause first
+		console.log('Trying query WITHOUT where clause...');
+		const allContests = await db.select().from(contest);
+		console.log('All contests (no filter):', allContests);
+		console.log('All contests count:', allContests.length);
+
+		// Now try with the WHERE clause
+		console.log('Trying query WITH where clause (deleted = false)...');
 		const contests = await db
 			.select()
 			.from(contest)
@@ -30,6 +41,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 		if (contests.length === 0) {
 			console.log('⚠️  No contests found (empty array)');
+			console.log('But all contests count:', allContests.length);
 		}
 
 		console.log('=== LOAD FUNCTION END ===');
