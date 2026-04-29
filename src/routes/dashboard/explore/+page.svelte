@@ -496,31 +496,6 @@
 		margin: 0;
 	}
 
-	.contests-grid {
-		display: flex;
-		gap: 20px;
-		overflow-x: auto;
-		scroll-behavior: smooth;
-		padding-bottom: 8px;
-		flex-wrap: nowrap;
-		scroll-snap-type: x mandatory;
-	}
-	
-	.contests-grid::-webkit-scrollbar {
-		display: none;
-	}
-
-	.contest-card {
-		min-width: 90%;
-		flex-shrink: 0;
-		background: white;
-		border-radius: 12px;
-		overflow: hidden;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-		border: 1px solid #e5e7eb;
-	}
-
 	.contests-viewport {
 		overflow: hidden;
 		width: 100%;
