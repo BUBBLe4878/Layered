@@ -505,8 +505,8 @@
 	}
 
 	.contest-card {
-		min-width: 280px;
-		max-width: 280px;
+		min-width: 90%;
+		max-width: 91%;
 		flex-shrink: 0;
 		background: white;
 		border-radius: 12px;
