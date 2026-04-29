@@ -30,9 +30,9 @@ export const actions: Actions = {
 		}
 
 		await db
-			.update(marketItem)
+			.update(contest)
 			.set({ deleted: true, updatedAt: new Date() })
-			.where(eq(marketItem.id, id));
+			.where(eq(contest.id, id));
 
 		return { success: true };
 	}
