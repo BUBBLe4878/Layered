@@ -525,18 +525,15 @@
 	.contest-image-wrapper {
 		position: relative;
 		width: 100%;
-		height: 250px;
-		/*padding-bottom: 66.67%; /* 3:2 aspect ratio */*/
+		aspect-ratio: 3 / 2;
 		overflow: hidden;
-		background: linear-gradient(135deg, #f0f4f8 0%, #e5ebf1 100%);
 	}
 
 	.contest-image {
 		position: absolute;
-		top: 0;
-		left: 0;
+		inset: 0;
 		width: 100%;
-		height: auto;
+		height: 100%;
 		object-fit: cover;
 	}
 
