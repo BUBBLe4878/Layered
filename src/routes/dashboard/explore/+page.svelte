@@ -525,7 +525,7 @@
 	.contest-image-wrapper {
 		position: relative;
 		width: 100%;
-		height: auto;
+		height: 250px;
 		padding-bottom: 66.67%; /* 3:2 aspect ratio */
 		overflow: hidden;
 		background: linear-gradient(135deg, #f0f4f8 0%, #e5ebf1 100%);
