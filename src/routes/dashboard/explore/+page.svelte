@@ -25,6 +25,7 @@
 
 	let currentIndex = 0;
 	const visibleCount = 1; // how many cards visible at once
+	const cardWidth = 900;
 
 	const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 	const timeFormatter = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
