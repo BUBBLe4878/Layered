@@ -520,6 +520,22 @@
 		border: 1px solid #e5e7eb;
 	}
 
+	.contests-viewport {
+		overflow: hidden;
+		width: 100%;
+	}
+	
+	.contests-track {
+		display: flex;
+		gap: 20px;
+		transition: transform 0.4s ease;
+	}
+	
+	.contest-card {
+		min-width: 280px;
+		max-width: 280px;
+		flex-shrink: 0;
+	}
 
 	.contest-card:hover {
 		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
