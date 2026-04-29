@@ -11,6 +11,7 @@
 <h1 class="mt-5 mb-3 font-hero text-3xl font-medium">Contests</h1>
 
 <div class="mb-5 flex flex-col gap-5">
+	 <a href="contests/item/create" class="button primary md mb-5">Add item</a>
 	{#if contests.length === 0}
 		<p class="text-sm text-primary-300">No contests yet.</p>
 	{:else}
