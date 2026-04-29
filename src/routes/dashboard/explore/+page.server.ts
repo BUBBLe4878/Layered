@@ -60,7 +60,7 @@ export async function load({ url, locals }) {
 			})
 			.from(user)
 			.leftJoin(devlog, eq(devlog.userId, user.id))
-			.leftJoin(devlogLike, eq(devlogLike.userId, user.id))
+			.leftJoin(devlogLike, eq(devlogLike.devlogId, devlog.id))
 			.leftJoin(project, eq(project.userId, user.id))
 			.groupBy(user.id, user.name);
 		
