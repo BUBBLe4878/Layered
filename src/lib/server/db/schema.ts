@@ -314,6 +314,7 @@ export const contest = pgTable('contest', {
 	status: text('status').notNull().default('upcoming'), // 'upcoming', 'active', 'ended'
 	prize: text('prize').notNull(), // Prize description/amount
 	deadline: timestamp('deadline').notNull(),
+	deleted: boolean('deleted').notNull().default(false),
 	createdAt: timestamp('created_at').notNull().defaultNow(),
 	updatedAt: timestamp('updated_at').notNull().defaultNow()
 });
