@@ -21,11 +21,26 @@
 	let hoveredDevlogId = $state<number | null>(null);
 	let leaderboard = $state(data.leaderboard);
 	let selectedUser = $state<any>(null);
+	let contestsContainer: HTMLDivElement | null = null;
 
 	const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 	const timeFormatter = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
 
 	const rootMargin = '300px 0px';
+
+	// ---------------------------
+	// Contests
+	// ---------------------------
+	function scrollContests(direction: 'left' | 'right') {
+		if (!contestsContainer) return;
+	
+		const scrollAmount = 320; // ~1 card width + gap
+	
+		contestsContainer.scrollBy({
+			left: direction === 'right' ? scrollAmount : -scrollAmount,
+			behavior: 'smooth'
+		});
+	}
 
 	// ---------------------------
 	// LOAD MORE
@@ -156,10 +171,22 @@
 	<!-- DESIGN CONTESTS SECTION -->
 	<div class="contests-section">
 		<div class="contests-header">
-			<div class="contests-title-group">
-				<Trophy size={28} class="text-amber-500" />
-				<h2>Design Contests</h2>
+			<div class="flex justify-between items-center">
+				<div class="contests-title-group">
+					<Trophy size={28} class="text-amber-500" />
+					<h2>Design Contests</h2>
+				</div>
+		
+				<div class="flex gap-2">
+					<button on:click={() => scrollContests('left')} class="arrow-btn">
+						←
+					</button>
+					<button on:click={() => scrollContests('right')} class="arrow-btn">
+						→
+					</button>
+				</div>
 			</div>
+		
 			<p class="contests-subtitle">Show your skills and win exciting prizes</p>
 		</div>
 
@@ -463,13 +490,21 @@
 	}
 
 	.contests-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		display: flex;
 		gap: 20px;
-		margin-bottom: 32px;
+		overflow-x: auto;
+		scroll-behavior: smooth;
+		padding-bottom: 8px;
+	}
+	
+	.contests-grid::-webkit-scrollbar {
+		display: none;
 	}
 
 	.contest-card {
+		min-width: 280px;
+		max-width: 280px;
+		flex-shrink: 0;
 		background: white;
 		border-radius: 12px;
 		overflow: hidden;
@@ -477,6 +512,7 @@
 		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		border: 1px solid #e5e7eb;
 	}
+
 
 	.contest-card:hover {
 		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
