@@ -226,20 +226,4 @@
 	</div>
 </div>
 
-<style>
-	.button {
-		@apply px-4 py-2 rounded font-medium transition;
-	}
 
-	.button.primary {
-		@apply bg-blue-500 text-white hover:bg-blue-600;
-	}
-
-	.button.secondary {
-		@apply bg-gray-200 text-gray-900 hover:bg-gray-300;
-	}
-
-	.button.danger {
-		@apply bg-red-500 text-white hover:bg-red-600;
-	}
-</style>
