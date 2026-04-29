@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index.js';
-import { marketItem } from '$lib/server/db/schema.js';
+import { contest } from '$lib/server/db/schema.js';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import type { Actions } from './$types';
