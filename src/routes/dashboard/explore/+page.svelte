@@ -23,6 +23,9 @@
 	let selectedUser = $state<any>(null);
 	let contestsContainer: HTMLDivElement | null = null;
 
+	let currentIndex = 0;
+	const visibleCount = 1; // how many cards visible at once
+
 	const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 	const timeFormatter = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
 
@@ -32,14 +35,11 @@
 	// Contests
 	// ---------------------------
 	function scrollContests(direction: 'left' | 'right') {
-		if (!contestsContainer) return;
-	
-		const scrollAmount = 320; // ~1 card width + gap
-	
-		contestsContainer.scrollBy({
-			left: direction === 'right' ? scrollAmount : -scrollAmount,
-			behavior: 'smooth'
-		});
+		if (direction === 'right') {
+			currentIndex = Math.min(currentIndex + 1, contests.length - visibleCount);
+		} else {
+			currentIndex = Math.max(currentIndex - 1, 0);
+		}
 	}
 
 	// ---------------------------
@@ -191,7 +191,11 @@
 		</div>
 
 		{#if contests.length > 0}
-			<div class="contests-grid" bind:this={contestsContainer}>
+			<div class="contests-viewport">
+				<div
+					class="contests-track"
+					style="transform: translateX(-{currentIndex * 300}px)"
+				>
 				{#each contests as c (c.id)}
 					{@const deadline = parseDate(c.deadline)}
 					{@const status = getContestStatus(c)}
@@ -247,6 +251,7 @@
 					</div>
 				{/each}
 			</div>
+		</div>
 		{:else}
 			<div class="no-contests">
 				<Trophy size={48} class="text-gray-300" />
