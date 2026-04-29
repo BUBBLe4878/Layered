@@ -310,15 +310,14 @@ export const contest = pgTable('contest', {
 	id: serial('id').primaryKey(),
 	title: text('title').notNull(),
 	description: text('description').notNull(),
-	image: text('image').notNull(), // URL to background image
-	status: text('status').notNull().default('upcoming'), // 'upcoming', 'active', 'ended'
-	prize: text('prize').notNull(), // Prize description/amount
+	image: text('image').notNull(),
+	status: text('status').notNull().default('upcoming'),
+	prize: text('prize').notNull(),
 	deadline: timestamp('deadline').notNull(),
 	deleted: boolean('deleted').notNull().default(false),
 	createdAt: timestamp('created_at').notNull().defaultNow(),
 	updatedAt: timestamp('updated_at').notNull().defaultNow()
 });
-
 //link contests to submissions 
 
 export const contestSubmission = pgTable('contest_submission', {
