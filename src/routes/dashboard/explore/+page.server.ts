@@ -28,8 +28,9 @@ export async function load({ url, locals }) {
 		const contests = await db
 			.select()
 			.from(contest)
+			.where(eq(contest.deleted, false))
 			.orderBy(desc(contest.deadline))
-			.limit(6); // Fetch up to 6 contests
+			//.limit(16);
 
 		// Map contests to include daysRemaining
 		const mappedContests = contests.map((c) => {
