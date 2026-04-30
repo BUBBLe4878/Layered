@@ -18,31 +18,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	try {
 		console.log('📊 Fetching contests from DB...');
-		console.log('Contest table object:', contest);
-		console.log('Contest.deleted field:', contest.deleted);
-
-		// Try without the WHERE clause first
-		console.log('Trying query WITHOUT where clause...');
-		const allContests = await db.select().from(contest);
-		console.log('All contests (no filter):', allContests);
-		console.log('All contests count:', allContests.length);
-
-		// Now try with the WHERE clause
-		console.log('Trying query WITH where clause (deleted = false)...');
 		const contests = await db
 			.select()
 			.from(contest)
 			.where(eq(contest.deleted, false));
 
 		console.log('✅ Query executed successfully');
-		console.log('Raw DB result:', contests);
 		console.log('Number of contests:', contests.length);
-		console.log('Contest IDs:', contests.map((c) => c.id));
-
-		if (contests.length === 0) {
-			console.log('⚠️  No contests found (empty array)');
-			console.log('But all contests count:', allContests.length);
-		}
 
 		console.log('=== LOAD FUNCTION END ===');
 		return { contests };
@@ -70,7 +52,8 @@ export const actions: Actions = {
 				image: formData.get('image')?.toString() || '',
 				status: formData.get('status')?.toString() || 'upcoming',
 				prize: formData.get('prize')?.toString() || '',
-				deadline: new Date(formData.get('deadline')?.toString() || '')
+				deadline: new Date(formData.get('deadline')?.toString() || ''),
+				deleted: false
 			};
 
 			console.log('📝 Contest data to insert:', contestData);
