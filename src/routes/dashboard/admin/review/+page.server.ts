@@ -138,6 +138,7 @@ async function getProjects(
 				project.editorFileType,
 				project.editorUrl,
 				project.uploadedFileUrl,
+				project.previewImage,
 				project.createdAt,
 				project.status,
 				user.id,
