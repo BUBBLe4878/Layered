@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../styles/global.css';
 	import Head from '$lib/components/Head.svelte';
 	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
 	import { BarChart3, BookOpen, Compass, PencilRuler, Store, Moon, Sun, Sparkles, Zap, Target, Flame } from '@lucide/svelte';
