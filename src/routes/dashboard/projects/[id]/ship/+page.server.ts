@@ -146,6 +146,7 @@ export const actions = {
 			const editorUrl = data.get('editor_url');
 			const editorFile = data.get('editor_file') as File;
 			const modelFile = data.get('model_file') as File;
+			const previewImage = data.get('preview_image') as File;
 			const submitAsClub = data.get('submit_as_club') === 'true';
 
 			log('ACTION_FORM_DATA', 'Form data extracted', {
@@ -153,6 +154,7 @@ export const actions = {
 				hasEditorUrl: Boolean(editorUrl),
 				editorFileSize: editorFile?.size ?? 0,
 				modelFileSize: modelFile?.size ?? 0,
+				previewImageSize: previewImage?.size ?? 0,
 				submitAsClub
 			});
 
@@ -338,6 +340,26 @@ export const actions = {
 			}
 			log('ACTION_MODEL_OK', 'Model file valid', { fileSize: modelFile.size });
 
+			// ── Validate Preview Image ───────────────────────────────
+			log('ACTION_VALIDATE_PREVIEW', 'Validating preview image');
+			const previewImageExists = previewImage instanceof File && previewImage.size > 0;
+			const previewImageValid =
+				previewImageExists &&
+				previewImage.size <= MAX_UPLOAD_SIZE &&
+				['image/jpeg', 'image/png', 'image/webp'].includes(previewImage.type);
+
+			if (previewImageExists && !previewImageValid) {
+				log('ACTION_PREVIEW_IMAGE_INVALID', 'Preview image validation failed', {
+					fileSize: previewImage?.size ?? 0,
+					maxSize: MAX_UPLOAD_SIZE,
+					mimeType: previewImage?.type
+				});
+				return fail(400, {
+					invalid_preview_image: true
+				});
+			}
+			log('ACTION_PREVIEW_OK', 'Preview image valid', { fileSize: previewImageExists ? previewImage.size : 0 });
+
 			// ── Query and validate project ───────────────────────────
 			log('ACTION_QUERY_PROJECT', 'Querying project for validation');
 			const [queriedProject] = await db
@@ -411,6 +433,7 @@ export const actions = {
 
 			let editorFileUrl: string | null = null;
 			let modelFileUrl: string | null = null;
+			let previewImageUrl: string | null = null;
 
 			try {
 				if (editorFileExists) {
@@ -459,6 +482,31 @@ export const actions = {
 					log('ACTION_UPLOAD_MODEL_VERCEL', 'Model file uploaded to Vercel Blob', { url: modelFileUrl });
 				}
 
+				if (previewImageExists) {
+					log('ACTION_UPLOAD_PREVIEW', 'Uploading preview image');
+					if (useR2) {
+						const previewPath = `ships/previews/${crypto.randomUUID()}${extname(previewImage.name)}`;
+						const previewCommand = new PutObjectCommand({
+							Bucket: env.S3_BUCKET_NAME!,
+							Key: previewPath,
+							Body: Buffer.from(await previewImage.arrayBuffer())
+						});
+						await S3.send(previewCommand);
+						previewImageUrl = previewPath;
+						log('ACTION_UPLOAD_PREVIEW_R2', 'Preview image uploaded to R2', { path: previewPath });
+					} else {
+						const previewBlob = await put(
+							`ships/previews/${crypto.randomUUID()}${extname(previewImage.name)}`,
+							previewImage,
+							{ access: 'public' }
+						);
+						previewImageUrl = previewBlob.url;
+						log('ACTION_UPLOAD_PREVIEW_VERCEL', 'Preview image uploaded to Vercel Blob', {
+							url: previewImageUrl
+						});
+					}
+				}
+
 				log('ACTION_UPLOAD_SUCCESS', 'All files uploaded successfully');
 			} catch (err) {
 				log('ACTION_UPLOAD_ERROR', 'File upload failed', {
@@ -497,7 +545,8 @@ export const actions = {
 						editorFileType: editorUrlExists ? 'url' : 'upload',
 						editorUrl: editorUrlExists ? editorUrlString : undefined,
 						uploadedFileUrl: editorFileExists ? editorFileUrl : undefined,
-						modelFile: modelFileUrl
+						modelFile: modelFileUrl,
+						previewImage: previewImageUrl
 					})
 					.where(
 						and(
@@ -550,6 +599,7 @@ export const actions = {
 					uploadedFileUrl: editorFileExists ? editorFileUrl : undefined,
 
 					modelFile: modelFileUrl,
+					previewImage: previewImageUrl,
 					clubId: clubIdForShip
 				});
 				log('ACTION_INSERT_SHIP_OK', 'Ship record created successfully');
