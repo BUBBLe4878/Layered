@@ -6,7 +6,7 @@
 	import { calculateCurrencyPayout, calculateMinutes } from '$lib/currency';
 	import { MAX_UPLOAD_SIZE } from '../config';
 	import type { PageProps } from './$types';
-	import { Ship, SquarePen } from '@lucide/svelte';
+	import { Ship, SquarePen, X } from '@lucide/svelte';
 
 	let { data, form }: PageProps = $props();
 
@@ -16,6 +16,7 @@
 	let editorUrl = $state(data.project.editorUrl);
 	let editorUploadFile = $state(null);
 	let modelFile = $state(null);
+	let previewImage = $state(null);
 	let submitAsClub = $state(false);
 
 	let hasEditorFile = $derived((editorUrl || editorUploadFile) && !(editorUrl && editorUploadFile));
@@ -28,6 +29,26 @@
 			data.project.createdAt
 		)
 	);
+
+	// Preview image preview
+	let previewImagePreview = $state<string | null>(null);
+
+	function handlePreviewImageChange(e: Event) {
+		const input = e.target as HTMLInputElement;
+		if (input.files?.[0]) {
+			previewImage = input.files[0];
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				previewImagePreview = e.target?.result as string;
+			};
+			reader.readAsDataURL(input.files[0]);
+		}
+	}
+
+	function clearPreviewImage() {
+		previewImage = null;
+		previewImagePreview = null;
+	}
 </script>
 
 <Head title="Ship project" />
@@ -162,6 +183,44 @@
 			<p class="mt-0.5 text-sm opacity-50">
 				Must be a 3MF file under {MAX_UPLOAD_SIZE / 1024 / 1024} MiB
 			</p>
+		{/if}
+	</label>
+
+	<label class="mt-2 flex grow flex-col gap-1">
+		<p>
+			Preview image <span class="opacity-50">(optional)</span>
+		</p>
+		<input
+			type="file"
+			name="preview_image"
+			accept="image/jpeg,image/png,image/webp"
+			onchange={handlePreviewImageChange}
+			class="themed-input-on-box p-1"
+		/>
+		{#if form?.invalid_preview_image}
+			<p class="mt-0.5 text-sm text-primary-500">
+				Invalid file, must be a JPG, PNG, or WebP under {MAX_UPLOAD_SIZE / 1024 / 1024} MiB
+			</p>
+		{:else}
+			<p class="mt-0.5 text-sm opacity-50">
+				JPG, PNG, or WebP up to {MAX_UPLOAD_SIZE / 1024 / 1024} MiB. This will be displayed on your shipped project.
+			</p>
+		{/if}
+
+		{#if previewImagePreview}
+			<div class="mt-2 rounded-lg border border-primary-600 overflow-hidden">
+				<div class="relative group">
+					<img src={previewImagePreview} alt="Preview" class="w-full h-auto max-h-64 object-cover" />
+					<button
+						type="button"
+						onclick={clearPreviewImage}
+						class="absolute top-2 right-2 p-1.5 bg-primary-900 rounded hover:bg-primary-800 opacity-0 group-hover:opacity-100 transition-opacity"
+						aria-label="Remove preview image"
+					>
+						<X size={16} />
+					</button>
+				</div>
+			</div>
 		{/if}
 	</label>
 
