@@ -188,6 +188,18 @@
 						aria-label="project"
 					>
 					</a>
+
+					<!-- Preview image if available -->
+					{#if project.project.previewImage}
+						<div class="mb-3 -mx-3 -mt-3 rounded-t-lg overflow-hidden">
+							<img
+								src={project.project.previewImage}
+								alt="Project preview for {project.project.name}"
+								class="w-full h-48 object-cover"
+							/>
+						</div>
+					{/if}
+
 					<h1 class="flex flex-row gap-1 text-xl font-semibold">
 						<span class="grow truncate">{project.project.name}</span>
 					</h1>
