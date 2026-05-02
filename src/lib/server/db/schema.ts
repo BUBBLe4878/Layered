@@ -149,6 +149,7 @@ export const project = pgTable('project', {
 	uploadedFileUrl: text(),
 
 	modelFile: text(),
+	previewImage: text(),
 	doubleDippingWith: doubleDippingEnum().notNull().default('none'),
 
 	status: projectStatusEnum().notNull().default('building'),
@@ -185,6 +186,7 @@ export const ship = pgTable('ship', {
 	uploadedFileUrl: text(),
 
 	modelFile: text().notNull(),
+	previewImage: text(),
 
 	timestamp: timestamp().notNull().defaultNow()
 });
