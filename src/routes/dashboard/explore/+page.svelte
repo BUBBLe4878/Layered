@@ -326,6 +326,7 @@
 				<div class="stats-grid">
 					<div class="stat-card">
 						<div class="stat-label">3D Modeling Time</div>
+						<div class="stat-value">{selectedUser.message}h</div>
 						<div class="stat-value">{selectedUser.totalHours}h</div>
 						<div class="stat-breakdown">
 							<div class="breakdown-bar">
