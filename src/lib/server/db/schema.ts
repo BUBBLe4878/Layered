@@ -298,6 +298,25 @@ export const devlogLike = pgTable(
 	})
 );
 
+//comments on devlogs
+export const devlogComment = pgTable(
+	'devlog_comment',
+	{
+		id: serial().primaryKey(),
+		devlogId: integer('devlog_id')
+			.notNull()
+			.references(() => devlog.id),
+		userId: integer('user_id')
+			.notNull()
+			.references(() => user.id),
+		comment: text('comment')
+			.notNull()
+	},
+	(table) => ({
+		uniqueConstraint: unique('devlog_comment_unique').on(table.devlogId, table.userId)
+	})
+);
+
 export const devlogView = pgTable('devlog_view', {
 	id: serial().primaryKey(),
 	devlogId: integer('devlog_id')
@@ -482,3 +501,4 @@ export type Club = typeof club.$inferSelect;
 export type ClubMembership = typeof clubMembership.$inferSelect;
 export type DevlogLike = typeof devlogLike.$inferSelect;
 export type DevlogView = typeof devlogView.$inferSelect;
+export type DevlogComment = typeof devlogComment.$inferSelect;
