@@ -1,8 +1,9 @@
 import { DEVLOGS_PAGE_SIZE, fetchExploreDevlogs, type SortType } from './devlogs.js';
 import { error as svelteError, json } from '@sveltejs/kit';
 import { db } from '$lib/server/db/index.js';
-import { user, devlog, devlogLike, project, contest } from '$lib/server/db/schema.js';
+import { user, devlog, devlogLike, project, contest, devlogComment } from '$lib/server/db/schema.js';
 import { eq, and, sql, desc, gt } from 'drizzle-orm';
+
 
 export async function load({ url, locals }) {
 	console.log('[explore/+page.server.ts] Load starting');
@@ -64,6 +65,21 @@ export async function load({ url, locals }) {
 			.leftJoin(devlogLike, eq(devlogLike.devlogId, devlog.id))
 			.leftJoin(project, eq(project.userId, user.id))
 			.groupBy(user.id, user.name);
+
+		// Fetch comments from the user's devlogs
+	const userCommentsData = await db
+	  .select({
+	    id: devlogComment.id,
+	    comment: devlogComment.comment,
+	    userId: devlogComment.userId,
+	    devlogId: devlogComment.devlogId,
+	    devlogDescription: devlog.description,
+	    createdAt: devlogComment.id, // or add createdAt to your schema
+	  })
+	  .from(devlogComment)
+	  .leftJoin(devlog, eq(devlog.id, devlogComment.devlogId))
+	  .where(eq(devlog.userId, locals.user?.id)) // Get comments ON this user's devlogs
+	  .limit(10);
 		
 		const leaderboard = leaderboardRaw
 			.map((u) => {
