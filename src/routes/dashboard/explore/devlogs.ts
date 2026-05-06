@@ -37,7 +37,19 @@ export async function fetchExploreDevlogs(
 		viewCount: count(devlogView.id).as('viewCount'),
 		userLiked: sql<boolean>`COUNT(CASE WHEN ${devlogLike.userId} = ${userId || null} THEN 1 END) > 0`.as(
 			'userLiked'
-		)
+		),
+		  devlogComments: sql`
+		    COALESCE(
+		      json_agg(
+		        DISTINCT jsonb_build_object(
+		          'id', ${devlogComment.id},
+		          'comment', ${devlogComment.comment},
+		          'userId', ${devlogComment.userId}
+		        )
+		      ) FILTER (WHERE ${devlogComment.id} IS NOT NULL),
+		      '[]'
+		    )
+		  `.as('devlogComments')
 	};
 
 	// Create an alias for the second join in 'liked' sort (to avoid duplicate table names)
