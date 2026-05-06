@@ -1,7 +1,8 @@
 import { db } from '$lib/server/db/index.js';
-import { devlog, project, user, devlogLike, devlogView } from '$lib/server/db/schema.js';
+import { devlog, project, user, devlogLike, devlogView, devlogComment } from '$lib/server/db/schema.js';
 import { desc, eq, count, sql, and, gte } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
+
 
 export const DEVLOGS_PAGE_SIZE = 15;
 export type SortType = 'newest' | 'trending' | 'random' | 'liked';
