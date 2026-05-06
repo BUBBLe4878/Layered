@@ -115,7 +115,8 @@ export async function load({ url, locals }) {
 			nextOffset: devlogs.length,
 			hasMore,
 			contests: mappedContests,
-			leaderboard
+			leaderboard,
+		    userComments: userCommentsData // NEW
 		};
 	} catch (err) {
 		console.error('[explore/+page.server.ts] Load failed:', err);
