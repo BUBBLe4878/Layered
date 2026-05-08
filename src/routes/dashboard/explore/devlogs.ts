@@ -16,7 +16,7 @@ export async function fetchExploreDevlogs(
 	console.log(`[fetchExploreDevlogs] Starting with sort=${sort}, offset=${offset}, userId=${userId}, limit=${limit}`);
 
 	// Base select fields (consistent across all queries)
-	// Use the original table references here (not aliases) for aggregates to work properly
+	// Note: We removed devlogComments from here since it requires a proper join
 	const selectFields = {
 		devlog: {
 			id: devlog.id,
@@ -38,19 +38,7 @@ export async function fetchExploreDevlogs(
 		viewCount: count(devlogView.id).as('viewCount'),
 		userLiked: sql<boolean>`COUNT(CASE WHEN ${devlogLike.userId} = ${userId || null} THEN 1 END) > 0`.as(
 			'userLiked'
-		),
-		  devlogComments: sql`
-		    COALESCE(
-		      json_agg(
-		        DISTINCT jsonb_build_object(
-		          'id', ${devlogComment.id},
-		          'comment', ${devlogComment.comment},
-		          'userId', ${devlogComment.userId}
-		        )
-		      ) FILTER (WHERE ${devlogComment.id} IS NOT NULL),
-		      '[]'
-		    )
-		  `.as('devlogComments')
+		)
 	};
 
 	// Create an alias for the second join in 'liked' sort (to avoid duplicate table names)
