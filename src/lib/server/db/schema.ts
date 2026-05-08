@@ -24,6 +24,14 @@ export const printerFulfilmentStatus = pgEnum('printer_fulfilment_status', [
 	'fulfilled'
 ]);
 
+export const projectReaction = pgTable('project_reaction', {
+  id:        serial('id').primaryKey(),
+  projectId: integer('project_id').notNull().references(() => project.id, { onDelete: 'cascade' }),
+  userId:    integer('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  reaction:  varchar('reaction', { length: 10 }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({ unq: unique().on(t.projectId, t.userId, t.reaction) }));
+
 export const user = pgTable('user', {
 	id: serial().primaryKey(), // User ID
 	idvId: text().notNull().unique(), // IDV ID
