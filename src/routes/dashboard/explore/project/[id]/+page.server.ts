@@ -9,6 +9,7 @@ export async function load({ params, locals }) {
   if (!projectId || isNaN(projectId)) throw svelteError(400, 'Invalid project ID');
 
   try {
+    //comment for redeploy
     // Project + author
     const projectResult = await db
       .select({
