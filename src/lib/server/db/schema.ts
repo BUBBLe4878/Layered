@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, boolean, timestamp, unique, varchar, pgEnum } from 'drizzle-orm/pg-core';//bro vercel, updateeeee
+import { pgTable, serial, integer, text, boolean, timestamp, unique, varchar, pgEnum, real } from 'drizzle-orm/pg-core';//bro vercel, updateeeee
 
 import { relations } from 'drizzle-orm';
 
