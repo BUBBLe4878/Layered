@@ -422,7 +422,7 @@
 				<!-- IMAGE LINK -->
 				<div class="relative aspect-square w-full overflow-hidden">
 					<a
-						href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
+						href={`/dashboard/explore/project/${devlog.project.id}`}
 						class="block h-full"
 					>
 						<img

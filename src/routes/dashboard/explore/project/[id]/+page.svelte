@@ -65,9 +65,9 @@
 
 		<!-- Stats row -->
 		<div class="flex gap-6 pt-2 text-sm text-gray-500">
-			<span>🗂 <strong class="text-gray-800">{devlogs.length}</strong> devlogs</span>
-			<span>⏱ <strong class="text-gray-800">{formatHours(totalHours)}</strong> logged</span>
-			<span>💬 <strong class="text-gray-800">{comments.length}</strong> comments</span>
+			<span> <strong class="text-gray-800">{devlogs.length}</strong> devlogs</span>
+			<span> <strong class="text-gray-800">{formatHours(totalHours)}</strong> logged</span>
+			<span> <strong class="text-gray-800">{comments.length}</strong> comments</span>
 		</div>
 
 		<!-- Links -->
@@ -80,16 +80,6 @@
 					class="rounded-lg bg-gray-100 px-4 py-1.5 text-sm font-medium hover:bg-gray-200"
 				>
 					🔗 View on Printables
-				</a>
-			{/if}
-			{#if project.editorUrl}
-				<a
-					href={project.editorUrl}
-					target="_blank"
-					rel="noopener"
-					class="rounded-lg bg-gray-100 px-4 py-1.5 text-sm font-medium hover:bg-gray-200"
-				>
-					✏️ Open Editor
 				</a>
 			{/if}
 		</div>
@@ -162,7 +152,7 @@
 									(expandedDevlogId = expandedDevlogId === log.id ? null : log.id)}
 								class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
 							>
-								<span>{expandedDevlogId === log.id ? '▼' : '▶'}</span>
+								<span>{expandedDevlogId === log.id ? '▼' : '-->'}</span>
 								<span
 									>{getDevlogComments(log.id).length} comment{getDevlogComments(log.id).length !==
 									1
