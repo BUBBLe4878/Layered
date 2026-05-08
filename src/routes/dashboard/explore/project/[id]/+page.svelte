@@ -152,7 +152,7 @@
 									(expandedDevlogId = expandedDevlogId === log.id ? null : log.id)}
 								class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
 							>
-								<span>{expandedDevlogId === log.id ? '▼' : '-->'}</span>
+								<span>{expandedDevlogId === log.id ? '↓' : '→'}</span>
 								<span
 									>{getDevlogComments(log.id).length} comment{getDevlogComments(log.id).length !==
 									1
