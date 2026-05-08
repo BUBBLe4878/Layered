@@ -310,10 +310,7 @@
 	</div>
 
 	{#if selectedUser}
-		<div
-			class="modal-overlay"
-			onclick={(e) => e.target === e.currentTarget && (selectedUser = null)}
-		>
+		<div class="modal-overlay" onclick={(e) => e.target === e.currentTarget && (selectedUser = null)}>
 			<div class="modal-content">
 				<button class="close-btn" onclick={() => (selectedUser = null)}>✕</button>
 
