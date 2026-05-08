@@ -53,7 +53,7 @@ export async function load({ params, locals }) {
       .select({
         id: devlogComment.id,
         comment: devlogComment.comment,
-        createdAt: devlogComment.createdAt,
+        //createdAt: devlogComment.createdAt,
         devlogId: devlogComment.devlogId,
         devlogDescription: devlog.description,
         authorId: user.id,

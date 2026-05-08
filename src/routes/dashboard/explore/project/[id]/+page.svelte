@@ -163,7 +163,7 @@
 				<div class="rounded-xl border bg-white p-4">
 					<div class="mb-1 flex items-center justify-between">
 						<span class="text-sm font-medium">{c.authorName || 'Anonymous'}</span>
-						<span class="text-xs text-gray-400">{formatDate(c.createdAt)}</span>
+						<span class="text-xs text-gray-400">{formatDate(c.createdAt || new Date())}</span>
 					</div>
 					<p class="mb-1 text-sm text-xs text-gray-500">
 						on: "{(c.devlogDescription || 'Untitled devlog').slice(0, 60)}…"
