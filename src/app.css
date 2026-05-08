@@ -145,7 +145,6 @@
 	--font-sans: 'Fredoka', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-<<<<<<< HEAD
 /* Light Mode (DEFAULT) */
 body {
 	--background-color: #ffffff;
@@ -153,15 +152,6 @@ body {
 	--background-color-tertiary: #f0f0f0;
 	--background-color-quarternary: #e8e8e8;
 	--font-color: #1a1a1a;
-=======
-/* Primary Dark Theme */
-body {
-	--background-color: #0f0f0f;
-	--background-color-secondary: #1a1a1a;
-	--background-color-tertiary: #252525;
-	--background-color-quarternary: #303030;
-	--font-color: #ffffff;
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 
 	--color-primary-50: #e6f9ff;
 	--color-primary-100: #ccf3ff;
@@ -174,7 +164,6 @@ body {
 	--color-primary-800: #005266;
 	--color-primary-900: #002933;
 	--color-primary-950: #001a1f;
-<<<<<<< HEAD
 }
 
 /* Dark Mode */
@@ -196,8 +185,6 @@ body.dark-mode {
 	--color-primary-800: #005266;
 	--color-primary-900: #002933;
 	--color-primary-950: #001a1f;
-=======
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 }
 
 /* ==================== */
@@ -208,14 +195,6 @@ body.dark-mode {
 	body {
 		background-color: var(--background-color);
 		color: var(--font-color);
-<<<<<<< HEAD
-=======
-		background-image:
-			linear-gradient(90deg, rgba(0, 217, 255, 0.02) 1px, transparent 1px),
-			linear-gradient(rgba(0, 217, 255, 0.02) 1px, transparent 1px);
-		background-size: 40px 40px;
-		background-attachment: fixed;
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 		transition: background-color 0.3s ease, color 0.3s ease;
 	}
 
@@ -226,7 +205,6 @@ body.dark-mode {
 			border-color 0.2s ease;
 	}
 
-<<<<<<< HEAD
 	h1, h2, h3, h4, h5, h6 {
 		@apply text-inherit;
 	}
@@ -241,23 +219,6 @@ body.dark-mode {
 
 	body.dark-mode a {
 		@apply text-primary-500 hover:text-primary-400;
-=======
-	body {
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-	}
-
-	/* Headings */
-	h1, h2, h3, h4, h5, h6 {
-		@apply text-white;
-	}
-
-	p {
-		@apply text-gray-300;
-	}
-
-	a {
-		@apply text-primary-500 hover:text-primary-400 transition-colors;
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 	}
 }
 
@@ -298,7 +259,6 @@ body.dark-mode {
 
 	/* Button Color Variants */
 	.button.primary {
-<<<<<<< HEAD
 		@apply bg-primary-600 text-white outline-primary-400 hover:bg-primary-700 hover:shadow-lg active:scale-95 transition-all;
 	}
 
@@ -333,51 +293,6 @@ body.dark-mode {
 
 	body.dark-mode .checkbox {
 		@apply border-gray-600 bg-gray-800 accent-primary-500 hover:border-gray-500;
-=======
-		@apply bg-primary-600 text-white outline-primary-400 hover:bg-primary-700 hover:shadow-lg hover:shadow-primary-950 active:scale-95 transition-all;
-	}
-
-	.button.secondary {
-		@apply bg-gray-700 text-white outline-primary-500 hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-950 active:scale-95 transition-all;
-	}
-
-	.button.red {
-		@apply bg-red-600 text-white outline-red-400 hover:bg-red-700 hover:shadow-lg hover:shadow-red-950 active:scale-95 transition-all;
-	}
-
-	.button.dark-red {
-		@apply bg-red-700 text-white outline-red-400 hover:bg-red-800 hover:shadow-lg hover:shadow-red-950 active:scale-95 transition-all;
-	}
-
-	.button.orange {
-		@apply bg-orange-600 text-white outline-orange-400 hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-950 active:scale-95 transition-all;
-	}
-
-	/* ---- Links ---- */
-	.link {
-		@apply text-primary-500 underline transition-colors hover:text-primary-400;
-	}
-
-	.list-link {
-		@apply text-primary-500 underline transition-all hover:text-primary-400;
-	}
-
-	/* ---- Form Inputs ---- */
-	.themed-input-light {
-		@apply rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200 hover:border-gray-500;
-	}
-
-	.themed-input {
-		@apply rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-white ring-0 transition-all duration-200 outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 hover:border-gray-500;
-	}
-
-	.themed-input-on-box {
-		@apply rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-white ring-0 transition-all duration-200 outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 hover:border-gray-500;
-	}
-
-	.checkbox {
-		@apply h-5 w-5 cursor-pointer rounded border border-gray-600 bg-gray-800 accent-primary-500 transition-all duration-200 hover:border-gray-500;
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 	}
 
 	/* ---- Themed Boxes ---- */
@@ -385,7 +300,6 @@ body.dark-mode {
 	.themed-box-prominent,
 	.themed-box-solid,
 	.themed-box-solid-prominent {
-<<<<<<< HEAD
 		@apply rounded-xl border border-gray-200 bg-gray-50 transition-all duration-200;
 	}
 
@@ -410,91 +324,6 @@ body.dark-mode {
 
 	body.dark-mode .themed-box-solid-prominent {
 		@apply hover:shadow-lg hover:border-gray-600 transition-all duration-200;
-=======
-		@apply rounded-xl border border-gray-700 bg-gray-900/50 backdrop-blur-sm transition-all duration-200;
-	}
-
-	.themed-box-solid {
-		@apply p-4 shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-black/60 hover:border-gray-600 transition-all duration-200;
-	}
-
-	.themed-box-solid-prominent {
-		@apply p-4 sm:p-5 hover:shadow-lg hover:border-gray-600 transition-all duration-200;
-	}
-
-	/* ---- Enclosure Background (Textured) ---- */
-	.enclosure-bg {
-		background-color: #1a1a1a;
-		position: relative;
-		overflow: hidden;
-		z-index: 1;
-		@apply rounded-xl border border-gray-700;
-	}
-
-	.enclosure-bg::before {
-		content: '';
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 150%;
-		height: 6000%;
-		transform: translate(-50%, -50%) rotate(30deg);
-		background-image: url('https://cdn.hackclub.com/019d4983-aa2c-7c07-ad9e-07ec8b3f9bb9/image.png');
-		opacity: 2%;
-		background-repeat: repeat;
-		background-size: 35px 35px;
-		z-index: 0;
-		pointer-events: none;
-	}
-
-	/* ---- PEI Buttons (Background Image Buttons) ---- */
-	.pei-button {
-		color: #ffffff !important;
-		background-size: cover !important;
-		background-position: center !important;
-		background-repeat: no-repeat !important;
-		border: 1.5px solid rgba(0, 217, 255, 0.6) !important;
-		border-radius: 12px !important;
-		box-shadow:
-			0 8px 32px rgba(0, 217, 255, 0.15) !important,
-			inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
-		position: relative !important;
-		overflow: hidden !important;
-		transition: all 0.3s ease !important;
-
-		* {
-			color: #ffffff !important;
-		}
-
-		&:hover {
-			border-color: rgba(0, 217, 255, 0.9) !important;
-			box-shadow:
-				0 12px 40px rgba(0, 217, 255, 0.2) !important,
-				inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
-			transform: translateY(-2px) !important;
-		}
-	}
-
-	.pei1,
-	.pei2,
-	.pei3,
-	.pei4,
-	.pei5,
-	.pei6 {
-		background-image: url('/img/peione.png') !important;
-	}
-
-	.pei7 {
-		background-image: url('/img/peitwo.png') !important;
-	}
-
-	.dashboard-header {
-		overflow: visible;
-	}
-
-	.header-nav-button:hover {
-		transform: translateY(0) !important;
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 	}
 }
 
@@ -507,22 +336,15 @@ body.dark-mode {
 		@apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform;
 	}
 
-<<<<<<< HEAD
 	.glass {
 		@apply rounded-xl border border-white/30 bg-white/20 backdrop-blur-md;
 	}
 
 	body.dark-mode .glass {
 		@apply border-white/10 bg-gray-800/30;
-=======
-	/* Glass effect */
-	.glass {
-		@apply rounded-xl border border-white/10 bg-gray-900/30 backdrop-blur-md;
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 	}
 
 	.shadow-modern {
-<<<<<<< HEAD
 		@apply shadow-lg shadow-black/15;
 	}
 
@@ -535,22 +357,6 @@ body.dark-mode {
 	}
 
 	body.dark-mode .lucide-icon {
-=======
-		@apply shadow-lg shadow-black/50;
-	}
-
-	/* Text shadows for readability */
-	.text-shadow {
-		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-	}
-
-	.text-shadow-strong {
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
-	}
-
-	/* Icon colors */
-	.lucide-icon {
->>>>>>> 9bf0123522aada6a6434374a0802891ae10f6410
 		@apply text-primary-500;
 	}
 }
