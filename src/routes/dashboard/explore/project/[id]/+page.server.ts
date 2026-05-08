@@ -81,6 +81,7 @@ export async function load({ params, locals }) {
       totalHours,
       isOwner: locals.user?.id === projectData.userId,
       currentUserId: locals.user?.id ?? null,
+      reactions: [],
       // reactions: reactionRows,
     };
   } catch (err) {
