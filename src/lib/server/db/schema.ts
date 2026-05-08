@@ -299,7 +299,8 @@ export const devlogComment = pgTable(
 			.notNull()
 			.references(() => user.id),
 		comment: text('comment')
-			.notNull()
+			.notNull(),
+		createdAt: timestamp('created_at').notNull().defaultNow()  // ✅ ADD THIS
 	},
 	(table) => ({
 		uniqueConstraint: unique('devlog_comment_unique').on(table.devlogId, table.userId)
