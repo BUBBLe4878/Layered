@@ -474,7 +474,7 @@
 				</div>
 
 				<a
-					href={`/dashboard/projects/${devlog.project.id}#devlog-${devlog.devlog.id}`}
+					href={`/dashboard/explore/project/${devlog.project.id}#devlog-${devlog.devlog.id}`}
 					class="block"
 				>
 					<div class="flex flex-col gap-1.5 p-3">

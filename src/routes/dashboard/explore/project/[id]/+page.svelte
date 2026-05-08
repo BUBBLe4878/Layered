@@ -73,8 +73,8 @@
       {/if}
     </div>
 
-    <!-- Reactions placeholder (enable after migration) -->
-    <!--
+    <!-- Reactions -->
+    
     <div class="flex gap-2 pt-2">
       {#each ['👍','❤️','🔥','😮','🎉'] as emoji}
         <form method="POST" action="?/toggleReaction" use:enhance>
@@ -85,7 +85,7 @@
         </form>
       {/each}
     </div>
-    -->
+    
   </div>
 
   <!-- Tabs -->
