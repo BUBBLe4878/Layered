@@ -88,20 +88,6 @@
 				</a>
 			{/if}
 		</div>
-
-		<!-- Reactions -->
-		<!--
-    <div class="flex gap-2 pt-2">
-      {#each ['👍','❤️','🔥','😮','🎉'] as emoji}
-        <form method="POST" action="?/toggleReaction" use:enhance>
-          <input type="hidden" name="reaction" value={emoji} />
-          <button class="px-3 py-1 rounded-full border text-sm hover:bg-gray-50">
-            {emoji} {reactions.find(r => r.reaction === emoji)?.reactionCount ?? 0}
-          </button>
-        </form>
-      {/each}
-    </div>
-    -->
 	</div>
 
 	<!-- Tabs -->
@@ -127,10 +113,10 @@
 					{#if log.image}
 						<img src={log.image} alt="devlog" class="h-48 w-full rounded-lg object-cover" />
 					{/if}
-					<p class="text-sm whitespace-pre-line text-gray-700">{log.description}</p>
+					<p class="text-sm whitespace-pre-line text-gray-700">{log.description || 'No description'}</p>
 					<div class="flex items-center justify-between text-xs text-gray-400">
 						<span>{formatDate(log.createdAt)} · ⏱ {formatHours((log.timeSpent ?? 0) / 600)}</span>
-						<span>❤️ {log.likeCount}</span>
+						<span>❤️ {log.likeCount ?? 0}</span>
 					</div>
 
 					<!-- Comment on this devlog -->
@@ -176,11 +162,11 @@
 			{#each comments as c (c.id)}
 				<div class="rounded-xl border bg-white p-4">
 					<div class="mb-1 flex items-center justify-between">
-						<span class="text-sm font-medium">{c.authorName}</span>
+						<span class="text-sm font-medium">{c.authorName || 'Anonymous'}</span>
 						<span class="text-xs text-gray-400">{formatDate(c.createdAt)}</span>
 					</div>
 					<p class="mb-1 text-sm text-xs text-gray-500">
-						on: "{c.devlogDescription?.slice(0, 60)}…"
+						on: "{(c.devlogDescription || 'Untitled devlog').slice(0, 60)}…"
 					</p>
 					<p class="text-sm text-gray-700">{c.comment}</p>
 				</div>

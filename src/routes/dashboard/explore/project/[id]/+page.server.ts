@@ -1,7 +1,7 @@
 import { error as svelteError } from '@sveltejs/kit';
 import { db } from '$lib/server/db/index.js';
 import {
-  project, user, devlog, devlogLike, devlogComment} from '$lib/server/db/schema.js';
+  project, user, devlog, devlogLike, devlogComment } from '$lib/server/db/schema.js';
 import { eq, desc, count, sql, and } from 'drizzle-orm';
 
 export async function load({ params, locals }) {
@@ -62,15 +62,8 @@ export async function load({ params, locals }) {
       .innerJoin(devlog, eq(devlogComment.devlogId, devlog.id))
       .innerJoin(user, eq(devlogComment.userId, user.id))
       .where(eq(devlog.projectId, projectId))
-      .orderBy(desc(devlogComment.createdAt))
+      .orderBy(desc(devlogComment.createdAt ?? new Date()))
       .limit(50);
-
-    // Reactions — uncomment after running migration below
-    // const reactionRows = await db
-    //   .select({ reaction: projectReaction.reaction, reactionCount: count(projectReaction.id) })
-    //   .from(projectReaction)
-    //   .where(eq(projectReaction.projectId, projectId))
-    //   .groupBy(projectReaction.reaction);
 
     const totalHours = devlogs.reduce((s, d) => s + (d.timeSpent ?? 0), 0) / 600;
 
@@ -82,7 +75,6 @@ export async function load({ params, locals }) {
       isOwner: locals.user?.id === projectData.userId,
       currentUserId: locals.user?.id ?? null,
       reactions: [],
-      // reactions: reactionRows,
     };
   } catch (err) {
     if ((err as any).status) throw err;
