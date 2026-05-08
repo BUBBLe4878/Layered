@@ -4,6 +4,7 @@
 	import Devlog from '$lib/components/Devlog.svelte';
 	import { DEVLOG_MIN_TIME } from '$lib/defs';
 	import { resolve } from '$app/paths';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
