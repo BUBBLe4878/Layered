@@ -68,7 +68,7 @@
 
 	<!-- Add/Edit Form -->
 	{#if showForm}
-		<div class="bg-white border rounded-lg p-6 mb-6 shadow-sm">
+		<div class="bg-gray-900 border rounded-lg p-6 mb-6 shadow-sm">
 			<h2 class="text-xl font-semibold mb-4">
 				{editingId ? 'Edit Contest' : 'Create New Contest'}
 			</h2>
@@ -179,7 +179,7 @@
 			</div>
 		{:else}-->
 			{#each contests as contest (contest.id)}
-				<div class="bg-white border rounded-lg p-4 flex items-center justify-between hover:shadow-md transition">
+				<div class="bg-gray-900 border rounded-lg p-4 flex items-center justify-between hover:shadow-md transition">
 					<div class="flex-1">
 						<h3 class="font-semibold text-lg">{contest.title}</h3>
 						<p class="text-sm text-gray-600">{contest.description}</p>

@@ -44,7 +44,7 @@
 <div class="mb-5 flex flex-col gap-4">
 	<div class="themed-box-solid-prominent p-4 sm:p-5">
 		<h1 class="font-hero text-3xl font-medium">Dashboard</h1>
-		<p class="mt-1 text-sm text-gray-700">
+		<p class="mt-1 text-sm text-gray-300">
 			Track your progress and jump back into your next build.
 		</p>
 	</div>
@@ -52,22 +52,22 @@
 	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Projects</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{projectCount}</p>
+			<p class="mt-1 text-3xl font-bold text-white">{projectCount}</p>
 		</div>
 		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal Entries</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{devlogCount}</p>
+			<p class="mt-1 text-3xl font-bold text-white">{devlogCount}</p>
 		</div>
 		<div class="themed-box-solid p-4 shadow-xl">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Shipped</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">{shipCount}</p>
+			<p class="mt-1 text-3xl font-bold text-white">{shipCount}</p>
 		</div>
 		<div class="themed-box-solid p-4 shadow-xl sm:col-span-2 lg:col-span-3">
 			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal streak</p>
-			<p class="mt-1 text-3xl font-bold text-primary-900">
+			<p class="mt-1 text-3xl font-bold text-white">
 				{$page.data?.user?.journalStreak ?? 0} day{($page.data?.user?.journalStreak ?? 0) === 1 ? '' : 's'}
 			</p>
-			<p class="mt-1 text-sm text-gray-700">Make a journal each day to keep it going. Miss a day and it resets.</p>
+			<p class="mt-1 text-sm text-gray-300">Make a journal each day to keep it going. Miss a day and it resets.</p>
 		</div>
 	</div>
 </div>
@@ -81,7 +81,7 @@
 		class:themed-box-solid={shipCount > 0}
 	>
 		<div class="mb-2 flex items-center gap-2">
-			<BarChart3 size={20} class="text-primary-800" />
+			<BarChart3 size={20} class="text-gray-300" />
 			<h2 class="text-xl font-bold">Progress checklist</h2>
 		</div>
 		<div class="flex flex-col gap-0.5">
@@ -137,42 +137,42 @@
 <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 	<a
 		href={resolve('/dashboard/projects')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<PencilRuler size={22} class="text-primary-800 dark-mode:text-blue-300" />
+		<PencilRuler size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Projects</p>
-			<p class="text-xs text-gray-700 dark-mode:text-slate-400">Build and manage your work</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">Build and manage your work</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/explore')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<Compass size={22} class="text-primary-800 dark-mode:text-blue-300" />
+		<Compass size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Explore</p>
-			<p class="text-xs text-gray-700 dark-mode:text-slate-400">See what others are making</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">See what others are making</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/market')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<Store size={22} class="text-primary-800 dark-mode:text-blue-300" />
+		<Store size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Printshop</p>
-			<p class="text-xs text-gray-700 dark-mode:text-slate-400">Spend layers and unlock upgrades</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">Spend layers and unlock upgrades</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/tutorial')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-primary-100 dark-mode:hover:bg-slate-700"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<BookOpen size={22} class="text-primary-800 dark-mode:text-blue-300" />
+		<BookOpen size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
 			<p class="font-semibold">Help</p>
-			<p class="text-xs text-gray-700 dark-mode:text-slate-400">FAQ, tutorials, and support</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">FAQ, tutorials, and support</p>
 		</div>
 	</a>
 </div>

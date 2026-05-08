@@ -43,7 +43,7 @@
 					<label class="flex flex-col gap-1">
 						<span class="font-medium">Status</span>
 						<select
-							class="h-40 grow border-3 border-primary-700 bg-primary-900 fill-primary-50 p-2 text-sm ring-primary-900 placeholder:text-primary-900 active:ring-3"
+							class="h-40 grow border-3 border-primary-700 bg-primary-900 fill-primary-50 p-2 text-sm ring-primary-900 placeholder:text-white active:ring-3"
 							name="status"
 							value={data.fields.status}
 							multiple

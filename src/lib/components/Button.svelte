@@ -2,7 +2,7 @@
 	let {
 		text,
 		bgcolor = 'bg-primary-600',
-		bgcolor_hover = 'bg-primary-500',
+		bgcolor_hover = 'bg-primary-600',
 		ringcolor = 'ring-primary-50',
 		disabled = false,
 		...other
