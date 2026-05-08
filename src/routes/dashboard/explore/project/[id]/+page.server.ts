@@ -1,8 +1,7 @@
 import { error as svelteError } from '@sveltejs/kit';
 import { db } from '$lib/server/db/index.js';
 import {
-  project, user, devlog, devlogLike, devlogComment, devlogView
-} from '$lib/server/db/schema.js';
+  project, user, devlog, devlogLike, devlogComment} from '$lib/server/db/schema.js';
 import { eq, desc, count, sql, and } from 'drizzle-orm';
 
 export async function load({ params, locals }) {
@@ -44,7 +43,6 @@ export async function load({ params, locals }) {
       })
       .from(devlog)
       .leftJoin(devlogLike, eq(devlog.id, devlogLike.devlogId))
-      .leftJoin(devlogView, eq(devlog.id, devlogView.devlogId))
       .where(and(eq(devlog.projectId, projectId), eq(devlog.deleted, false)))
       .groupBy(devlog.id)
       .orderBy(desc(devlog.createdAt));
