@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
+
 	import Button from '$lib/components/Button.svelte';
 	import Head from '$lib/components/Head.svelte';
 	import Footer from './Footer.svelte';
@@ -6,6 +9,7 @@
 	import logo from '$lib/assets/logo-nobg.png';
 
 	let { data } = $props();
+	injectSpeedInsights();
 </script>
 
 <Head title="Layered" />
