@@ -407,7 +407,7 @@
 		{#each devlogs as devlog (devlog.devlog.id)}
 			{@const updatedAt = parseDate(devlog.devlog.createdAt)}
 			<div
-				class="themed-box-solid group relative overflow-hidden border border-primary-200 bg-white/80 p-0"
+				class="themed-box-solid group relative overflow-hidden border border-gray-700 bg-gray-900/80 p-0"
 				onmouseenter={() => {
 					if (!performanceModeEnabled) {
 						hoveredDevlogId = devlog.devlog.id;
@@ -430,7 +430,7 @@
 							class={`h-full w-full object-cover transition-opacity duration-200 ${getHoverModelState(devlog.devlog.id, devlog.devlog.model) ? 'opacity-0' : 'opacity-100'}`}
 						/>
 						{#if getHoverModelState(devlog.devlog.id, devlog.devlog.model)}
-							<div class="pointer-events-none absolute inset-0 bg-white/80">
+							<div class="pointer-events-none absolute inset-0 bg-gray-900/80">
 								<Spinny3DPreview
 									identifier={`explore-hover-${devlog.devlog.id}`}
 									modelUrl={devlog.devlog.model}
@@ -460,7 +460,7 @@
 								class={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs font-semibold transition-all ${
 									devlog.userLiked
 										? 'bg-red-500 text-white'
-										: 'bg-white/80 text-gray-700 hover:bg-white'
+										: 'bg-gray-900/80 text-gray-300 hover:bg-gray-900'
 								}`}
 							>
 								<Heart
@@ -478,8 +478,8 @@
 					class="block"
 				>
 					<div class="flex flex-col gap-1.5 p-3">
-						<p class="truncate text-base font-semibold text-primary-900">{devlog.project.name}</p>
-						<p class="text-xs leading-relaxed text-gray-700">
+						<p class="truncate text-base font-semibold text-white">{devlog.project.name}</p>
+						<p class="text-xs leading-relaxed text-gray-300">
 							{devlog.devlog.description || 'No update notes yet.'}
 						</p>
 						<div class="flex items-center gap-3 text-[11px] text-gray-600">

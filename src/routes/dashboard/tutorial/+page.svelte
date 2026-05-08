@@ -7,7 +7,7 @@
 
 <div class="mb-4">
 	<h1 class="mt-5 mb-2 font-hero text-3xl font-medium">Help Center</h1>
-	<p class="text-sm text-gray-700">
+	<p class="text-sm text-gray-300">
 		FAQ, tutorials, and support for getting started, shipping projects, and earning Layers.
 	</p>
 </div>

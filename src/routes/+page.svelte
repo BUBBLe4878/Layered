@@ -16,14 +16,14 @@
 
 <div class="min-h-screen bg-[var(--background-color)] flex flex-col">
 	<!-- Header -->
-	<header class="border-b border-primary-200 bg-primary-50/40 backdrop-blur-sm sticky top-0 z-50">
+	<header class="border-b border-gray-700 bg-gray-800/40 backdrop-blur-sm sticky top-0 z-50">
 		<div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
 			<div class="flex items-center gap-3 group">
 				<img src={logo} alt="Layered" class="h-9 w-9 transition-transform group-hover:scale-110" />
-				<span class="font-bold text-primary-950 text-lg tracking-tight">Layered</span>
+				<span class="font-bold text-white text-lg tracking-tight">Layered</span>
 			</div>
 			<nav class="flex items-center gap-6">
-				<a href="/dashboard/tutorial" class="text-sm text-primary-700 hover:text-primary-900 transition-colors duration-200 font-medium">
+				<a href="/dashboard/tutorial" class="text-sm text-gray-400 hover:text-white transition-colors duration-200 font-medium">
 					Help
 				</a>
 				{#if data.loggedIn}
@@ -43,13 +43,13 @@
 				<!-- Text Content -->
 				<div class="space-y-8">
 					<div class="space-y-4">
-						<div class="inline-block px-3 py-1.5 rounded-lg bg-primary-100/60 border border-primary-300/40">
-							<span class="text-xs font-semibold text-primary-900 tracking-wide">CAD × 3D PRINTING × MAKER</span>
+						<div class="inline-block px-3 py-1.5 rounded-lg bg-gray-800/60 border border-gray-700/40">
+							<span class="text-xs font-semibold text-white tracking-wide">CAD × 3D PRINTING × MAKER</span>
 						</div>
-						<h1 class="text-5xl md:text-6xl font-bold text-primary-950 leading-tight">
+						<h1 class="text-5xl md:text-6xl font-bold text-white leading-tight">
 							Design in Layers. <br /> Build Your Vision.
 						</h1>
-						<p class="text-lg text-primary-800 leading-relaxed max-w-xl">
+						<p class="text-lg text-gray-300 leading-relaxed max-w-xl">
 							Layered is where makers design CAD projects, get them 3D printed, and build reputation. Track your progress, unlock rewards, and compete on the leaderboard.
 						</p>
 					</div>
@@ -129,8 +129,8 @@
 					<div class="flex flex-col h-full gap-4">
 						<div class="text-4xl opacity-70">{feature.icon}</div>
 						<div>
-							<h3 class="text-xl font-bold text-primary-950 mb-2">{feature.title}</h3>
-							<p class="text-primary-800 leading-relaxed">{feature.desc}</p>
+							<h3 class="text-xl font-bold text-white mb-2">{feature.title}</h3>
+							<p class="text-gray-300 leading-relaxed">{feature.desc}</p>
 						</div>
 					</div>
 				</div>
@@ -140,8 +140,8 @@
 		<!-- How It Works - Technical Flow -->
 		<section class="mb-32">
 			<div class="mb-12">
-				<h2 class="text-4xl font-bold text-primary-950 mb-2">The Process</h2>
-				<p class="text-primary-700">5 steps from concept to reality</p>
+				<h2 class="text-4xl font-bold text-white mb-2">The Process</h2>
+				<p class="text-gray-400">5 steps from concept to reality</p>
 			</div>
 
 			<div class="space-y-6">
@@ -153,15 +153,15 @@
 					{ num: '05', title: 'Receive', desc: 'Approved? We print and ship your design. You earn your reward.', time: '2-3 weeks' }
 				] as step, i}
 					<div class="themed-box-solid flex gap-6 items-start hover:-translate-y-0.5 transition-transform">
-						<div class="flex-shrink-0 w-16 h-16 rounded-lg bg-primary-100 border-2 border-primary-300 flex items-center justify-center">
-							<span class="text-2xl font-bold text-primary-700">{step.num}</span>
+						<div class="flex-shrink-0 w-16 h-16 rounded-lg bg-gray-800 border-2 border-gray-700 flex items-center justify-center">
+							<span class="text-2xl font-bold text-gray-400">{step.num}</span>
 						</div>
 						<div class="flex-1 py-2">
 							<div class="flex items-baseline gap-3 mb-2">
-								<h3 class="text-lg font-bold text-primary-950">{step.title}</h3>
-								<span class="text-xs text-primary-600 bg-primary-100 px-2 py-1 rounded">{step.time}</span>
+								<h3 class="text-lg font-bold text-white">{step.title}</h3>
+								<span class="text-xs text-primary-600 bg-gray-800 px-2 py-1 rounded">{step.time}</span>
 							</div>
-							<p class="text-primary-800">{step.desc}</p>
+							<p class="text-gray-300">{step.desc}</p>
 						</div>
 					</div>
 				{/each}
@@ -178,8 +178,8 @@
 				] as stat}
 					<div class="themed-box-solid text-center py-8 hover:shadow-lg transition-shadow">
 						<div class="text-5xl mb-3 opacity-70">{stat.value}</div>
-						<h3 class="text-lg font-bold text-primary-950 mb-1">{stat.label}</h3>
-						<p class="text-sm text-primary-700">{stat.desc}</p>
+						<h3 class="text-lg font-bold text-white mb-1">{stat.label}</h3>
+						<p class="text-sm text-gray-400">{stat.desc}</p>
 					</div>
 				{/each}
 			</div>
@@ -187,30 +187,30 @@
 
 		<!-- Blueprint Technical Specs Section -->
 		<section class="mb-32">
-			<div class="themed-box-solid border-2 border-primary-300">
+			<div class="themed-box-solid border-2 border-gray-700">
 				<div class="space-y-6">
 					<div>
-						<h2 class="text-3xl font-bold text-primary-950 mb-2">Technical Specs</h2>
-						<p class="text-primary-700">Everything you need to know about submitting</p>
+						<h2 class="text-3xl font-bold text-white mb-2">Technical Specs</h2>
+						<p class="text-gray-400">Everything you need to know about submitting</p>
 					</div>
 
 					<div class="grid md:grid-cols-2 gap-8">
 						<div class="space-y-4">
 							<div>
-								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+								<h3 class="font-bold text-white mb-2 flex items-center gap-2">
 									<span class="text-lg">📐</span> Supported Formats
 								</h3>
-								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+								<ul class="text-sm text-gray-300 space-y-1 pl-6">
 									<li>• STL, STEP, IGES</li>
 									<li>• OBJ, FBX, 3DS</li>
 									<li>• Native Fusion 360 files</li>
 								</ul>
 							</div>
 							<div>
-								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+								<h3 class="font-bold text-white mb-2 flex items-center gap-2">
 									<span class="text-lg">📏</span> Size Limits
 								</h3>
-								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+								<ul class="text-sm text-gray-300 space-y-1 pl-6">
 									<li>• Max 300 × 300 × 300 mm</li>
 									<li>• Min wall thickness: 0.8 mm</li>
 									<li>• File size: ≤ 50 MB</li>
@@ -220,20 +220,20 @@
 
 						<div class="space-y-4">
 							<div>
-								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+								<h3 class="font-bold text-white mb-2 flex items-center gap-2">
 									<span class="text-lg">⚙️</span> Materials
 								</h3>
-								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+								<ul class="text-sm text-gray-300 space-y-1 pl-6">
 									<li>• PLA (standard)</li>
 									<li>• ABS, PETG</li>
 									<li>• Resin (for precision)</li>
 								</ul>
 							</div>
 							<div>
-								<h3 class="font-bold text-primary-900 mb-2 flex items-center gap-2">
+								<h3 class="font-bold text-white mb-2 flex items-center gap-2">
 									<span class="text-lg">✓</span> Quality Checks
 								</h3>
-								<ul class="text-sm text-primary-800 space-y-1 pl-6">
+								<ul class="text-sm text-gray-300 space-y-1 pl-6">
 									<li>• Structural integrity</li>
 									<li>• Print feasibility</li>
 									<li>• Design originality</li>
@@ -248,8 +248,8 @@
 		<!-- CTA Section -->
 		<section class="space-y-8 text-center">
 			<div>
-				<h2 class="text-4xl font-bold text-primary-950 mb-4">Ready to Design?</h2>
-				<p class="text-lg text-primary-800 max-w-2xl mx-auto">
+				<h2 class="text-4xl font-bold text-white mb-4">Ready to Design?</h2>
+				<p class="text-lg text-gray-300 max-w-2xl mx-auto">
 					Join the Layered community. Your next 3D printed creation is one submission away.
 				</p>
 			</div>
@@ -268,10 +268,10 @@
 	</main>
 
 	<!-- Footer -->
-	<footer class="mt-20 border-t border-primary-200 bg-primary-50/30 backdrop-blur-sm">
-		<div class="max-w-6xl mx-auto px-6 py-12 text-center text-primary-800">
-			<p class="mb-2">Made by <a href="https://hackclub.com" class="text-primary-600 hover:text-primary-700 font-semibold transition-colors">Hack Club</a></p>
-			<p class="text-sm text-primary-700">Building the future of maker education</p>
+	<footer class="mt-20 border-t border-gray-700 bg-gray-800/30 backdrop-blur-sm">
+		<div class="max-w-6xl mx-auto px-6 py-12 text-center text-gray-300">
+			<p class="mb-2">Made by <a href="https://hackclub.com" class="text-primary-600 hover:text-gray-400 font-semibold transition-colors">Hack Club</a></p>
+			<p class="text-sm text-gray-400">Building the future of maker education</p>
 		</div>
 	</footer>
 </div>

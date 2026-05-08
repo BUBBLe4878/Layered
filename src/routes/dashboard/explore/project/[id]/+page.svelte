@@ -42,12 +42,12 @@
 	>
 
 	<!-- Project Header -->
-	<div class="space-y-3 rounded-2xl border bg-white p-6">
+	<div class="space-y-3 rounded-2xl border bg-gray-900 p-6">
 		<div class="flex flex-wrap items-start justify-between gap-4">
 			<div>
 				<h1 class="text-2xl font-bold">{project.name}</h1>
 				<p class="mt-1 text-sm text-gray-500">
-					by <span class="font-medium text-gray-700">{project.authorName}</span>
+					by <span class="font-medium text-gray-300">{project.authorName}</span>
 					· {formatDate(project.createdAt)}
 				</p>
 			</div>
@@ -60,7 +60,7 @@
 		</div>
 
 		{#if project.description}
-			<p class="text-sm leading-relaxed text-gray-700">{project.description}</p>
+			<p class="text-sm leading-relaxed text-gray-300">{project.description}</p>
 		{/if}
 
 		<!-- Stats row -->
@@ -93,7 +93,7 @@
 				class="border-b-2 px-4 py-2 text-sm font-medium capitalize transition-colors
           {activeTab === tab
 					? 'border-black text-black'
-					: 'border-transparent text-gray-400 hover:text-gray-700'}"
+					: 'border-transparent text-gray-400 hover:text-gray-300'}"
 			>
 				{tab === 'devlogs' ? `Devlogs (${devlogs.length})` : `Comments (${comments.length})`}
 			</button>
@@ -104,11 +104,11 @@
 	{#if activeTab === 'devlogs'}
 		<div class="space-y-4">
 			{#each devlogs as log (log.id)}
-				<div class="space-y-2 rounded-xl border bg-white p-4">
+				<div class="space-y-2 rounded-xl border bg-gray-900 p-4">
 					{#if log.image}
 						<img src={log.image} alt="devlog" class="h-48 w-full rounded-lg object-cover" />
 					{/if}
-					<p class="text-sm whitespace-pre-line text-gray-700">{log.description || 'No description'}</p>
+					<p class="text-sm whitespace-pre-line text-gray-300">{log.description || 'No description'}</p>
 					<div class="flex items-center justify-between text-xs text-gray-400">
 						<span>{formatDate(log.createdAt)} · ⏱ {formatHours((log.timeSpent ?? 0) / 600)}</span>
 						<span>❤️ {log.likeCount ?? 0}</span>
@@ -150,7 +150,7 @@
 							<button
 								onclick={() =>
 									(expandedDevlogId = expandedDevlogId === log.id ? null : log.id)}
-								class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+								class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-white"
 							>
 								<span>{expandedDevlogId === log.id ? '↓' : '→'}</span>
 								<span
@@ -167,12 +167,12 @@
 									{#each getDevlogComments(log.id) as c (c.id)}
 										<div class="rounded-lg bg-gray-50 p-3">
 											<div class="mb-1 flex items-center justify-between">
-												<span class="text-sm font-medium text-gray-900">
+												<span class="text-sm font-medium text-white">
 													{c.authorName || 'Anonymous'}
 												</span>
 												<span class="text-xs text-gray-400">{formatDate(c.createdAt)}</span>
 											</div>
-											<p class="text-sm text-gray-700">{c.comment}</p>
+											<p class="text-sm text-gray-300">{c.comment}</p>
 										</div>
 									{/each}
 								</div>
@@ -190,7 +190,7 @@
 	{#if activeTab === 'comments'}
 		<div class="space-y-3">
 			{#each comments as c (c.id)}
-				<div class="rounded-xl border bg-white p-4">
+				<div class="rounded-xl border bg-gray-900 p-4">
 					<div class="mb-1 flex items-center justify-between">
 						<span class="text-sm font-medium">{c.authorName || 'Anonymous'}</span>
 						<span class="text-xs text-gray-400">{formatDate(c.createdAt)}</span>
@@ -198,7 +198,7 @@
 					<p class="mb-1 text-sm text-xs text-gray-500">
 						on: "{(c.devlogDescription || 'Untitled devlog').slice(0, 60)}…"
 					</p>
-					<p class="text-sm text-gray-700">{c.comment}</p>
+					<p class="text-sm text-gray-300">{c.comment}</p>
 				</div>
 			{:else}
 				<p class="text-sm text-gray-400 text-center py-8">No comments yet.</p>

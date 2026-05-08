@@ -4,17 +4,17 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-	--color-primary-50: #fffaf0;
-	--color-primary-100: #fef3c7;
-	--color-primary-200: #fce8a6;
-	--color-primary-300: #fdd97b;
-	--color-primary-400: #fcc84a;
-	--color-primary-500: #d4af85;
-	--color-primary-600: #c9a25b;
-	--color-primary-700: #b8924a;
-	--color-primary-800: #a8823d;
-	--color-primary-900: #8b6a32;
-	--color-primary-950: #5a4623;
+	--color-primary-50: #e6f9ff;
+	--color-primary-100: #ccf3ff;
+	--color-primary-200: #99e7ff;
+	--color-primary-300: #66dbff;
+	--color-primary-400: #33cfff;
+	--color-primary-500: #00d9ff;
+	--color-primary-600: #00a3cc;
+	--color-primary-700: #007a99;
+	--color-primary-800: #005266;
+	--color-primary-900: #002933;
+	--color-primary-950: #001a1f;
 
 	--color-red-50: #fef5f4;
 	--color-red-100: #fde9e7;
@@ -64,41 +64,41 @@
 	--color-cyan-900: #1d5968;
 	--color-cyan-950: #0d3540;
 
-	--color-blue-50: #f3f8ff;
-	--color-blue-100: #e6f0ff;
-	--color-blue-200: #c8e0ff;
-	--color-blue-300: #9ac5ff;
-	--color-blue-400: #61a3ff;
-	--color-blue-500: #3b82ff;
-	--color-blue-600: #60719E;  /* use to be #2563eb;*/
-	--color-blue-700: #1d4ed8;
-	--color-blue-800: #1e40af;
-	--color-blue-900: #1e3a8a;
-	--color-blue-950: #0c1e4d;
+	--color-blue-50: #f0f8ff;
+	--color-blue-100: #e0f1ff;
+	--color-blue-200: #c0e3ff;
+	--color-blue-300: #a0d5ff;
+	--color-blue-400: #80c7ff;
+	--color-blue-500: #60b5ff;
+	--color-blue-600: #4a9bdb;
+	--color-blue-700: #3481b7;
+	--color-blue-800: #1e6793;
+	--color-blue-900: #0d4d6f;
+	--color-blue-950: #083346;
 
-	--color-purple-50: #fdf7ff;
-	--color-purple-100: #f8e8ff;
-	--color-purple-200: #f0d0ff;
-	--color-purple-300: #e5b3ff;
-	--color-purple-400: #d582ff;
-	--color-purple-500: #c13eff;
-	--color-purple-600: #a624d6;
-	--color-purple-700: #8f1fbb;
-	--color-purple-800: #75189a;
-	--color-purple-900: #5e127d;
-	--color-purple-950: #380d4d;
+	--color-purple-50: #faf4ff;
+	--color-purple-100: #f5e9ff;
+	--color-purple-200: #ebd3ff;
+	--color-purple-300: #e1bdff;
+	--color-purple-400: #d7a7ff;
+	--color-purple-500: #9b6fff;
+	--color-purple-600: #7d5ae6;
+	--color-purple-700: #5f45cc;
+	--color-purple-800: #4130b3;
+	--color-purple-900: #231b99;
+	--color-purple-950: #150d80;
 
-	--color-gray-50: #faf9f8;
-	--color-gray-100: #f3f1ef;
-	--color-gray-200: #e8e5e1;
-	--color-gray-300: #d8d2c9;
-	--color-gray-400: #bfb5a8;
-	--color-gray-500: #a69789;
-	--color-gray-600: #8b7a6d;
-	--color-gray-700: #6d5d52;
-	--color-gray-800: #4a3f37;
-	--color-gray-900: #2a2622;
-	--color-gray-950: #1a1815;
+	--color-gray-50: #fafafa;
+	--color-gray-100: #f5f5f5;
+	--color-gray-200: #eeeeee;
+	--color-gray-300: #e0e0e0;
+	--color-gray-400: #bdbdbd;
+	--color-gray-500: #9e9e9e;
+	--color-gray-600: #757575;
+	--color-gray-700: #616161;
+	--color-gray-800: #424242;
+	--color-gray-900: #212121;
+	--color-gray-950: #0a0a0a;
 }
 
 /* ==================== */
@@ -145,116 +145,25 @@
 	--font-sans: 'Fredoka', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/* Theme 1: Warm Gold (DEFAULT) */
+/* Primary Dark Theme */
 body {
-	--background-color: #faf6f1;
-	--background-color-secondary: #f5f0e870;
-	--background-color-tertiary: #ede6dead;
-	--background-color-quarternary: #e8dcc8;
-	--font-color: #0d0b08;
+	--background-color: #0f0f0f;
+	--background-color-secondary: #1a1a1a;
+	--background-color-tertiary: #252525;
+	--background-color-quarternary: #303030;
+	--font-color: #ffffff;
 
-	--color-primary-50: #fffaf0;
-	--color-primary-100: #fef3c7;
-	--color-primary-200: #fce8a6;
-	--color-primary-300: #fdd97b;
-	--color-primary-400: #fcc84a;
-	--color-primary-500: #d4af85;
-	--color-primary-600: #c9a25b;
-	--color-primary-700: #b8924a;
-	--color-primary-800: #a8823d;
-	--color-primary-900: #8b6a32;
-	--color-primary-950: #5a4623;
-}
-
-/* Theme 2: Pastel Blue */
-body.theme-2 {
-	--background-color: #1e1e1e;
-	--background-color-secondary: #101829;
-	--background-color-tertiary: #e8f0f8;
-	--background-color-quarternary: #dfe9f4;
-	--font-color: #2c3e50;
-
-	--color-primary-50: #f0f6fd;
-	--color-primary-100: #e0ecfb;
-	--color-primary-200: #c1daf7;
-	--color-primary-300: #a1c8f3;
-	--color-primary-400: #81b6ef;
-	--color-primary-500: #60719e;
-	--color-primary-600: #556a94;
-	--color-primary-700: #4a5d8a;
-	--color-primary-800: #3f5080;
-	--color-primary-900: #344376;
-	--color-primary-950: #29366c;
-}
-
-/* Theme 3: Rose Pink */
-body.theme-3 {
-	--background-color: #faf6f8;
-	--background-color-secondary: #f5f0f4;
-	--background-color-tertiary: #ede6ed;
-	--background-color-quarternary: #e8dce8;
-	--font-color: #3d1528;
-
-	--color-primary-50: #fdf7fb;
-	--color-primary-100: #fbeff7;
-	--color-primary-200: #f7dff0;
-	--color-primary-300: #f3cfe9;
-	--color-primary-400: #efbfe2;
-	--color-primary-500: #d088c3;
-	--color-primary-600: #c076b6;
-	--color-primary-700: #b064a9;
-	--color-primary-800: #a0529c;
-	--color-primary-900: #90408f;
-	--color-primary-950: #802e82;
-}
-
-/* Theme 4: Teal Green */
-body.theme-4 {
-	--background-color: #f5faf8;
-	--background-color-secondary: #f0f8f5;
-	--background-color-tertiary: #eaf6f1;
-	--background-color-quarternary: #e0f1eb;
-	--font-color: #1b3d36;
-
-	--color-primary-50: #f0fdfb;
-	--color-primary-100: #e0fbf7;
-	--color-primary-200: #c1f7ef;
-	--color-primary-300: #a2f3e7;
-	--color-primary-400: #83efdf;
-	--color-primary-500: #4dac9e;
-	--color-primary-600: #459d91;
-	--color-primary-700: #3d8e84;
-	--color-primary-800: #357f77;
-	--color-primary-900: #2d706a;
-	--color-primary-950: #25615d;
-}
-
-/* Common color palettes for all themes */
-:root {
-	--animate-outline-ping: outline-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes outline-ping {
-	0% {
-		outline-width: 0px;
-	}
-	70% {
-		outline-width: 10px;
-		outline-color: transparent;
-	}
-	100% {
-		outline-width: 0px;
-		outline-color: transparent;
-	}
-}
-
-@keyframes fadeIn {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
+	--color-primary-50: #e6f9ff;
+	--color-primary-100: #ccf3ff;
+	--color-primary-200: #99e7ff;
+	--color-primary-300: #66dbff;
+	--color-primary-400: #33cfff;
+	--color-primary-500: #00d9ff;
+	--color-primary-600: #00a3cc;
+	--color-primary-700: #007a99;
+	--color-primary-800: #005266;
+	--color-primary-900: #002933;
+	--color-primary-950: #001a1f;
 }
 
 /* ==================== */
@@ -266,37 +175,11 @@ body.theme-4 {
 		background-color: var(--background-color);
 		color: var(--font-color);
 		background-image:
-			linear-gradient(90deg, rgba(212, 175, 133, 0.05) 1px, transparent 1px),
-			linear-gradient(rgba(212, 175, 133, 0.05) 1px, transparent 1px);
+			linear-gradient(90deg, rgba(0, 217, 255, 0.02) 1px, transparent 1px),
+			linear-gradient(rgba(0, 217, 255, 0.02) 1px, transparent 1px);
 		background-size: 40px 40px;
 		background-attachment: fixed;
 		transition: background-color 0.3s ease, color 0.3s ease;
-	}
-
-	/* Dark Mode - True dark theme with pastel-blue accents (#60719E) */
-	body.dark-mode {
-		--background-color: #1F1F1E;
-		--background-color-secondary: #0f1724cc;
-		--background-color-tertiary: #0b122026;
-		--background-color-quarternary: #07101b;
-		--font-color: #e6eef8;
-	
-		/* Primary pastel-blue accent (center) and its scale */
-		--color-primary-50: #f2f5fb;
-		--color-primary-100: #e6ecf8;
-		--color-primary-200: #cdd9f0;
-		--color-primary-300: #aab6e1;
-		--color-primary-400: #8793d2;
-		--color-primary-500: #60719e;
-		--color-primary-600: #546186;
-		--color-primary-700: #46506a;
-		--color-primary-800: #38404e;
-		--color-primary-900: #2b303f;
-		--color-primary-950: #1a202b;
-	
-		background-image:
-			linear-gradient(90deg, rgba(96, 113, 158, 0.03) 1px, transparent 1px),
-			linear-gradient(rgba(96, 113, 158, 0.03) 1px, transparent 1px);
 	}
 
 	* {
@@ -307,11 +190,20 @@ body.theme-4 {
 	}
 
 	body {
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	}
 
-	body.dark-mode {
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	/* Headings */
+	h1, h2, h3, h4, h5, h6 {
+		@apply text-white;
+	}
+
+	p {
+		@apply text-gray-300;
+	}
+
+	a {
+		@apply text-primary-500 hover:text-primary-400 transition-colors;
 	}
 }
 
@@ -322,7 +214,7 @@ body.theme-4 {
 @layer components {
 	/* ---- Buttons ---- */
 	.button {
-		@apply flex cursor-pointer flex-row justify-center rounded-lg font-medium tracking-wide transition-colors;
+		@apply flex cursor-pointer flex-row justify-center rounded-lg font-medium tracking-wide transition-all;
 
 		&.sm {
 			@apply gap-1.5 px-3 py-2 text-sm hover:outline-1 focus:outline-1;
@@ -352,85 +244,49 @@ body.theme-4 {
 
 	/* Button Color Variants */
 	.button.primary {
-		@apply bg-primary-600 text-white outline-primary-400 hover:bg-primary-700 hover:shadow-lg;
+		@apply bg-primary-600 text-white outline-primary-400 hover:bg-primary-700 hover:shadow-lg hover:shadow-primary-950 active:scale-95 transition-all;
 	}
 
-	.dark-mode .button.primary {
-		@apply bg-blue-600 text-white outline-blue-400 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900;
+	.button.secondary {
+		@apply bg-gray-700 text-white outline-primary-500 hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-950 active:scale-95 transition-all;
 	}
 
 	.button.red {
-		@apply bg-red-600 text-white outline-red-400 hover:bg-red-700 hover:shadow-lg;
-	}
-
-	.dark-mode .button.red {
-		@apply bg-blue-600 text-white outline-blue-400 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900;
+		@apply bg-red-600 text-white outline-red-400 hover:bg-red-700 hover:shadow-lg hover:shadow-red-950 active:scale-95 transition-all;
 	}
 
 	.button.dark-red {
-		@apply bg-red-700 text-white outline-red-400 hover:bg-red-800 hover:shadow-lg;
-	}
-
-	.dark-mode .button.dark-red {
-		@apply bg-blue-700 text-white outline-blue-400 hover:bg-blue-800 hover:shadow-lg hover:shadow-blue-900;
+		@apply bg-red-700 text-white outline-red-400 hover:bg-red-800 hover:shadow-lg hover:shadow-red-950 active:scale-95 transition-all;
 	}
 
 	.button.orange {
-		@apply bg-orange-600 text-white outline-orange-400 hover:bg-orange-700 hover:shadow-lg;
-	}
-
-	.dark-mode .button.orange {
-		@apply bg-blue-600 text-white outline-blue-400 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900;
+		@apply bg-orange-600 text-white outline-orange-400 hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-950 active:scale-95 transition-all;
 	}
 
 	/* ---- Links ---- */
 	.link {
-		@apply text-primary-600 underline transition-colors hover:text-primary-700;
-	}
-
-	.dark-mode .link {
-		@apply text-primary-600 hover:text-primary-700;
+		@apply text-primary-500 underline transition-colors hover:text-primary-400;
 	}
 
 	.list-link {
-		@apply text-primary-600 underline transition-all hover:text-primary-700;
-	}
-
-	.dark-mode .list-link {
-		@apply text-primary-600 hover:text-primary-700;
+		@apply text-primary-500 underline transition-all hover:text-primary-400;
 	}
 
 	/* ---- Form Inputs ---- */
 	.themed-input-light {
-		@apply rounded-lg border border-primary-300 bg-primary-50 p-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200 hover:border-primary-400;
-	}
-
-	.dark-mode .themed-input-light {
-		@apply border-blue-600 bg-slate-700 text-blue-100 placeholder:text-slate-500 focus:border-blue-400 focus:ring-blue-400 hover:border-blue-500 transition-all duration-200;
+		@apply rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200 hover:border-gray-500;
 	}
 
 	.themed-input {
-		@apply rounded-lg border border-primary-300 bg-primary-50 px-3 py-2.5 text-gray-900 ring-0 transition-all duration-200 outline-none placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 hover:border-primary-400;
-	}
-
-	.dark-mode .themed-input {
-		@apply border-blue-600 bg-slate-700 text-blue-100 placeholder:text-slate-500 focus:border-blue-400 focus:ring-blue-400 hover:border-blue-500 transition-all duration-200;
+		@apply rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-white ring-0 transition-all duration-200 outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 hover:border-gray-500;
 	}
 
 	.themed-input-on-box {
-		@apply rounded-lg border border-primary-300 bg-primary-50 px-3 py-2.5 text-gray-900 ring-0 transition-all duration-200 outline-none placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 hover:border-primary-400;
-	}
-
-	.dark-mode .themed-input-on-box {
-		@apply border-blue-600 bg-slate-700 text-blue-100 placeholder:text-slate-500 focus:border-blue-400 focus:ring-blue-400 hover:border-blue-500 transition-all duration-200;
+		@apply rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-white ring-0 transition-all duration-200 outline-none placeholder:text-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 hover:border-gray-500;
 	}
 
 	.checkbox {
-		@apply h-5 w-5 cursor-pointer rounded border border-primary-300 bg-primary-50 accent-primary-500 transition-all duration-200 hover:border-primary-400;
-	}
-
-	.dark-mode .checkbox {
-		@apply border-slate-600 bg-slate-800 accent-blue-400 hover:border-slate-500 transition-all duration-200;
+		@apply h-5 w-5 cursor-pointer rounded border border-gray-600 bg-gray-800 accent-primary-500 transition-all duration-200 hover:border-gray-500;
 	}
 
 	/* ---- Themed Boxes ---- */
@@ -438,44 +294,24 @@ body.theme-4 {
 	.themed-box-prominent,
 	.themed-box-solid,
 	.themed-box-solid-prominent {
-		@apply rounded-xl border border-primary-200 bg-primary-50/60 backdrop-blur-sm transition-all duration-200;
-	}
-
-	.dark-mode .themed-box,
-	.dark-mode .themed-box-prominent,
-	.dark-mode .themed-box-solid,
-	.dark-mode .themed-box-solid-prominent {
-		@apply border-slate-700 bg-slate-900/85 p-4;
+		@apply rounded-xl border border-gray-700 bg-gray-900/50 backdrop-blur-sm transition-all duration-200;
 	}
 
 	.themed-box-solid {
-		@apply p-4 shadow-xl hover:shadow-2xl hover:border-primary-300 transition-all duration-200;
-	}
-
-	.dark-mode .themed-box-solid {
-		@apply shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-blue-950/30 hover:border-slate-500 transition-all duration-200;
+		@apply p-4 shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-black/60 hover:border-gray-600 transition-all duration-200;
 	}
 
 	.themed-box-solid-prominent {
-		@apply p-4 sm:p-5 hover:shadow-lg hover:border-primary-300 transition-all duration-200;
-	}
-
-	.dark-mode .themed-box-solid-prominent {
-		@apply hover:shadow-md hover:shadow-blue-950/25 hover:border-slate-500 transition-all duration-200;
+		@apply p-4 sm:p-5 hover:shadow-lg hover:border-gray-600 transition-all duration-200;
 	}
 
 	/* ---- Enclosure Background (Textured) ---- */
 	.enclosure-bg {
-		background-color: #fffcf9;
+		background-color: #1a1a1a;
 		position: relative;
 		overflow: hidden;
 		z-index: 1;
-		@apply rounded-xl border border-primary-200;
-	}
-
-	.dark-mode .enclosure-bg {
-		background-color: #0f1724;
-		@apply border-slate-700;
+		@apply rounded-xl border border-gray-700;
 	}
 
 	.enclosure-bg::before {
@@ -487,7 +323,7 @@ body.theme-4 {
 		height: 6000%;
 		transform: translate(-50%, -50%) rotate(30deg);
 		background-image: url('https://cdn.hackclub.com/019d4983-aa2c-7c07-ad9e-07ec8b3f9bb9/image.png');
-		opacity: 3%;
+		opacity: 2%;
 		background-repeat: repeat;
 		background-size: 35px 35px;
 		z-index: 0;
@@ -500,11 +336,11 @@ body.theme-4 {
 		background-size: cover !important;
 		background-position: center !important;
 		background-repeat: no-repeat !important;
-		border: 1.5px solid rgba(212, 175, 133, 0.6) !important;
+		border: 1.5px solid rgba(0, 217, 255, 0.6) !important;
 		border-radius: 12px !important;
 		box-shadow:
-			0 8px 32px rgba(212, 175, 133, 0.2) !important,
-			inset 0 1px 2px rgba(255, 255, 255, 0.2) !important;
+			0 8px 32px rgba(0, 217, 255, 0.15) !important,
+			inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
 		position: relative !important;
 		overflow: hidden !important;
 		transition: all 0.3s ease !important;
@@ -514,25 +350,11 @@ body.theme-4 {
 		}
 
 		&:hover {
-			border-color: rgba(212, 175, 133, 0.9) !important;
+			border-color: rgba(0, 217, 255, 0.9) !important;
 			box-shadow:
-				0 12px 40px rgba(212, 175, 133, 0.3) !important,
-				inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
-			transform: translateY(-2px) !important;
-		}
-	}
-
-	.dark-mode .pei-button {
-		border-color: rgba(96, 165, 250, 0.6) !important;
-		box-shadow:
-			0 8px 32px rgba(96, 165, 250, 0.15) !important,
-			inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
-
-		&:hover {
-			border-color: rgba(96, 165, 250, 0.9) !important;
-			box-shadow:
-				0 12px 40px rgba(96, 165, 250, 0.2) !important,
+				0 12px 40px rgba(0, 217, 255, 0.2) !important,
 				inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+			transform: translateY(-2px) !important;
 		}
 	}
 
@@ -556,86 +378,6 @@ body.theme-4 {
 	.header-nav-button:hover {
 		transform: translateY(0) !important;
 	}
-
-	/* Dark mode text adjustments */
-	.dark-mode h1,
-	.dark-mode h2,
-	.dark-mode h3,
-	.dark-mode h4,
-	.dark-mode h5,
-	.dark-mode h6 {
-		@apply text-gray-100;
-	}
-
-	.dark-mode p {
-		@apply text-gray-300;
-	}
-
-	.dark-mode .text-primary-900 {
-		@apply text-gray-100;
-	}
-
-	.dark-mode .text-primary-950 {
-		@apply text-gray-100;
-	}
-
-	.dark-mode .text-primary-700 {
-		@apply text-gray-300;
-	}
-
-	.dark-mode .text-primary-600 {
-		@apply text-gray-300;
-	}
-
-	.dark-mode .text-primary-500 {
-		@apply text-blue-200;
-	}
-
-	/* Smoother hover/transition rules for panels to avoid bright flashes */
-	.dark-mode .themed-box-solid {
-		transition-property: background-color, box-shadow, transform, color;
-		transition-duration: 200ms;
-		transition-timing-function: ease;
-		will-change: transform, box-shadow, background-color, color;
-	}
-
-	.dark-mode .themed-box-solid:hover {
-		transform: translateY(-3px);
-		box-shadow: 0 10px 30px rgba(0,0,0,0.55);
-	}
-
-	/* Soften utility classes that would otherwise be very bright in dark mode */
-
-	.dark-mode .bg-white {
-		background-color: rgba(255,255,255,0.02) !important;
-	}
-
-	.dark-mode .bg-white\/80 {
-		background-color: rgba(255,255,255,0.03) !important;
-	}
-
-	/* Make ring utilities subtler in dark mode to avoid flashy bright rings */
-
-	.dark-mode .ring-primary-50 {
-		--tw-ring-color: rgba(96,113,158,0.08) !important;
-	}
-
-	.dark-mode .ring-primary-500,
-	.dark-mode .ring-primary-600 {
-		--tw-ring-color: rgba(96,113,158,0.28) !important;
-	}
-
-	.dark-mode .text-gray-700 {
-		@apply text-gray-300;
-	}
-
-	.dark-mode .text-gray-600 {
-		@apply text-gray-400;
-	}
-
-	.dark-mode .text-primary-800 {
-		@apply text-gray-200;
-	}
 }
 
 /* ==================== */
@@ -647,43 +389,27 @@ body.theme-4 {
 		@apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform;
 	}
 
-	/* Modern glass effect */
+	/* Glass effect */
 	.glass {
-		@apply rounded-xl border border-white/30 bg-white/20 backdrop-blur-md;
-	}
-
-	.dark-mode .glass {
-		@apply border-blue-400/20 bg-slate-800/30;
+		@apply rounded-xl border border-white/10 bg-gray-900/30 backdrop-blur-md;
 	}
 
 	/* Smooth shadow */
 	.shadow-modern {
-		@apply shadow-lg shadow-black/15;
-	}
-
-	.dark-mode .shadow-modern {
 		@apply shadow-lg shadow-black/50;
 	}
 
 	/* Text shadows for readability */
 	.text-shadow {
-		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-	}
-
-	.text-shadow-strong {
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	}
-
-	.dark-mode .text-shadow {
 		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 	}
 
-	.dark-mode .text-shadow-strong {
+	.text-shadow-strong {
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
 	}
 
-	/* Dark mode icon colors */
-	.dark-mode .lucide-icon {
-		@apply text-blue-300;
+	/* Icon colors */
+	.lucide-icon {
+		@apply text-primary-500;
 	}
 }
