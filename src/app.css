@@ -234,7 +234,6 @@ body.dark-mode {
 	/* ---- Buttons ---- */
 	.button {
 		@apply flex cursor-pointer flex-row justify-center rounded-lg font-medium tracking-wide transition-all;
-	}
 
 		&.sm {
 			@apply gap-1.5 px-3 py-2 text-sm hover:outline-1 focus:outline-1;
