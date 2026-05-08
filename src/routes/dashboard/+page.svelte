@@ -1,16 +1,16 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
-	import { BarChart3, BookOpen, Compass, PencilRuler, Store, Moon, Sun } from '@lucide/svelte';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import { BarChart3, BookOpen, Compass, PencilRuler, Store } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import BenchyRevealer from './BenchyRevealer.svelte';
-	
+	import { autoOpenDashboardTutorial } from '$lib/stores/tutorial';
+
 	let performanceModeEnabled = $state(false);
 	let performanceModeReady = $state(false);
-	let darkModeEnabled = $state(false);
-	let darkModeReady = $state(false);
 
 	// ✅ Use $page.data instead of props
 	let projectCount = $derived($page.data?.stats?.projectCount ?? 0);
@@ -29,31 +29,13 @@
 		);
 	}
 
-	function persistDarkMode() {
-		window.localStorage.setItem('darkModeEnabled', darkModeEnabled.toString());
-		if (darkModeEnabled) {
-			document.body.classList.add('dark-mode');
-			document.body.classList.remove('theme-1', 'theme-3', 'theme-4');
-			document.body.classList.add('theme-2');
-		} else {
-			document.body.classList.remove('dark-mode');
-			document.body.classList.remove('theme-1', 'theme-2', 'theme-3', 'theme-4');
-		}
-		window.dispatchEvent(
-			new CustomEvent('darkModeChanged', {
-				detail: { darkModeEnabled }
-			})
-		);
-	}
-
 	onMount(() => {
 		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
 		performanceModeReady = true;
 		persistPerformanceMode();
 
-		darkModeEnabled = window.localStorage.getItem('darkModeEnabled') === 'true';
-		darkModeReady = true;
-		persistDarkMode();
+		// Auto-open tutorial for first-time users
+		autoOpenDashboardTutorial();
 	});
 </script>
 
@@ -113,47 +95,19 @@
 
 	<div class="themed-box-solid p-4">
 		<h2 class="text-lg font-bold">Settings</h2>
-		
-		<!-- Dark Mode Toggle -->
+
+		<!-- Theme Toggle -->
 		<div class="mt-4">
-			<p class="text-sm font-medium mb-2">Display Mode</p>
-			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-gray-100 transition-colors hover:bg-slate-800 dark-mode:border-blue-700 dark-mode:bg-slate-900/80 dark-mode:hover:bg-slate-800">
-				<input
-					type="checkbox"
-					class="peer sr-only"
-					bind:checked={darkModeEnabled}
-					onchange={() => {
-						if (!darkModeReady) return;
-						persistDarkMode();
-					}}
-				/>
-				<span
-					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-slate-600 bg-slate-800 text-blue-300 transition-all peer-checked:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900"
-					aria-hidden="true"
-				>
-					{#if darkModeEnabled}
-						<span class="text-sm font-bold leading-none">✓</span>
-					{/if}
-				</span>
-				<div class="flex items-center gap-2">
-					{#if darkModeEnabled}
-						<Moon size={16} />
-						<span class="text-sm font-medium">Dark mode</span>
-					{:else}
-						<Sun size={16} />
-						<span class="text-sm font-medium">Light mode</span>
-					{/if}
-				</div>
-			</label>
+			<ThemeToggle />
 		</div>
 
 		<!-- Performance Mode Toggle -->
 		<div class="mt-4">
 			<p class="text-sm font-medium mb-2">Performance</p>
-			<p class="text-xs text-gray-600 dark-mode:text-gray-400 mb-2">
+			<p class="text-xs text-gray-500 mb-2">
 				When enabled, 3D previews are disabled for better performance.
 			</p>
-			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-gray-100 transition-colors hover:bg-slate-800 dark-mode:border-blue-700 dark-mode:bg-slate-900/80 dark-mode:hover:bg-slate-800">
+			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-300 bg-gray-100 px-3 py-2 text-gray-700 transition-colors hover:bg-gray-200">
 				<input
 					type="checkbox"
 					class="peer sr-only"
@@ -164,7 +118,7 @@
 					}}
 				/>
 				<span
-					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-slate-600 bg-slate-800 text-blue-300 transition-all peer-checked:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900"
+					class="flex h-5 w-5 items-center justify-center rounded border-2 border-gray-400 bg-white text-primary-600 transition-all peer-checked:border-primary-600 peer-checked:bg-primary-600 peer-checked:text-white"
 					aria-hidden="true"
 				>
 					{#if performanceModeEnabled}
@@ -173,7 +127,7 @@
 				</span>
 				<span class="text-sm font-medium">Disable 3D previews</span>
 			</label>
-			<p class="mt-2 text-xs text-gray-600 dark-mode:text-gray-400">
+			<p class="mt-2 text-xs text-gray-500">
 				{performanceModeEnabled ? 'On' : 'Off'}
 			</p>
 		</div>
