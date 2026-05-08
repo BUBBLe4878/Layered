@@ -53,7 +53,7 @@ export async function load({ params, locals }) {
       .select({
         id: devlogComment.id,
         comment: devlogComment.comment,
-        //createdAt: devlogComment.createdAt,
+        createdAt: devlogComment.createdAt,
         devlogId: devlogComment.devlogId,
         devlogDescription: devlog.description,
         authorId: user.id,
@@ -63,7 +63,7 @@ export async function load({ params, locals }) {
       .innerJoin(devlog, eq(devlogComment.devlogId, devlog.id))
       .innerJoin(user, eq(devlogComment.userId, user.id))
       .where(eq(devlog.projectId, projectId))
-      .orderBy(desc(devlogComment.createdAt ?? new Date()))
+      .orderBy(desc(devlogComment.createdAt))  
       .limit(50);
 
     const totalHours = devlogs.reduce((s, d) => s + (d.timeSpent ?? 0), 0) / 600;
