@@ -229,12 +229,7 @@
 						{#each printers as printer, idx}
 							<button
 								on:click={() => (currentPrinterIndex = idx)}
-								class="p-4 rounded-lg border transition-all duration-300 group"
-								class:border-primary-600={idx === currentPrinterIndex}
-								class:bg-primary-600/20={idx === currentPrinterIndex}
-								class:border-gray-700={idx !== currentPrinterIndex}
-								class:bg-gray-800/50={idx !== currentPrinterIndex}
-								class:hover:bg-gray-700={idx !== currentPrinterIndex}
+								class="{idx === currentPrinterIndex ? 'p-4 rounded-lg border transition-all duration-300 group border-primary-600 bg-primary-600/20' : 'p-4 rounded-lg border transition-all duration-300 group border-gray-700 bg-gray-800/50 hover:bg-gray-700'}"
 							>
 								<p class="text-2xl mb-2">{printer.image}</p>
 								<p class="text-sm font-semibold text-white">{printer.name}</p>
