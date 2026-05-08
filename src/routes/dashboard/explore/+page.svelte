@@ -809,8 +809,45 @@
 	.rank {
 		font-weight: 700;
 		font-size: 14px;
-		color: #1f2937;
+		color: white;
 		min-width: 40px;
+		background: #00d9ff;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 8px;
+		position: relative;
+		overflow: hidden;
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		cursor: pointer;
+		box-shadow: 0 4px 12px rgba(0, 217, 255, 0.25);
+		background-image: url('https://cdn.hackclub.com/019d4983-aa2c-7c07-ad9e-07ec8b3f9bb9/image.png');
+		background-color: #00d9ff;
+		background-size: 35px 35px;
+		background-blend-mode: overlay;
+	}
+
+	.rank:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 8px 20px rgba(0, 217, 255, 0.35);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.rank {
+			background: #1a1a1a;
+			background-image: url('https://cdn.hackclub.com/019d4983-aa2c-7c07-ad9e-07ec8b3f9bb9/image.png');
+			background-color: #1a1a1a;
+			background-size: 35px 35px;
+			background-blend-mode: lighten;
+			color: #00d9ff;
+			box-shadow: 0 4px 12px rgba(0, 217, 255, 0.15);
+		}
+
+		.rank:hover {
+			box-shadow: 0 8px 20px rgba(0, 217, 255, 0.25);
+		}
 	}
 
 	.user-info {

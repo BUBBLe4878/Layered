@@ -40,8 +40,11 @@
 		<div class="flex gap-3">
 			<!-- Light Mode Button -->
 			<button
-				on:click={() => !isDarkMode && toggleTheme()}
-				class="flex-1 flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all duration-300 font-medium"
+				on:click={() => {
+					isDarkMode = false;
+					applyTheme(false);
+				}}
+				class="flex-1 flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all duration-300 font-medium cursor-pointer"
 				class:border-primary-600={!isDarkMode}
 				class:bg-primary-100={!isDarkMode}
 				class:text-primary-900={!isDarkMode}
@@ -58,8 +61,11 @@
 
 			<!-- Dark Mode Button -->
 			<button
-				on:click={() => isDarkMode && toggleTheme()}
-				class="flex-1 flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all duration-300 font-medium"
+				on:click={() => {
+					isDarkMode = true;
+					applyTheme(true);
+				}}
+				class="flex-1 flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all duration-300 font-medium cursor-pointer"
 				class:border-primary-600={isDarkMode}
 				class:bg-gray-800={isDarkMode}
 				class:text-white={isDarkMode}
