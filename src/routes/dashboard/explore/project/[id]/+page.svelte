@@ -6,7 +6,7 @@
 
 	const { project, devlogs, comments, totalHours, isOwner, currentUserId } = $derived(data);
 
-	let selectedDevlogId = $state<number | null>(null);
+	let expandedDevlogId = $state<number | null>(null);
 	let commentText = $state('');
 	let activeTab = $state<'devlogs' | 'comments'>('devlogs');
 
@@ -27,6 +27,11 @@
 
 	function formatHours(h: number) {
 		return h < 1 ? `${Math.round(h * 60)}m` : `${h.toFixed(1)}h`;
+	}
+
+	// Get comments for a specific devlog
+	function getDevlogComments(devlogId: number) {
+		return comments.filter(c => c.devlogId === devlogId);
 	}
 </script>
 
@@ -105,7 +110,7 @@
 		{/each}
 	</div>
 
-	<!-- Devlogs tab -->
+	<!-- Devlogs tab (with nested comments) -->
 	{#if activeTab === 'devlogs'}
 		<div class="space-y-4">
 			{#each devlogs as log (log.id)}
@@ -119,7 +124,7 @@
 						<span>❤️ {log.likeCount ?? 0}</span>
 					</div>
 
-					<!-- Comment on this devlog -->
+					<!-- Comment input -->
 					{#if currentUserId}
 						<form
 							method="POST"
@@ -127,7 +132,6 @@
 							use:enhance={() => {
 								return ({ update }) => {
 									commentText = '';
-									selectedDevlogId = null;
 									update();
 								};
 							}}
@@ -149,6 +153,42 @@
 							</button>
 						</form>
 					{/if}
+
+					<!-- Comments section -->
+					{#if getDevlogComments(log.id).length > 0}
+						<div class="mt-4 border-t pt-4">
+							<button
+								onclick={() =>
+									(expandedDevlogId = expandedDevlogId === log.id ? null : log.id)}
+								class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+							>
+								<span>{expandedDevlogId === log.id ? '▼' : '▶'}</span>
+								<span
+									>{getDevlogComments(log.id).length} comment{getDevlogComments(log.id).length !==
+									1
+										? 's'
+										: ''}</span
+								>
+							</button>
+
+							<!-- Expanded comments -->
+							{#if expandedDevlogId === log.id}
+								<div class="mt-3 space-y-2">
+									{#each getDevlogComments(log.id) as c (c.id)}
+										<div class="rounded-lg bg-gray-50 p-3">
+											<div class="mb-1 flex items-center justify-between">
+												<span class="text-sm font-medium text-gray-900">
+													{c.authorName || 'Anonymous'}
+												</span>
+												<span class="text-xs text-gray-400">{formatDate(c.createdAt)}</span>
+											</div>
+											<p class="text-sm text-gray-700">{c.comment}</p>
+										</div>
+									{/each}
+								</div>
+							{/if}
+						</div>
+					{/if}
 				</div>
 			{:else}
 				<p class="text-sm text-gray-400 text-center py-8">No devlogs yet.</p>
@@ -156,14 +196,14 @@
 		</div>
 	{/if}
 
-	<!-- Comments tab -->
+	<!-- Comments tab (all comments view) -->
 	{#if activeTab === 'comments'}
 		<div class="space-y-3">
 			{#each comments as c (c.id)}
 				<div class="rounded-xl border bg-white p-4">
 					<div class="mb-1 flex items-center justify-between">
 						<span class="text-sm font-medium">{c.authorName || 'Anonymous'}</span>
-						<span class="text-xs text-gray-400">{formatDate(c.createdAt || new Date())}</span>
+						<span class="text-xs text-gray-400">{formatDate(c.createdAt)}</span>
 					</div>
 					<p class="mb-1 text-sm text-xs text-gray-500">
 						on: "{(c.devlogDescription || 'Untitled devlog').slice(0, 60)}…"
