@@ -243,9 +243,9 @@
 				</div>
 				{#if !selectedPrinterPurchaseable && canAffordPrinter}
 					{#if selectedPrinterAlreadyPurchased}
-						<p class="mt-0.5 text-sm font-medium text-primary-600">Already purchased</p>
+						<p class="mt-0.5 text-sm font-medium text-gray-400">Already purchased</p>
 					{:else}
-						<p class="mt-0.5 text-sm font-medium text-primary-600">
+						<p class="mt-0.5 text-sm font-medium text-gray-400">
 							Haven't bought required upgrades
 						</p>
 					{/if}
@@ -257,7 +257,7 @@
 						>
 					</p>
 				{:else}
-					<p class="mt-0.5 text-sm font-medium text-primary-600">Can't afford</p>
+					<p class="mt-0.5 text-sm font-medium text-gray-400">Can't afford</p>
 				{/if}
 
 				<div class="mt-2 flex flex-row gap-3">

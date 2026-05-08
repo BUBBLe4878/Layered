@@ -31,7 +31,7 @@
 				placeholder="Come up with an interesting name"
 				required
 				value={form?.fields?.name ?? data.project.name}
-				class="themed-box ring-primary-900 placeholder:text-primary-900 active:ring-3"
+				class="themed-box ring-primary-900 placeholder:text-white active:ring-3"
 			/>
 		</label>
 		{#if form?.invalid_name}
@@ -46,7 +46,7 @@
 			<textarea
 				name="description"
 				placeholder="A couple sentences to describe your project"
-				class="themed-box ring-primary-900 placeholder:text-primary-900 active:ring-3"
+				class="themed-box ring-primary-900 placeholder:text-white active:ring-3"
 				>{form?.fields?.description ?? data.project.description}</textarea
 			>
 		</label>

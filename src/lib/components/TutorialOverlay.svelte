@@ -77,7 +77,7 @@
 			<!-- Progress Bar -->
 			<div class="w-full bg-gray-800 rounded-full h-1">
 				<div
-					class="bg-primary-500 h-1 rounded-full transition-all duration-300"
+					class="bg-primary-600 h-1 rounded-full transition-all duration-300"
 					style="width: {((currentStep + 1) / steps.length) * 100}%"
 				/>
 			</div>

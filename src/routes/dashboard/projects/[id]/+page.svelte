@@ -236,7 +236,7 @@
 								{onchange}
 								disabled={lapse?.ok}
 								class:cursor-not-allowed={lapse?.ok}
-								class="themed-input w-25 placeholder:text-primary-900"
+								class="themed-input w-25 placeholder:text-white"
 							/>
 						</div>
 						<input
@@ -390,7 +390,7 @@
 			<div class="mt-1.5 flex">
 				<select
 					bind:value={sortDropdownValue}
-					class="themed-input fill-primary-50 text-sm ring-primary-900 placeholder:text-primary-900 active:ring-3"
+					class="themed-input fill-primary-50 text-sm ring-primary-900 placeholder:text-white active:ring-3"
 				>
 					<option value="descending">New to old</option>
 					<option value="ascending">Old to new</option>

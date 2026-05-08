@@ -106,7 +106,7 @@
 
 						<!-- Step 4: Earn -->
 						<div class="flex items-center gap-3 w-full px-6 py-4 rounded-lg bg-primary-900/30 border border-primary-700">
-							<div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold flex-shrink-0">4</div>
+							<div class="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold flex-shrink-0">4</div>
 							<div>
 								<div class="text-sm font-semibold text-white">Earn Rewards</div>
 								<div class="text-xs text-primary-300">Unlock items, build reputation</div>

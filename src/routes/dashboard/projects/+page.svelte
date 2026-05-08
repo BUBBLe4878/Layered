@@ -118,7 +118,7 @@
 			t1_approved: 'bg-cyan-500',
 			printing: 'bg-orange-500',
 			printed: 'bg-primary-600',
-			finalized: 'bg-primary-500'
+			finalized: 'bg-primary-600'
 		};
 		return colors[status] || 'bg-gray-500';
 	}
@@ -147,7 +147,7 @@
 		<div class="flex w-80 flex-col gap-3 pb-4">
 			<!-- Search bar -->
 			<div class="relative flex items-center">
-				<Search size={15} class="pointer-events-none absolute left-3 text-primary-700" />
+				<Search size={15} class="pointer-events-none absolute left-3 text-gray-400" />
 				<input
 					type="text"
 					bind:value={searchQuery}
@@ -160,7 +160,7 @@
 					<button
 						on:click={() => (searchQuery = '')}
 						aria-label="Clear search"
-						class="absolute right-2 flex items-center justify-center rounded-md p-1 text-primary-700 transition-colors hover:bg-primary-100"
+						class="absolute right-2 flex items-center justify-center rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-800"
 					>
 						<X size={13} />
 					</button>
@@ -176,7 +176,7 @@
 							rounded-lg border-2 px-2 py-1 text-xs font-semibold transition-colors
 							{activeFilter === filter.key
 							? 'border-primary-600 bg-primary-700 text-primary-50'
-							: 'border-primary-200 bg-primary-50 text-primary-700 hover:border-primary-400 hover:bg-primary-100'}
+							: 'border-gray-700 bg-gray-800 text-gray-400 hover:border-primary-400 hover:bg-gray-800'}
 						"
 					>
 						{filter.label}
@@ -197,7 +197,7 @@
 							on:click={() => (selectedProjectId = project.id)}
 							class="
 								themed-box text-shadow relative overflow-hidden p-3 text-left transition-all hover:shadow-md
-								{selectedProjectId === project.id ? 'shadow-lg ring-2 ring-primary-500' : 'hover:bg-primary-50'}
+								{selectedProjectId === project.id ? 'shadow-lg ring-2 ring-primary-500' : 'hover:bg-gray-800'}
 							"
 						>
 							{#if latestDevlogByProjectId.get(project.id)}
@@ -234,7 +234,7 @@
 					{/each}
 				{:else}
 					<div class="themed-box flex flex-col items-center justify-center gap-2 py-8 text-center">
-						<Search size={20} class="text-primary-700" />
+						<Search size={20} class="text-gray-400" />
 						<p class="text-xs font-semibold">No projects found</p>
 					</div>
 				{/if}
@@ -267,13 +267,13 @@
 
 					<!-- Image Preview -->
 					{#if lastDevlog}
-						<div class="overflow-hidden rounded-lg border-3 border-primary-200">
+						<div class="overflow-hidden rounded-lg border-3 border-gray-700">
 							<img
 								src={lastDevlog.image}
 								alt="Latest devlog preview"
 								class="h-48 w-full object-cover"
 							/>
-							<div class="bg-primary-50 p-2 text-xs text-[#72685e]">
+							<div class="bg-gray-800 p-2 text-xs text-[#72685e]">
 								Latest: {relativeDate(lastDevlog.createdAt)}
 							</div>
 						</div>
@@ -282,7 +282,7 @@
 					<!-- Description -->
 					<div>
 						<h3 class="mb-1 text-sm font-semibold">About</h3>
-						<p class="text-sm text-gray-700">
+						<p class="text-sm text-gray-300">
 							{selectedProject.description ?? 'No description provided'}
 						</p>
 					</div>
@@ -327,7 +327,7 @@
 					</div>
 
 					<!-- Metadata -->
-					<div class="border-t border-primary-200 pt-4">
+					<div class="border-t border-gray-700 pt-4">
 						<div class="grid grid-cols-2 gap-4 text-sm">
 							<div>
 								<p class="mb-1 font-medium text-[#72685e]">Created</p>
@@ -345,7 +345,7 @@
 					</div>
 
 					<!-- Journal entries ──────────────────────────────────────── -->
-					<div class="border-t border-primary-200 pt-4">
+					<div class="border-t border-gray-700 pt-4">
 						<div class="mb-3 flex items-center justify-between gap-2">
 							<h3 class="text-sm font-semibold">
 								Journal entries ({selectedProjectDevlogs.length})
@@ -361,7 +361,7 @@
 										href={resolve('/dashboard/projects/[id]', {
 											id: `${selectedProject.id}`
 										})}
-										class="flex items-center gap-1 text-xs text-primary-600 hover:underline"
+										class="flex items-center gap-1 text-xs text-gray-400 hover:underline"
 									>
 										<PlusCircle size={13} />
 										Add entry
@@ -388,7 +388,7 @@
 				</div>
 			{:else}
 				<div class="themed-box flex h-full flex-col items-center justify-center gap-4 p-5">
-					<Search size={32} class="text-primary-700" />
+					<Search size={32} class="text-gray-400" />
 					<p class="text-lg font-semibold">Select a project to view details</p>
 				</div>
 			{/if}
