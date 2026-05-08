@@ -1,18 +1,25 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
 	import ChecklistItem from '$lib/components/ChecklistItem.svelte';
-	import { BarChart3, BookOpen, Compass, PencilRuler, Store } from '@lucide/svelte';
+	import { BarChart3, BookOpen, Compass, PencilRuler, Store, Moon, Sun } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import BenchyRevealer from './BenchyRevealer.svelte';
-
+	import { autoOpenDashboardTutorial } from '$lib/stores/tutorial';
+	
 	let performanceModeEnabled = $state(false);
 	let performanceModeReady = $state(false);
+	let darkModeEnabled = $state(false);
+	let darkModeReady = $state(false);
 
+	// ✅ Use $page.data instead of props
 	let projectCount = $derived($page.data?.stats?.projectCount ?? 0);
 	let devlogCount = $derived($page.data?.stats?.devlogCount ?? 0);
 	let shipCount = $derived($page.data?.stats?.shipCount ?? 0);
+
+	console.log('[Dashboard] page.data:', $page.data);
+	console.log('[Dashboard] stats:', $page.data?.stats);
 
 	function persistPerformanceMode() {
 		window.localStorage.setItem('enableModelRendering', (!performanceModeEnabled).toString());
@@ -23,73 +30,134 @@
 		);
 	}
 
+	function persistDarkMode() {
+		window.localStorage.setItem('darkModeEnabled', darkModeEnabled.toString());
+		if (darkModeEnabled) {
+			document.body.classList.add('dark-mode');
+			document.body.classList.remove('theme-1', 'theme-3', 'theme-4');
+			document.body.classList.add('theme-2');
+		} else {
+			document.body.classList.remove('dark-mode');
+			document.body.classList.remove('theme-1', 'theme-2', 'theme-3', 'theme-4');
+		}
+		window.dispatchEvent(
+			new CustomEvent('darkModeChanged', {
+				detail: { darkModeEnabled }
+			})
+		);
+	}
+
 	onMount(() => {
 		performanceModeEnabled = window.localStorage.getItem('enableModelRendering') === 'false';
 		performanceModeReady = true;
 		persistPerformanceMode();
+
+		darkModeEnabled = window.localStorage.getItem('darkModeEnabled') === 'true';
+		darkModeReady = true;
+		persistDarkMode();
+
+		// Auto-open tutorial for first-time users on dashboard
+		autoOpenDashboardTutorial();
 	});
 </script>
 
 <Head title="Dashboard" />
 
 <div class="mb-5 flex flex-col gap-4">
-	<div class="themed-box-solid p-4 sm:p-5">
-		<h1 class="font-hero text-3xl font-medium text-white">Dashboard</h1>
-		<p class="mt-1 text-sm text-gray-400">
+	<div class="themed-box-solid-prominent p-4 sm:p-5">
+		<h1 class="font-hero text-3xl font-medium">Dashboard</h1>
+		<p class="mt-1 text-sm text-gray-300">
 			Track your progress and jump back into your next build.
 		</p>
 	</div>
 
-	<!-- Stats Cards -->
 	<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-		<div class="themed-box-solid p-4">
-			<p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">Projects</p>
-			<p class="mt-2 text-4xl font-bold text-primary-500">{projectCount}</p>
+		<div class="themed-box-solid p-4 shadow-xl">
+			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Projects</p>
+			<p class="mt-1 text-3xl font-bold text-white">{projectCount}</p>
 		</div>
-		<div class="themed-box-solid p-4">
-			<p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">Journal Entries</p>
-			<p class="mt-2 text-4xl font-bold text-primary-500">{devlogCount}</p>
+		<div class="themed-box-solid p-4 shadow-xl">
+			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal Entries</p>
+			<p class="mt-1 text-3xl font-bold text-white">{devlogCount}</p>
 		</div>
-		<div class="themed-box-solid p-4">
-			<p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">Shipped</p>
-			<p class="mt-2 text-4xl font-bold text-primary-500">{shipCount}</p>
+		<div class="themed-box-solid p-4 shadow-xl">
+			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Shipped</p>
+			<p class="mt-1 text-3xl font-bold text-white">{shipCount}</p>
 		</div>
-		<div class="themed-box-solid p-4 sm:col-span-2 lg:col-span-3">
-			<p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">Journal Streak</p>
-			<p class="mt-2 text-3xl font-bold text-primary-500">
+		<div class="themed-box-solid p-4 shadow-xl sm:col-span-2 lg:col-span-3">
+			<p class="text-xs font-semibold tracking-wide text-gray-600 uppercase">Journal streak</p>
+			<p class="mt-1 text-3xl font-bold text-white">
 				{$page.data?.user?.journalStreak ?? 0} day{($page.data?.user?.journalStreak ?? 0) === 1 ? '' : 's'}
 			</p>
-			<p class="mt-2 text-sm text-gray-400">Make a journal each day to keep it going. Miss a day and it resets.</p>
+			<p class="mt-1 text-sm text-gray-300">Make a journal each day to keep it going. Miss a day and it resets.</p>
 		</div>
 	</div>
 </div>
 
-<!-- Progress Checklist & Settings -->
 <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
-	<div class="lg:col-span-2 themed-box-solid p-4">
-		<div class="mb-4 flex items-center gap-2">
-			<BarChart3 size={20} class="text-primary-500" />
-			<h2 class="text-xl font-bold text-white">Progress Checklist</h2>
+	<div
+		class="flex flex-col gap-0.5 p-4 outline-primary-500 lg:col-span-2"
+		class:animate-outline-ping={shipCount == 0}
+		class:outline={shipCount == 0}
+		class:themed-box-solid-prominent={shipCount == 0}
+		class:themed-box-solid={shipCount > 0}
+	>
+		<div class="mb-2 flex items-center gap-2">
+			<BarChart3 size={20} class="text-gray-300" />
+			<h2 class="text-xl font-bold">Progress checklist</h2>
 		</div>
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col gap-0.5">
 			<ChecklistItem completed={projectCount > 0}
-				><a href={resolve('/dashboard/projects/create')} class="underline text-primary-500 hover:text-primary-400">Create</a> your first project</ChecklistItem
+				><a href={resolve('/dashboard/projects/create')} class="underline">Create</a> your first project</ChecklistItem
 			>
 			<ChecklistItem completed={devlogCount > 0}>Make your first journal entry</ChecklistItem>
 			<ChecklistItem completed={shipCount > 0}>Ship your project</ChecklistItem>
 		</div>
 	</div>
 
-	<!-- Settings -->
 	<div class="themed-box-solid p-4">
-		<h2 class="text-lg font-bold text-white mb-4">Settings</h2>
+		<h2 class="text-lg font-bold">Settings</h2>
+		
+		<!-- Dark Mode Toggle -->
+		<div class="mt-4">
+			<p class="text-sm font-medium mb-2">Display Mode</p>
+			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-gray-100 transition-colors hover:bg-slate-800 dark-mode:border-blue-700 dark-mode:bg-slate-900/80 dark-mode:hover:bg-slate-800">
+				<input
+					type="checkbox"
+					class="peer sr-only"
+					bind:checked={darkModeEnabled}
+					onchange={() => {
+						if (!darkModeReady) return;
+						persistDarkMode();
+					}}
+				/>
+				<span
+					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-slate-600 bg-slate-800 text-blue-300 transition-all peer-checked:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900"
+					aria-hidden="true"
+				>
+					{#if darkModeEnabled}
+						<span class="text-sm font-bold leading-none">✓</span>
+					{/if}
+				</span>
+				<div class="flex items-center gap-2">
+					{#if darkModeEnabled}
+						<Moon size={16} />
+						<span class="text-sm font-medium">Dark mode</span>
+					{:else}
+						<Sun size={16} />
+						<span class="text-sm font-medium">Light mode</span>
+					{/if}
+				</div>
+			</label>
+		</div>
 
-		<div>
-			<p class="text-sm font-medium text-gray-300 mb-3">Performance</p>
-			<p class="text-xs text-gray-500 mb-3">
+		<!-- Performance Mode Toggle -->
+		<div class="mt-4">
+			<p class="text-sm font-medium mb-2">Performance</p>
+			<p class="text-xs text-gray-600 dark-mode:text-gray-400 mb-2">
 				When enabled, 3D previews are disabled for better performance.
 			</p>
-			<label class="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 transition-colors hover:bg-gray-700">
+			<label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-gray-100 transition-colors hover:bg-slate-800 dark-mode:border-blue-700 dark-mode:bg-slate-900/80 dark-mode:hover:bg-slate-800">
 				<input
 					type="checkbox"
 					class="peer sr-only"
@@ -100,7 +168,7 @@
 					}}
 				/>
 				<span
-					class="flex h-5 w-5 items-center justify-center rounded border-2 border-gray-600 bg-gray-700 text-primary-400 transition-all peer-checked:border-primary-500 peer-checked:bg-primary-600 peer-checked:text-white"
+					class="flex h-6 w-6 items-center justify-center rounded-md border-2 border-slate-600 bg-slate-800 text-blue-300 transition-all peer-checked:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900"
 					aria-hidden="true"
 				>
 					{#if performanceModeEnabled}
@@ -109,55 +177,55 @@
 				</span>
 				<span class="text-sm font-medium">Disable 3D previews</span>
 			</label>
+			<p class="mt-2 text-xs text-gray-600 dark-mode:text-gray-400">
+				{performanceModeEnabled ? 'On' : 'Off'}
+			</p>
 		</div>
 	</div>
 </div>
 
-<!-- Quick Navigation -->
-<div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+<div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 	<a
 		href={resolve('/dashboard/projects')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:border-gray-500 transition-colors"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<PencilRuler size={22} class="text-primary-500 flex-shrink-0" />
+		<PencilRuler size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
-			<p class="font-semibold text-white">Projects</p>
-			<p class="text-xs text-gray-400">Build and manage your work</p>
+			<p class="font-semibold">Projects</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">Build and manage your work</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/explore')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:border-gray-500 transition-colors"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<Compass size={22} class="text-primary-500 flex-shrink-0" />
+		<Compass size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
-			<p class="font-semibold text-white">Explore</p>
-			<p class="text-xs text-gray-400">See what others are making</p>
+			<p class="font-semibold">Explore</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">See what others are making</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/market')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:border-gray-500 transition-colors"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<Store size={22} class="text-primary-500 flex-shrink-0" />
+		<Store size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
-			<p class="font-semibold text-white">Printshop</p>
-			<p class="text-xs text-gray-400">Spend layers and unlock upgrades</p>
+			<p class="font-semibold">Printshop</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">Spend layers and unlock upgrades</p>
 		</div>
 	</a>
 	<a
 		href={resolve('/dashboard/tutorial')}
-		class="themed-box-solid flex items-center gap-3 p-4 hover:border-gray-500 transition-colors"
+		class="themed-box-solid flex items-center gap-3 p-4 hover:bg-gray-800 dark-mode:hover:bg-slate-700"
 	>
-		<BookOpen size={22} class="text-primary-500 flex-shrink-0" />
+		<BookOpen size={22} class="text-gray-300 dark-mode:text-blue-300" />
 		<div>
-			<p class="font-semibold text-white">Help</p>
-			<p class="text-xs text-gray-400">FAQ, tutorials, and support</p>
+			<p class="font-semibold">Help</p>
+			<p class="text-xs text-gray-300 dark-mode:text-slate-400">FAQ, tutorials, and support</p>
 		</div>
 	</a>
 </div>
-
-<!-- Additional Components -->
 <div class="mt-4">
 	<BenchyRevealer />
 </div>

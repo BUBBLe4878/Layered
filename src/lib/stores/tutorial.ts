@@ -113,7 +113,7 @@ export function hasUserViewedTutorial(): boolean {
 
 /**
  * Initialize tutorial state on app load
- * Auto-opens for first-time users
+ * Does NOT auto-open - will open from dashboard instead
  */
 export function initializeTutorial() {
 	if (typeof window === 'undefined') return;
@@ -122,7 +122,18 @@ export function initializeTutorial() {
 	tutorialStore.update(state => ({
 		...state,
 		hasViewedBefore: hasViewed,
-		// Auto-open for first-time users only
-		isOpen: !hasViewed
+		isOpen: false
 	}));
+}
+
+/**
+ * Auto-open tutorial on dashboard for first-time users
+ */
+export function autoOpenDashboardTutorial() {
+	if (typeof window === 'undefined') return;
+
+	const hasViewed = hasUserViewedTutorial();
+	if (!hasViewed) {
+		openTutorial();
+	}
 }
